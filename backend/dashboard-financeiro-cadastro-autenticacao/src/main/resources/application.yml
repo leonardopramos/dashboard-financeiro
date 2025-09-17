@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=dashboard_financeiro_cadastro_autenticacao;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: Strong@Passw0rd
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
