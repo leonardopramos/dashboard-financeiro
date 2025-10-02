@@ -1,0 +1,266 @@
+_type: export
+__export_format: 4
+__export_date: 2025-10-02T13:59:54.000Z
+__export_source: codex.cli
+resources:
+  - _id: wrk_dashboard_financeiro
+    parentId: null
+    modified: 1730479194000
+    created: 1730479194000
+    name: Dashboard Financeiro API
+    description: "Coleção de requisições para testar o serviço de Dashboard Financeiro."
+    scope: collection
+    _type: workspace
+
+  - _id: env_dashboard_financeiro
+    parentId: wrk_dashboard_financeiro
+    modified: 1730479194000
+    created: 1730479194000
+    name: Base Environment
+    data:
+      base_url: http://localhost:8080
+      user_id: CF14040D-24FC-43E6-B156-BDE250EF3E54
+      bank_account_id: 00000000-0000-0000-0000-000000000000
+      transaction_id: 00000000-0000-0000-0000-000000000000
+    dataPropertyOrder:
+      "&":
+        - base_url
+        - user_id
+        - bank_account_id
+        - transaction_id
+    color: null
+    isPrivate: false
+    metaSortKey: 1730479194000
+    _type: environment
+
+  - _id: fld_bank_accounts
+    parentId: wrk_dashboard_financeiro
+    modified: 1730479194000
+    created: 1730479194000
+    name: Bank Accounts
+    description: "Operações sobre contas bancárias do usuário."
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1730479194000
+    _type: request_group
+
+  - _id: req_create_bank_account
+    parentId: fld_bank_accounts
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/bank-accounts"
+    name: Create Bank Account
+    description: "Cria uma nova conta bancária para o usuário informado."
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "userId": "{{ _.user_id }}",
+          "institutionName": "Banco do Brasil",
+          "branchNumber": "1234",
+          "accountNumber": "567890",
+          "accountDigit": "1",
+          "accountType": "CHECKING",
+          "nickname": "Conta Principal",
+          "initialBalance": 2500.00
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1730479194000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_get_bank_account_by_id
+    parentId: fld_bank_accounts
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/bank-accounts/{{ _.bank_account_id }}"
+    name: Get Bank Account by ID
+    description: "Recupera uma conta bancária específica. Atualize a variável 'bank_account_id' com o resultado da criação."
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1730478194000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: true
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_get_bank_accounts_by_user
+    parentId: fld_bank_accounts
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/bank-accounts/user/{{ _.user_id }}"
+    name: Get Bank Accounts by User
+    description: "Lista todas as contas bancárias do usuário informado."
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1730477194000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: true
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: fld_transactions
+    parentId: wrk_dashboard_financeiro
+    modified: 1730479194000
+    created: 1730479194000
+    name: Transactions
+    description: "Operações de criação e consulta de transações financeiras."
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1730476194000
+    _type: request_group
+
+  - _id: req_create_transaction_income
+    parentId: fld_transactions
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/transactions"
+    name: Create Transaction (Income)
+    description: "Registra uma transação de entrada (INCOME) vinculada à conta bancária informada."
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "userId": "{{ _.user_id }}",
+          "bankAccountId": "{{ _.bank_account_id }}",
+          "type": "INCOME",
+          "amount": 5400.75,
+          "transactionDate": "2025-10-01",
+          "description": "Salário Outubro",
+          "category": "Salário",
+          "notes": "Pagamento mensal"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1730479194000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_create_transaction_expense
+    parentId: fld_transactions
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/transactions"
+    name: Create Transaction (Expense)
+    description: "Registra uma transação de saída (EXPENSE) ligada à conta bancária informada."
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "userId": "{{ _.user_id }}",
+          "bankAccountId": "{{ _.bank_account_id }}",
+          "type": "EXPENSE",
+          "amount": 320.40,
+          "transactionDate": "2025-10-02",
+          "description": "Supermercado",
+          "category": "Alimentação",
+          "notes": "Compras do mês"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1730479094000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_get_transaction_by_id
+    parentId: fld_transactions
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/transactions/{{ _.transaction_id }}"
+    name: Get Transaction by ID
+    description: "Recupera detalhes de uma transação específica. Atualize 'transaction_id' com o retorno das criações."
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1730478994000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: true
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_get_transactions_by_bank_account
+    parentId: fld_transactions
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/transactions/bank-account/{{ _.bank_account_id }}"
+    name: Get Transactions by Bank Account
+    description: "Lista todas as transações associadas à conta bancária informada."
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1730478894000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: true
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
+
+  - _id: req_get_transactions_by_user
+    parentId: fld_transactions
+    modified: 1730479194000
+    created: 1730479194000
+    url: "{{ _.base_url }}/api/v1/transactions/user/{{ _.user_id }}"
+    name: Get Transactions by User
+    description: "Lista todas as transações do usuário informado."
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1730478794000
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: true
+    settingEncodeUrl: true
+    settingFollowRedirects: global
+    _type: request
