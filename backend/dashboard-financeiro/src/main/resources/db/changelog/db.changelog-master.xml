@@ -4,4 +4,5 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    <include file="db/changelog/001-create-bank-and-transactions.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
