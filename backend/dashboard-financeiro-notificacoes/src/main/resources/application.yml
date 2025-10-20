@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: dashboard-financeiro-notificacoes
+
+  datasource:
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=dashboard_financeiro_notificacoes;encrypt=false;trustServerCertificate=true}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:Strong@Passw0rd}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+    show-sql: false
+    open-in-view: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    consumer:
+      group-id: dashboard-notifications
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.dashboard_financeiro.*
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring:
+        json:
+          add:
+            type:
+              headers: false
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
+
+server:
+  port: ${SERVER_PORT:8083}
+
+messaging:
+  topics:
+    user-events: user.events
+    transaction-events: transactions.events
+    goal-events: goals.events
+
+notifications:
+  email:
+    from: ${MAIL_FROM:no-reply@dashboard-financeiro.local}
+    enabled: ${MAIL_ENABLED:true}
+    fallback: ${MAIL_FALLBACK:suporte@dashboard-financeiro.local}
+
+logging:
+  level:
+    com.dashboard_financeiro.notificacoes: DEBUG
+    org.springframework.kafka: INFO

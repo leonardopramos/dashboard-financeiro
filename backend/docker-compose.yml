@@ -1,6 +1,4 @@
-version: "3.8"
 services:
-  # Banco SQL Server
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: dashboard-sqlserver
@@ -22,7 +20,6 @@ services:
       - dashboard-network
     restart: unless-stopped
 
-  # Zookeeper (necessário para o Kafka)
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: dashboard-zookeeper
@@ -36,13 +33,12 @@ services:
       - dashboard-network
     restart: unless-stopped
 
-  # Apache Kafka
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: dashboard-kafka
+    # Removido "9092:9092"
     ports:
-      - "9092:9092"   # consumo dos outros containers
-      - "9094:9094"   # consumo da sua máquina local
+      - "9094:9094"  # acesso pela sua máquina
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -60,7 +56,6 @@ services:
       - dashboard-network
     restart: unless-stopped
 
-  # Kafka UI (opcional - interface web)
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: dashboard-kafka-ui
@@ -85,3 +80,4 @@ volumes:
 networks:
   dashboard-network:
     driver: bridge
+

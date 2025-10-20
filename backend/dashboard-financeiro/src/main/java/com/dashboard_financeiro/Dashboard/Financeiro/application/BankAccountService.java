@@ -22,14 +22,14 @@ public class BankAccountService {
     private final BankAccountJpaRepository repository;
 
     @Transactional
-    public BankAccountResponse register(CreateBankAccountRequest request) {
+    public BankAccountResponse register(UUID userId, CreateBankAccountRequest request) {
         String institutionName = request.institutionName().trim();
         String branchNumber = request.branchNumber().trim();
         String accountNumber = request.accountNumber().trim();
         String accountDigit = request.accountDigit() != null ? request.accountDigit().trim() : "";
 
         repository.findByUserIdAndInstitutionNameAndAccountNumberAndAccountDigitAndBranchNumber(
-                request.userId(),
+                userId,
                 institutionName,
                 accountNumber,
                 accountDigit,
@@ -44,7 +44,7 @@ public class BankAccountService {
 
         var entity = BankAccountJpaEntity.builder()
                 .id(UUID.randomUUID())
-                .userId(request.userId())
+                .userId(userId)
                 .institutionName(institutionName)
                 .branchNumber(branchNumber)
                 .accountNumber(accountNumber)
@@ -58,9 +58,15 @@ public class BankAccountService {
     }
 
     @Transactional(readOnly = true)
-    public BankAccountJpaEntity getEntity(UUID id) {
-        return repository.findById(id)
+    public BankAccountJpaEntity getEntity(UUID userId, UUID id) {
+        BankAccountJpaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta bancária não encontrada"));
+
+        if (!entity.getUserId().equals(userId)) {
+            throw new BusinessException("Conta bancária não pertence ao usuário informado");
+        }
+
+        return entity;
     }
 
     @Transactional
@@ -69,8 +75,8 @@ public class BankAccountService {
     }
 
     @Transactional(readOnly = true)
-    public BankAccountResponse findById(UUID id) {
-        return BankAccountResponse.from(getEntity(id));
+    public BankAccountResponse findById(UUID userId, UUID id) {
+        return BankAccountResponse.from(getEntity(userId, id));
     }
 
     @Transactional(readOnly = true)

@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: dashboard-financeiro-api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      routes:
+        - id: auth-service
+          uri: ${services.auth:http://localhost:8081}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*), /api/v1/auth/${segment}
+        - id: users-service
+          uri: ${services.auth:http://localhost:8081}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users(?<segment>/?.*), /api/v1/users${segment}
+        - id: finance-service
+          uri: ${services.finance:http://localhost:8082}
+          predicates:
+            - Path=/api/finance/**
+          filters:
+            - RewritePath=/api/finance/(?<segment>.*), /api/v1/${segment}
+        - id: notifications-service
+          uri: ${services.notifications:http://localhost:8083}
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/notifications/(?<segment>.*), /api/v1/${segment}
+
+services:
+  auth: ${AUTH_SERVICE_URL:http://localhost:8081}
+  finance: ${FINANCE_SERVICE_URL:http://localhost:8080}
+  notifications: ${NOTIFICATIONS_SERVICE_URL:http://localhost:8083}
+
+security:
+  jwt:
+    issuer: dashboard-financeiro-auth
+    secret: bG9jYWwtand0LXNoYXJlZC1zZWNyZXQtMzItYnl0ZXMhIQ==
+
+gateway:
+  security:
+    public-paths:
+      - /api/auth/**
+      - /api/users
+      - /api/users/**
+      - /actuator/**
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+
+server:
+  port: ${SERVER_PORT:8089}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    com.dashboard_financeiro.gateway: DEBUG

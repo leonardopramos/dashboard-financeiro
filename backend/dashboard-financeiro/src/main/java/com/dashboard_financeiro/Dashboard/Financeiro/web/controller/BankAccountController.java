@@ -1,6 +1,7 @@
 package com.dashboard_financeiro.Dashboard.Financeiro.web.controller;
 
 import com.dashboard_financeiro.Dashboard.Financeiro.application.BankAccountService;
+import com.dashboard_financeiro.Dashboard.Financeiro.security.AuthenticatedUser;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.BankAccountResponse;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.CreateBankAccountRequest;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/v1/bank-accounts")
@@ -26,8 +28,9 @@ public class BankAccountController {
     private final BankAccountService bankAccountService;
 
     @PostMapping
-    public ResponseEntity<BankAccountResponse> create(@Valid @RequestBody CreateBankAccountRequest request) {
-        var response = bankAccountService.register(request);
+    public ResponseEntity<BankAccountResponse> create(@AuthenticationPrincipal AuthenticatedUser currentUser,
+                                                      @Valid @RequestBody CreateBankAccountRequest request) {
+        var response = bankAccountService.register(currentUser.id(), request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(response.id())
@@ -36,12 +39,13 @@ public class BankAccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(bankAccountService.findById(id));
+    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id,
+                                                       @AuthenticationPrincipal AuthenticatedUser currentUser) {
+        return ResponseEntity.ok(bankAccountService.findById(currentUser.id(), id));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BankAccountResponse>> getByUser(@PathVariable UUID userId) {
-        return ResponseEntity.ok(bankAccountService.findByUser(userId));
+    @GetMapping
+    public ResponseEntity<List<BankAccountResponse>> getByUser(@AuthenticationPrincipal AuthenticatedUser currentUser) {
+        return ResponseEntity.ok(bankAccountService.findByUser(currentUser.id()));
     }
 }

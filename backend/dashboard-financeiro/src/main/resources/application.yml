@@ -22,7 +22,7 @@ spring:
     enabled: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9094
     consumer:
       group-id: dashboard-financeiro-consumers
       auto-offset-reset: earliest
@@ -30,7 +30,13 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring:
+        json:
+          add:
+            type:
+              headers: false
 
   security:
     oauth2:
@@ -44,6 +50,11 @@ spring:
           google:
             issuer-uri: https://accounts.google.com
 
+security:
+  jwt:
+    issuer: dashboard-financeiro-auth
+    secret: ${JWT_SECRET:bG9jYWwtand0LXNoYXJlZC1zZWNyZXQtMzItYnl0ZXMhIQ==}
+
 server:
   port: 8080
 
@@ -52,6 +63,11 @@ logging:
     root: INFO
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+
+messaging:
+  topics:
+    transaction-events: transactions.events
+    goal-events: goals.events
 
 ---
 spring:

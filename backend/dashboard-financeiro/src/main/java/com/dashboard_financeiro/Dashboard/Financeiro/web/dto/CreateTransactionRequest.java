@@ -11,9 +11,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record CreateTransactionRequest(
-        @NotNull(message = "O identificador do usuário é obrigatório")
-        UUID userId,
-
         @NotNull(message = "O identificador da conta bancária é obrigatório")
         UUID bankAccountId,
 
@@ -31,8 +28,7 @@ public record CreateTransactionRequest(
         @Size(max = 200, message = "A descrição deve ter no máximo 200 caracteres")
         String description,
 
-        @Size(max = 80, message = "A categoria deve ter no máximo 80 caracteres")
-        String category,
+        UUID categoryId,
 
         @Size(max = 255, message = "As observações devem ter no máximo 255 caracteres")
         String notes

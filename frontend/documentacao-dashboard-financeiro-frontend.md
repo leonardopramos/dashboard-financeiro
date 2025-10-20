@@ -5,6 +5,11 @@
 - Estrutura organizada em camadas simples: `contexts` para estado compartilhado, `services` para chamadas HTTP, `components`/`pages` para UI.
 - Uso de Tailwind CSS com paleta laranja personalizada (`primary.500 = #FF6B35`) para garantir consistência visual com o restante do ecossistema.
 
+## Linha do tempo de desenvolvimento
+- 16/09/2025 — Commit "first commit" subiu o scaffolding do Vite com React + TypeScript, configuração do ESLint e scripts básicos (`npm run dev`, `build`, `lint`).
+- 02/10/2025 — Commit "Ajustes no login e criação da primeira tela" implementou contexto de autenticação, componentes de login/cadastro, `ProtectedRoute`, integração com Axios e Tailwind.
+- 02/10/2025 — Commit "Ajustes e adicao de documentacao" refatorou README, alinhou o design system e registrou esta documentação de status do frontend.
+
 ## Fluxos implementados
 - **Autenticação baseada em JWT**: contexto `AuthContext` centraliza estado do usuário, loading e operações `login`, `register`, `logout`; tokens são persistidos em `localStorage` e reaproveitados na inicialização da aplicação.
 - **Interceptação de chamadas HTTP** (`src/services/api.ts`): Axios configurado com base `http://localhost:8080/api/v1`, injeta `Authorization` automaticamente e redireciona para `/login` ao receber 401.

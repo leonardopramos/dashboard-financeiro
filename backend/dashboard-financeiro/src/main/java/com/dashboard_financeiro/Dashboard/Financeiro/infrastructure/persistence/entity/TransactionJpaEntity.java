@@ -31,7 +31,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "bankAccount")
+@ToString(exclude = {"bankAccount", "category"})
 public class TransactionJpaEntity {
 
     @Id
@@ -54,8 +54,9 @@ public class TransactionJpaEntity {
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
-    @Column(name = "category", length = 80)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private CategoryJpaEntity category;
 
     @Column(name = "notes", length = 255)
     private String notes;

@@ -1,34 +1,39 @@
-# Dashboard Financeiro — Cadastro & Autenticação (status em 02/10/2025)
+# Dashboard Financeiro — Cadastro & Autenticação
 
-## Visão geral do serviço
-- Microserviço Spring Boot 3.5.5 (Java 25) responsável por cadastro de usuários e autenticação centralizada do ecossistema.
-- Camadas organizadas em `web`, `application`, `infrastructure`, com DTOs validados e uso de Lombok para construtores/`builder`.
-- Dependências chave: Spring Security, Spring Data JPA, Bean Validation, Liquibase e biblioteca `jjwt` para emissão e parsing de tokens JWT.
+## Visão geral
+- Microserviço Spring Boot 3.5.5 (Java 25) dedicado ao ciclo de vida de usuários e emissão de tokens JWT.
+- Estrutura em camadas (`web`, `application`, `infrastructure`, `security`, `messaging`) isolando controladores REST, serviços, persistência, autenticação e publicação de eventos.
+- Stack principal: Spring Security, Spring Data JPA, Bean Validation, Liquibase, `jjwt`, Spring Kafka.
 
-## Funcionalidades implementadas
-- **Cadastro de usuários** (`UserController`, `UserService`): endpoint `POST /api/v1/users` persiste dados pessoais, endereço e papel do usuário; aplica validação de email único e armazena senha com `BCryptPasswordEncoder`. Disponibiliza busca `GET /api/v1/users/{id}`.
+## Linha do tempo de desenvolvimento
+- 17/09/2025 — Commits "Adição dos demais micro serviços do backend" e "Primeira versao do serviço de cadastro de usuario" criaram o projeto, configuraram Gradle/Docker Compose e entregaram os endpoints de cadastro, login, refresh e consulta (`AuthController`, `UserController`) com migração `0001_create_table_users.sql`.
+- 02/10/2025 — Commit "Ajustes no login e criação da primeira tela" introduziu `CorsConfig`, ajustes de segurança e melhorias no fluxo de autenticação para integrar com o frontend React.
+- 02/10/2025 — Commit "Ajustes e adicao de documentacao" atualizou a documentação deste serviço e sincronizou a coleção Insomnia com os novos endpoints.
+
+## Funcionalidades
+- **Cadastro e consulta de usuários** (`UserController`/`UserService`):
+  - `POST /api/v1/users` registra usuário com validação de e-mail/CPF únicos, senha cifrada (`BCryptPasswordEncoder`) e dados de endereço.
+  - `GET /api/v1/users/{id}` exige autenticação JWT, só permitindo acesso ao próprio registro ou a perfis com `ROLE_ADMIN`.
 - **Autenticação JWT** (`AuthController`, `AuthService`, `JwtService`):
-  - `POST /api/v1/auth/login` valida credenciais no banco e devolve par de tokens (`access` 15 min, `refresh` 7 dias).
-  - `POST /api/v1/auth/refresh` reaproveita refresh token para emitir novo access token.
-  - `POST /api/v1/auth/logout` implementado de forma stateless (não invalida tokens em banco).
-  - `GET /api/v1/auth/me` extrai JWT do header `Authorization`, resolve usuário atual e retorna entidade persistida.
-- **Configuração de CORS e segurança**: `SecurityConfig` libera rotas de cadastro/autenticação e exige autenticação para as demais; `CorsConfig` autoriza origem `http://localhost:5173`, métodos padrão REST e envia cabeçalho `Authorization` ao front-end.
+  - `POST /api/v1/auth/login` gera par de tokens (`access` configurável, `refresh` padrão 7 dias) com claims `sub` (UUID), `email`, `name`, `role`.
+  - `POST /api/v1/auth/refresh` valida refresh token, reemite access token e mantém o refresh original.
+  - `GET /api/v1/auth/me` retorna o usuário autenticado por meio do token.
+  - `POST /api/v1/auth/logout` permanece stateless.
+- **Sincronização via Kafka**: após o cadastro, `UserEventProducer` publica `UserRegisteredEvent` no tópico `user.events`, permitindo que outros serviços (ex.: notificações) mantenham cache local de contatos.
+- **Segurança**:
+  - `SecurityConfig` estabelece sessão stateless, desabilita HTTP Basic/CSRF e adiciona `JwtAuthenticationFilter` antes da `UsernamePasswordAuthenticationFilter`.
+  - O filtro valida token, busca usuário em cache e injeta `AuthenticatedUser` na `SecurityContext`.
+  - Handler global (`ApiExceptionHandler`) padroniza falhas de validação, `IllegalArgumentException`, regras de negócio e erros inesperados.
 
-## Persistência e migrações
-- Entidade `UserJpaEntity` mapeando a tabela `users`, com atributos para identificação (CPF, email), endereço e flags (`emailVerified`, `active`). `@PrePersist` e `@PreUpdate` gerenciam timestamps automaticamente.
-- Repositório `UserJpaRepository` com buscas por email e CPF, usado para garantir unicidade.
-- Liquibase aplicado via `application.yml`, com changelog mestre que inclui `0001_create_table_users.sql` criando a estrutura inicial e índices/constraints relevantes.
+## Persistência e migração
+- Banco SQL Server com tabela `users` criada via `0001_create_table_users.sql`.
+- Campos de auditoria (`registered_at`, `updated_at`) gerenciados por `@PrePersist/@PreUpdate`.
+- Repositório `UserJpaRepository` oferece consultas por e-mail/CPF e busca por id.
 
-## Tokens e políticas de segurança
-- `JwtService` gera tokens HS256 usando chave secreta estática (codificada em Base64 em tempo de execução). Funções para emitir e extrair `subject` suportam fluxo de login e refresh.
-- `PasswordEncoder` compartilhado (BCrypt) garante armazenamento seguro das senhas.
-- Flags `emailVerified` e `active` já presentes na entidade para suportar evoluções futuras (verificação de email, bloqueio de contas).
+## Configuração
+- `application.yml` expõe parâmetros para datasource, JWT (`security.jwt.secret`, issuer e tempos), Kafka e CORS.
+- Grupo Kafka `dashboard-notifications` consome eventos publicados por este serviço.
+- Profiles suportam execução local e em Docker (ajuste automático do datasource).
 
-## Testes e observações adicionais
-- Testes automatizados restritos a `ApplicationTests` (load de contexto). Não há cobertura específica para regras de autenticação ou repositório.
-- O pacote do teste usa capitalização diferente (`com.dashboard_financeiro.Cadastro.Autenticacao`), detalhe a ajustar em evoluções futuras para alinhar com o código principal.
-
-## Integração com docker-compose.yml
-- Serviço depende do SQL Server definido em `docker-compose.yml` (container `sqlserver`) para persistir usuários; as credenciais da aplicação (`Strong@Passw0rd`) estão alinhadas com as variáveis definidas no compose.
-- A configuração Kafka apontada para `kafka:9092` pressupõe os containers `zookeeper`, `kafka` e `kafka-ui` do mesmo compose, preparando o terreno para eventos de autenticação (ainda não implementados).
-- Ao executar no ambiente Docker, basta colocar o serviço na mesma rede `dashboard-network` para resolver os hosts declarados (`sqlserver`, `kafka`).
+## Testes
+- `ApplicationTests` garante carga de contexto. Recomenda-se ampliar cobertura para serviços de autenticação e publicação de eventos.

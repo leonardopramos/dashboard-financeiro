@@ -1,6 +1,7 @@
 package com.dashboard_financeiro.Dashboard.Financeiro.web.dto;
 
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.model.TransactionType;
+import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.CategoryJpaEntity;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.TransactionJpaEntity;
 
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ public record TransactionResponse(
         BigDecimal amount,
         LocalDate transactionDate,
         String description,
-        String category,
+        CategorySummary category,
         String notes,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -30,10 +31,31 @@ public record TransactionResponse(
                 entity.getAmount(),
                 entity.getTransactionDate(),
                 entity.getDescription(),
-                entity.getCategory(),
+                CategorySummary.from(entity.getCategory()),
                 entity.getNotes(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
+    }
+
+    public record CategorySummary(
+            UUID id,
+            String name,
+            String type,
+            String color,
+            String icon
+    ) {
+        public static CategorySummary from(CategoryJpaEntity category) {
+            if (category == null) {
+                return null;
+            }
+            return new CategorySummary(
+                    category.getId(),
+                    category.getName(),
+                    category.getType().name(),
+                    category.getColor(),
+                    category.getIcon()
+            );
+        }
     }
 }

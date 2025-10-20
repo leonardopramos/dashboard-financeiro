@@ -6,12 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public record CreateBankAccountRequest(
-        @NotNull(message = "O identificador do usuário é obrigatório")
-        UUID userId,
-
         @NotBlank(message = "O nome da instituição é obrigatório")
         @Size(max = 120, message = "O nome da instituição deve ter no máximo 120 caracteres")
         String institutionName,

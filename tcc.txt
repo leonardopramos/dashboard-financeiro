@@ -1,0 +1,1126 @@
+PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO GRANDE DO SUL
+ESCOLA POLITÉCNICA
+BACHARELADO EM SISTEMAS DE INFORMAÇÃO
+
+DASHBOARD FINANCEIRO
+LEONARDO PRECZEVSKI RAMOS
+
+Trabalho de Conclusão II apresentado
+como requisito parcial à obtenção do
+grau de Bacharel em Sistemas de
+Informação na Pontifícia Universidade
+Católica do Rio Grande do Sul.
+
+Orientador: Prof. Ana Bacelo
+
+Porto Alegre
+2025
+
+DEDICATÓRIA
+
+Dedico este trabalho aos meus pais, que sempre estiveram ao meu lado em todos
+os momentos. Em especial ao meu pai, que passou a vida trabalhando em sua oficina de
+chapeação e pintura, dedicando suas mãos ao ofício com esforço e dignidade, para que eu
+pudesse construir um futuro diferente. Este diploma é tão deles quanto meu.
+
+“The best way to predict the future is to invent
+it.”
+(Alan Kay)
+
+AGRADECIMENTOS
+
+Agradeço aos meus pais, pelo suporte constante, esforço e dedicação incansáveis — pilares que sustentaram minha trajetória. À minha família e amigos, que sempre
+acreditaram em mim mesmo quando as dificuldades pareciam maiores que os resultados.
+Sou grato também aos colegas e professores que, de alguma forma, contribuíram
+para meu crescimento acadêmico e pessoal ao longo da graduação. Cada troca, desafio e
+conversa teve seu valor neste caminho de aprendizado.
+
+DASHBOARD FINANCEIRO
+
+RESUMO
+
+Este trabalho apresenta a proposta e o desenvolvimento de uma aplicação web
+chamada Dashboard Financeiro, voltada ao controle e análise de finanças pessoais. A
+aplicação será construída com arquitetura full-stack, utilizando React.js [Met25] no frontend e Spring Boot com segurança via Spring Security [Spr25] no backend, com banco
+de dados MySQL [Ora25]. O sistema permitirá o registro de transações, definição de metas
+e visualização gráfica de dados financeiros [Mun14]. Além disso, serão aplicadas boas práticas de engenharia de software, com destaque para a organização ágil baseada em Kanban [And10]. A proposta visa impactar positivamente a autonomia financeira dos usuários,
+promovendo educação financeira por meio de uma ferramenta intuitiva, segura e educativa.
+
+Palavras-chave: educação financeira, dashboard, full-stack, visualização de dados, finanças pessoais.
+
+FINANCIAL DASHBOARD
+
+ABSTRACT
+
+This paper presents the proposal and development of a web application called
+Financial Dashboard, aimed at managing and analyzing personal finances. The solution
+will be built using a full-stack architecture, with React.js on the frontend and Spring Boot on
+the backend, using MySQL as the database. The system will allow users to track financial
+transactions, set goals, and visualize financial data through dynamic charts. The project
+will follow best software engineering practices, including Spring Security for secure access
+and Kanban for agile management. The tool is expected to positively impact users’ financial
+awareness, providing an intuitive and educational solution.
+
+Keywords: financial education, dashboard, full-stack, data visualization, personal finances.
+
+LISTA DE FIGURAS
+
+Figura 2.1 – Autopercepção do conhecimento em educação financeira no Brasil
+(2025). Fonte: Observatório FEBRABAN/IPESPE [FI25]. . . . . . . . . . . . . . . 17
+Figura 2.2 – I-SFB: série recente (2020–2024). Fontes: FEBRABAN/BCB [FEB22,
+Ban24, FEB24]. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+Figura 2.3 – Interface do aplicativo Guiabolso (ilustrativa). . . . . . . . . . . . . . . . . . . . 19
+Figura 2.4 – Interface do aplicativo Organizze (ilustrativa). . . . . . . . . . . . . . . . . . . . 20
+Figura 2.5 – Interface do Minhas Economias (ilustrativa). . . . . . . . . . . . . . . . . . . . . 21
+Figura 2.6 – Interface do aplicativo Mobills (ilustrativa). . . . . . . . . . . . . . . . . . . . . . 22
+Figura 3.1 – Arquitetura proposta para o Dashboard Financeiro. . . . . . . . . . . . . . 27
+Figura 5.1 – Arquitetura geral prevista para o Dashboard Financeiro. . . . . . . . . . . 37
+Figura 5.2 – Modelo relacional do banco de dados do sistema Dashboard Financeiro. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+Figura 5.3 – Diagrama de casos de uso do sistema Dashboard Financeiro. . . . . . 38
+
+LISTA DE TABELAS
+
+Tabela 2.1 – Comparativo de funcionalidades entre ferramentas concorrentes. . . . 23
+Tabela 4.1 – Cronograma de atividades por mês (Abril a Dezembro de 2025) . . . . 29
+
+LISTA DE ALGORITMOS
+
+LISTA DE SIGLAS
+
+API – Application Programming Interface
+CRUD – Create, Read, Update, Delete
+HTTP – Hypertext Transfer Protocol
+IDE – Integrated Development Environment
+JPA – Java Persistence API
+JSON – JavaScript Object Notation
+PUCRS – Pontifícia Universidade Católica do Rio Grande do Sul
+REST – Representational State Transfer
+TCC – Trabalho de Conclusão de Curso
+UI – User Interface
+UX – User Experience
+
+LISTA DE ABREVIATURAS
+
+VSCode – Visual Studio Code
+BD – Banco de Dados
+
+LISTA DE SÍMBOLOS
+
+π – Constante com valor aproximado de 3,14 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+
+SUMÁRIO
+
+1
+
+INTRODUÇÃO . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+
+1.1
+
+POTENCIAL DE IMPACTO DA SOLUÇÃO . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+
+2
+
+FUNDAMENTAÇÃO TEÓRICA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+2.1
+
+EDUCAÇÃO FINANCEIRA E CONTROLE PESSOAL DE GASTOS . . . . . . . . . 16
+
+2.2
+
+VISUALIZAÇÃO DE DADOS, BUSINESS INTELLIGENCE E INTERFACE ANALÍTICA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+2.3
+
+EXEMPLOS DE FERRAMENTAS SEMELHANTES E OPORTUNIDADES DE
+MELHORIA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+
+2.3.1 GUIABOLSO . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+2.3.2 ORGANIZZE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+2.3.3 MINHAS ECONOMIAS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+2.3.4 MOBILLS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+3
+
+PROPOSTA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+4
+
+CRONOGRAMA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+
+5
+
+RECURSOS A SEREM UTILIZADOS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+
+6
+
+CONSIDERAÇÕES FINAIS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+REFERÊNCIAS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
+APÊNDICE A – Meu primeiro apêndice . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+APÊNDICE B – My second appendix . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+ANEXO A – Meu primeiro anexo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
+ANEXO B – My second attachment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+
+14
+
+1.
+
+INTRODUÇÃO
+
+Com o avanço acelerado da tecnologia e a popularização da internet, ferramentas digitais têm sido integradas de forma crescente ao cotidiano, impactando positivamente
+áreas como saúde, educação, mobilidade urbana e finanças pessoais. Essa digitalização
+viabiliza maior eficiência, automação de tarefas e acesso aprimorado à informação, promovendo mais controle e autonomia para o cidadão em suas tomadas de decisão.
+No âmbito financeiro, observa-se o crescimento de plataformas digitais voltadas à
+gestão de recursos pessoais. O controle financeiro, que já foi visto como uma recomendação, é hoje uma necessidade premente diante do contexto econômico brasileiro. Em
+dezembro de 2024, o número de brasileiros endividados chegou a 73,51 milhões [Ser25].
+Em janeiro de 2025, o percentual de famílias endividadas reduziu-se para 76,1%, queda de
+0,6 p.p. em relação a dezembro, embora o quadro permaneça preocupante [Con25].
+A saúde financeira dos brasileiros também apresentou leve melhora: o Índice de
+Saúde Financeira do Brasileiro (I-SFB), desenvolvido pela FEBRABAN em parceria com
+o Banco Central, subiu de 56,2 em 2023 para 56,7 em 2024 — o melhor resultado dos
+últimos três anos [Ban24, FEB24]. Complementando esse cenário, um levantamento indica
+que cerca de 57 milhões de brasileiros estão endividados sem perceber, e 19 milhões já
+chegaram a negativar o nome, evidenciando a urgência de maior conscientização [CNN25].
+A má administração de recursos pode levar ao acúmulo de dívidas, perda de poder
+de compra e prejuízo à qualidade de vida. Por outro lado, uma gestão consciente viabiliza
+estabilidade, criação de reservas de segurança e o alcance de objetivos pessoais. A educação financeira, nesse sentido, emerge não apenas como ferramenta de empoderamento
+individual, mas também como base de decisões mais equilibradas e sustentáveis [AP24].
+Diante desse contexto, este trabalho propõe o desenvolvimento de uma aplicação
+web — o Dashboard Financeiro — voltada à gestão de finanças pessoais. Seu desenho
+full-stack organiza-se em duas camadas principais: o frontend, responsável pela interface
+e interação com o usuário; e o backend, responsável pela lógica de negócio, autenticação e persistência dos dados. Essa combinação modular favorece a criação de sistemas
+escaláveis e alinhados às boas práticas de engenharia de software.
+O termo dashboard refere-se a um painel visual que sintetiza dados e indicadores
+de forma clara e acessível, facilitando a identificação de padrões, o monitoramento de metas
+e a tomada de decisões embasadas [Mun14, Few17]. No Dashboard Financeiro, o usuário
+poderá registrar transações, classificar receitas e despesas, definir metas e acompanhar
+visualizações que evidenciem comportamentos e tendências ao longo do tempo.
+
+15
+
+Objetivos
+
+Objetivo Geral
+Desenvolver uma aplicação web full-stack, denominada Dashboard Financeiro,
+para organização e análise de finanças pessoais, utilizando práticas modernas, seguras,
+escaláveis e acessíveis de engenharia de software.
+Objetivos Específicos
+• Permitir o registro e a categorização de receitas e despesas por meio de uma interface
+intuitiva;
+• Apresentar gráficos e indicadores financeiros de forma dinâmica e responsiva;
+• Oferecer recursos de definição de metas mensais e alertas de desempenho;
+• Garantir segurança e privacidade dos dados por meio de autenticação baseada em
+tokens e criptografia;
+• Estruturar a aplicação com arquitetura orientada a serviços e persistência em banco
+de dados relacional;
+• Implantar a aplicação em ambiente de nuvem para acesso remoto e escalabilidade.
+
+1.1
+
+Potencial de Impacto da Solução
+
+O Dashboard Financeiro visa transformar a forma como os usuários lidam com
+suas finanças, fomentando hábitos saudáveis e promovendo autonomia econômica. Sua
+abordagem educativa, visual e segura pode gerar impacto positivo na vida das pessoas —
+ajudando-as a planejar, economizar, evitar endividamentos desnecessários e tomar decisões mais conscientes, com efeitos benéficos para a sociedade como um todo.
+
+16
+
+2.
+
+FUNDAMENTAÇÃO TEÓRICA
+
+Este capítulo apresenta os conceitos, fundamentos e tecnologias que embasam
+o Dashboard Financeiro. O objetivo é contextualizar teoricamente a escolha do tema,
+reforçar sua relevância em Sistemas de Informação e demonstrar como a aplicação se
+relaciona com a realidade econômica atual, com foco em educação financeira, visualização
+de dados (BI) e usabilidade.
+
+2.1
+
+Educação Financeira e Controle Pessoal de Gastos
+
+A educação financeira é amplamente reconhecida como essencial para promover
+bem-estar econômico e social. Evidências recentes mostram uma lacuna entre a importância percebida do tema e sua prática cotidiana: a 17ª edição do Observatório FEBRABAN
+aponta que 55% dos brasileiros afirmam entender pouco (40%) ou nada (15%) de educação financeira, embora a maioria considere o tema relevante para a vida pessoal [FI25].
+Em paralelo, o Índice de Saúde Financeira do Brasileiro (I-SFB) — desenvolvido pela FEBRABAN com apoio do Banco Central do Brasil — registrou 56,7 pontos em 2024, o maior
+patamar dos últimos três anos, o que sugere leve melhora, ainda que em patamar moderado
+[Ban24, FEB24].
+Esses dados reforçam um diagnóstico: há espaço para soluções tecnológicas que
+traduzam conceitos financeiros em linguagem acessível e, ao mesmo tempo, ofereçam feedback visual e orientações práticas. Bancos e fintechs já incorporam funções de controle
+financeiro em seus aplicativos (p. ex., categorização automática e alertas), mas em geral
+essas ofertas:
+1. ficam restritas ao próprio ecossistema da instituição (usuários/clientes), reduzindo a
+interoperabilidade;
+2. priorizam a visão transacional (extrato/saldo) em detrimento de recursos educativos
+e de insights analíticos acionáveis;
+3. apresentam barreiras de custo para funcionalidades avançadas ou interfaces que não
+favorecem o aprendizado progressivo.
+O Dashboard Financeiro proposto neste trabalho busca preencher essa lacuna
+com uma abordagem independente, inclusiva e educativa, combinando: (i) acompanhamento de receitas/despesas e metas; (ii) visualizações analíticas que facilitam a interpretação (padrões de consumo, desvios, projeções); (iii) conteúdo instrucional embutido (dicas, microexplicações e boas práticas). Ao integrar visualização + orientação, a ferramenta
+
+17
+
+pretende aumentar a autonomia do usuário e apoiar a formação de hábitos financeiros saudáveis, alinhada às diretrizes e achados recentes sobre o tema [AP24].
+Visualização 1 — Autopercepção do conhecimento em educação financeira (dados
+reais).
+
+% da população
+
+60
+
+40
+
+40
+
+20
+
+19
+15
+6
+
+0
+Nada
+
+Pouco
+
+Razoável/Médio
+
+Muito
+
+Figura 2.1 – Autopercepção do conhecimento em educação financeira no Brasil (2025).
+Fonte: Observatório FEBRABAN/IPESPE [FI25].
+
+2.2
+
+Visualização de Dados, Business Intelligence e Interface Analítica
+
+Transformar dados brutos em insights compreensíveis é central em sistemas de
+apoio à decisão. Na literatura de visualização, boas práticas destacam clareza, saliência
+do que importa e design parcimonioso para leitura rápida e sem ambiguidade [Mun14,
+Few17]. Em aplicações financeiras pessoais, a experiência do usuário (UX) e a usabilidade
+são determinantes para adoção e percepção de valor: interfaces bem projetadas reduzem
+carga cognitiva e encorajam decisões embasadas [Nie94].
+No Dashboard Financeiro, a camada analítica será organizada como um painel
+de BI pessoal com:
+• Visões temporais: evolução mensal de receitas, despesas e saldo, com médias móveis e destaques para meses atípicos (outliers).
+• Comparativos por categoria: barras que mostram o peso relativo de moradia, alimentação, transporte etc., com drill-down por subcategoria.
+• Metas e orçamentos: barras de progresso e marcadores de desvio; alertas visuais
+em caso de extrapolação.
+
+18
+
+• Indicadores de bem-estar financeiro: cartões sintéticos (p. ex., % de meses com
+superávit, variação de reserva de emergência).
+• Orientação contextual: microtextos explicativos ao lado dos gráficos (“por que isso
+importa?” e “como melhorar?”).
+Visualização 2 — Série histórica recente do I-SFB (dados reais).
+58.5
+
+I-SFB (0–100)
+
+58
+57.5
+57
+56.5
+56
+55.5
+55
+
+2,020
+
+2,022
+
+2,023
+
+2,024
+
+Ano
+Figura 2.2 – I-SFB: série recente (2020–2024). Fontes: FEBRABAN/BCB [FEB22, Ban24,
+FEB24].
+
+2.3
+
+Exemplos de Ferramentas Semelhantes e Oportunidades de Melhoria
+
+O mercado brasileiro possui diversas soluções de controle financeiro pessoal. A
+seguir, estruturam-se referências concorrentes ao Dashboard Financeiro, com uma visão
+comparativa de funcionalidades e uma descrição objetiva de cada uma.
+
+2.3.1
+
+Guiabolso
+
+Descrição. O Guiabolso ficou marcado por integrar dados de múltiplas instituições financeiras por meio do acesso consentido às contas dos usuários, apresentando uma visão
+consolidada dos fluxos de entrada e saída. A plataforma combina sincronização automática com instituições bancárias, categorização assistida de lançamentos e recomendações
+baseadas em comportamento de gastos. Além da funcionalidade transacional, o aplicativo
+
+19
+
+oferece trilhas de educação financeira e conteúdos editoriais voltados a crédito consciente,
+renegociação de dívidas e planejamento de metas.
+
+Figura 2.3 – Interface do aplicativo Guiabolso (ilustrativa).
+
+Pontos fortes.
+• Integração automática com contas bancárias, reduzindo a necessidade de lançamentos manuais;
+• Categorização inteligente que aprende com os ajustes do usuário;
+• Visão consolidada de transações, saldos e compromissos;
+• Campanhas de renegociação que ajudam a reduzir dívidas com parceiros credenciados.
+
+Limitações.
+• Ênfase em ofertas de produtos financeiros, o que pode reduzir a percepção de neutralidade;
+• Dependência do ecossistema institucional e das políticas de compartilhamento de dados;
+• Recursos educativos concentrados em conteúdos estáticos, com menor orientação
+personalizada;
+• Encerramento das operações no Brasil em 2021, sinalizando riscos de sustentabilidade para plataformas baseadas em open finance.
+
+20
+
+2.3.2
+
+Organizze
+
+Descrição. O Organizze aposta em uma abordagem centrada no registro manual de transações e na simplicidade de uso. A aplicação oferece interface limpa, com fluxo orientado a
+categorias personalizáveis, metas mensais e relatórios gráficos básicos. O aplicativo disponibiliza sincronização com contas bancárias em planos pagos, mas mantém o foco principal
+em quem prefere controle manual e acompanhamento diário com notificações de lembretes.
+
+Figura 2.4 – Interface do aplicativo Organizze (ilustrativa).
+
+Pontos fortes.
+• Interface intuitiva, com curva de aprendizado curta mesmo para usuários pouco familiarizados com finanças;
+• Categorização manual flexível, permitindo ajuste fino às realidades pessoais;
+• Notificações configuráveis para lembrar lançamentos e pagamentos;
+• Modelo de assinatura acessível em comparação a concorrentes internacionais.
+Limitações.
+• Recursos analíticos restritos a relatórios sintéticos, sem comparativos históricos avançados ou projeções;
+• Funcionalidades relevantes (sincronização automática, controle de cartões) dependem de planos pagos;
+• Alto volume de lançamentos manuais pode reduzir engajamento de longo prazo;
+• Ausência de conteúdos educativos integrados ao fluxo.
+
+21
+
+2.3.3
+
+Minhas Economias
+
+Descrição. O Minhas Economias, plataforma brasileira com versão web e mobile, enfatiza
+o planejamento financeiro tradicional. Além do controle de receitas e despesas, a ferramenta permite criar orçamentos, metas de poupança e projetar fluxo de caixa mensal. O
+serviço disponibiliza planilhas complementares, artigos educacionais e simuladores (p. ex.,
+de investimento e independência financeira), buscando integrar informação e prática para o
+público iniciante.
+
+Figura 2.5 – Interface do Minhas Economias (ilustrativa).
+
+Pontos fortes.
+• Planejamento estruturado com foco em metas e orçamento;
+
+22
+
+• Biblioteca de simuladores e planilhas que ajudam na educação financeira;
+• Versão web acessível para quem prefere interface em desktop;
+• Opção gratuita robusta para controle manual.
+
+Limitações.
+• Experiência visual e de navegação desatualizada em comparação com padrões atuais;
+• Ausência de integrações automáticas com instituições financeiras;
+• Carência de funcionalidades colaborativas ou compartilhamento familiar;
+• Curva de engajamento dependente da disciplina do usuário para manter registros atualizados.
+
+2.3.4
+
+Mobills
+
+Descrição. O Mobills, criado no Brasil e expandido para o mercado norte-americano, oferece controle financeiro completo com dashboards personalizáveis, metas, gerenciamento
+de cartões, alertas de fatura e integração automática com bancos via open finance. A plataforma disponibiliza módulos premium com relatórios avançados, exportação de dados e
+acompanhamento de investimentos, além de comunidade ativa com conteúdos didáticos e
+trilhas de aprendizado.
+
+Figura 2.6 – Interface do aplicativo Mobills (ilustrativa).
+
+23
+
+Pontos fortes.
+• Ecossistema maduro com ampla base de usuários e atualizações frequentes;
+• Integração com múltiplos bancos e cartões, reduzindo trabalho manual;
+• Dashboards configuráveis com múltiplas visões (categorias, tags, metas, saldo diário);
+• Aplicativos mobile com experiência consistente e recursos offline.
+
+Limitações.
+• Boa parte das funcionalidades avançadas permanece atrás de paywall, limitando usuários gratuitos;
+• Integridade das integrações depende de autorizações recorrentes e políticas bancárias;
+• Grande volume de recursos pode gerar curva de aprendizado maior;
+• Conteúdos educativos concentrados fora do fluxo principal, exigindo navegação adicional.
+
+Tabela comparativa de funcionalidades
+
+Tabela 2.1 – Comparativo de funcionalidades entre ferramentas concorrentes.
+Feature
+Guiabolso Organizze Minhas Economias Mobills
+Integração bancária automática
+Categorização de gastos
+Planejamento/metas
+Recursos educativos
+Custos / Paywall
+Design / UX atual
+
+Sim
+Sim
+Limitado
+Poucos
+Não
+Médio
+
+Não
+Sim
+Sim
+Não
+Não
+Bom
+
+Não
+Sim
+Sim
+Não
+Não
+Fraco
+
+Sim
+Sim
+Sim
+Poucos
+Sim
+Bom
+
+Síntese.
+As alternativas existentes evoluíram a experiência de controle financeiro, mas ainda
+deixam lacunas importantes. Observam-se três frentes críticas:
+• Educação prática integrada ao fluxo. Orientar decisões sem exigir buscas externas
+permanece como diferencial desejado;
+
+24
+
+• Análises visuais acionáveis. É preciso oferecer narrativas guiadas que expliquem
+causas e recomendações em linguagem simples;
+• Acessibilidade. Funcionalidades essenciais devem estar disponíveis sem barreiras
+financeiras ou técnicas.
+O Dashboard Financeiro combina essas frentes para promover entendimento, engajamento e mudança de comportamento, alinhando-se às evidências sobre o estado da educação financeira no país [FI25, AP24].
+
+25
+
+3.
+
+PROPOSTA
+
+Este trabalho propõe o desenvolvimento de uma aplicação web chamada Dashboard Financeiro, voltada ao controle e à análise de finanças pessoais. A proposta busca
+oferecer aos usuários uma plataforma moderna, intuitiva e educativa, permitindo o gerenciamento de seus recursos de maneira simples, segura e visualmente acessível.
+
+Objetivo da Solução
+
+Oferecer uma ferramenta funcional que atenda a necessidades reais dos usuários
+e, ao mesmo tempo, estimule o aprendizado e a prática de uma gestão financeira mais
+consciente. Ao final do projeto, espera-se entregar um sistema completo, educativo, seguro
+e com potencial de impacto positivo na organização financeira pessoal dos usuários.
+
+Organização e Planejamento Metodológico
+
+A implementação seguirá um modelo incremental com método ágil do tipo Kanban, de forma a permitir visibilidade do fluxo de trabalho, redução de gargalos e entregas
+contínuas de valor ao longo do projeto [And10]. As tarefas serão organizadas em boards,
+com priorização iterativa e validação frequente com a orientação.
+A equipe (quando houver mais colaboradores) adotará práticas de revisão de código, integração contínua e versionamento por meio de repositório Git, além de atuar com
+entregas incrementais para permitir avaliação e ajustes periódicos.
+
+Funcionalidades Principais
+
+A aplicação disponibilizará as seguintes funcionalidades:
+• Registro de entradas e saídas financeiras;
+• Categorização de transações (por exemplo: alimentação, transporte, lazer);
+• Criação e monitoramento de metas financeiras mensais;
+• Visualização de gráficos dinâmicos com indicadores personalizados;
+• Histórico detalhado de transações com filtros por período e categoria;
+
+26
+
+• Ranqueamento de categorias com maiores gastos;
+• Notificações sobre comportamento de consumo e metas não atingidas.
+Nesta seção são definidas as funcionalidades essenciais que compõem o escopo
+mínimo viável (MVP). Funcionalidades avançadas (integração automática com bancos, análises preditivas) podem ser planejadas como extensões após validação do MVP.
+
+Arquitetura da Aplicação
+
+A arquitetura organiza-se em serviços especializados que se comunicam por APIs
+REST, seguindo separação de responsabilidades e favorecendo escalabilidade e manutenção.
+
+Componentes Principais
+
+• Tela do Usuário (Frontend): interface React.js, responsável pela experiência de uso
+e apresentação dos indicadores;
+• Serviço Web / API REST (Spring Boot): camada de borda do backend; recebe requisições, aplica regras transversais (autenticação, autorização, validação) e orquestra os
+serviços internos;
+• Serviço de Dashboard: gera visualizações, KPIs e relatórios (agregações e consultas analíticas);
+• Serviço de Gestão Financeira: centraliza regras de negócio de transações, categorias, metas e conciliações;
+• Serviço de Cadastro: registro, autenticação e gerenciamento de perfis;
+• Serviço de Notificação (e-mail): envio de alertas (metas não atingidas, lembretes e
+avisos relevantes);
+• Banco de Dados MySQL: armazenamento relacional seguro dos dados persistentes.
+
+Fluxo de Uso (Exemplo)
+
+1. O usuário acessa a Tela (React), que solicita “buscar transações do mês” para o
+Serviço Web;
+
+27
+
+2. A API valida o JWT e encaminha ao Serviço de Gestão Financeira;
+3. O serviço consulta o Banco MySQL e retorna as transações;
+4. A API entrega a resposta ao Frontend, que atualiza os gráficos do Serviço de Dashboard;
+5. Se uma meta for extrapolada, aciona-se o Serviço de Notificação para envio de email.
+
+Diagrama de Arquitetura
+
+Tela do Usuário (React.js)
+
+Serviço Web / API REST (Spring Boot)
+
+Serviço de Dashboard
+
+Serviço de Gestão Financeira
+
+Serviço de Cadastro
+
+Serviço de Notificação (e-mail)
+
+Banco de Dados MySQL
+
+Figura 3.1 – Arquitetura proposta para o Dashboard Financeiro.
+Cadastro.
+Criação de conta, autenticação (login), recuperação de senha e gestão de perfil.
+Interage com Serviço de Cadastro e Banco MySQL; a API aplica autenticação/autorização.
+
+Gestão Financeira.
+CRUD de transações, categorização e metas. Regras de negócio (validações, limites, fechamento mensal) ficam no Serviço de Gestão Financeira. Persistência no MySQL.
+
+28
+
+Dashboard e Indicadores.
+Consultas agregadas (e.g., por período/categoria), KPIs e gráficos; implementado
+no Serviço de Dashboard, consumido pelo frontend.
+
+Notificações.
+Envio de e-mails para metas não atingidas, lembretes e alertas de comportamento;
+disparo orquestrado pela API ou pelos serviços mediante regras de negócio.
+
+Considerações sobre Distribuição de Funcionalidades entre Componentes
+
+A separação entre Serviço de Gestão Financeira e Serviço de Dashboard permite
+otimizar consultas analíticas sem comprometer a camada transacional. Estratégias como
+materialized views, índices e endpoints específicos para agregações serão consideradas
+para garantir desempenho. Autenticação e autorização ficam centralizadas na camada de
+API para uniformizar políticas de segurança (uso de JWT, roles e scoping mínimo).
+O modelo proposto facilita testes unitários e de integração, implantação independente dos serviços e escala horizontal seletiva de componentes com maior demanda (por
+exemplo, Serviço de Dashboard).
+
+29
+
+4.
+
+CRONOGRAMA
+
+A Tabela 4.1 apresenta o cronograma de atividades para o desenvolvimento do
+Trabalho de Conclusão de Curso, distribuídas entre os meses de abril e dezembro de 2025.
+As etapas foram planejadas de forma a garantir organização, entregas incrementais e revisões contínuas ao longo do processo.
+Desde abril de 2025, foram realizadas atividades como levantamento de requisitos, planejamento técnico e estruturação da proposta. As etapas seguintes concentram-se
+no desenvolvimento da solução e na elaboração do Volume II do TCC, até sua entrega e
+defesa.
+Tabela 4.1 – Cronograma de atividades por mês (Abril a Dezembro de 2025)
+Atividades
+
+Abr
+
+Mai
+
+Levantamento de requisitos iniciais e estudo de viabilidade
+
+X
+
+X
+
+Modelagem da aplicação e arquitetura do sistema
+
+X
+
+Jun
+
+X
+
+Início do desenvolvimento (MVP)
+
+X
+
+Validação de funcionalidades com
+feedback de usuários
+
+Ago
+
+Set
+
+X
+
+X
+
+Out
+
+Nov
+
+Dez
+
+X
+
+Configuração do ambiente de desenvolvimento (Docker, repositórios)
+Desenvolvimento do backend e
+frontend
+
+Jul
+
+X
+X
+
+X
+
+X
+
+Refinamento do sistema, testes finais e correções
+
+X
+
+X
+
+Escrita e revisão do Volume II do
+TCC
+
+X
+
+X
+
+X
+
+X
+
+X
+
+Preparação da apresentação final
+Entrega e defesa do TCC
+
+As marcações com “X” indicam os meses em que cada atividade será executada.
+O cronograma foi elaborado com foco no avanço progressivo do projeto, prevendo entregas parciais, revisões constantes com o orientador e tempo hábil para ajustes, testes e
+documentação final.
+
+X
+
+30
+
+Funcionalidades do Sistema
+
+O sistema Dashboard Financeiro foi projetado para proporcionar ao usuário um
+ambiente intuitivo e eficiente para o controle de suas finanças pessoais. As funcionalidades
+foram definidas com base nas entidades modeladas no banco de dados e estruturadas para
+atender às necessidades práticas do cotidiano financeiro. As principais funcionalidades são:
+• Cadastro de Usuário: criação de conta com dados pessoais, endereço completo e
+credenciais de acesso;
+• Login Seguro: autenticação via e-mail e senha, com proteção de rotas por meio do
+Spring Security [Spr25];
+• Gerenciamento de Contas Bancárias: cadastro de múltiplas contas com tipo (corrente, poupança etc.), número da conta, agência e saldo atual;
+• Registro de Transações: lançamento de entradas e saídas financeiras com valor,
+data, categoria e tipo (receita ou despesa), atualizando automaticamente o saldo da
+conta;
+• Classificação por Categoria: associação de cada transação a uma categoria específica, como alimentação, transporte, moradia, saúde, lazer, entre outras;
+• Visualização de Histórico Financeiro: exibição do histórico de transações por conta,
+com filtros por período, tipo e categoria;
+• Metas Financeiras: definição de objetivos com valor e prazo, permitindo o planejamento e o acompanhamento de metas pessoais;
+• Notificações de Metas: alertas visuais para metas próximas do vencimento e ainda
+não alcançadas;
+• Painel Resumo: apresentação gráfica do saldo atual, despesas por categoria, metas
+ativas e progresso financeiro do usuário;
+• Organização Responsiva: adaptação da interface a diferentes tamanhos de tela,
+promovendo usabilidade em computadores e dispositivos móveis;
+• Gerenciamento de Sessão: controle de login do usuário, com encerramento de sessão e redirecionamento seguro;
+• Segurança dos Dados: proteção de endpoints, uso de tokens JWT para autenticação
+e criptografia de senhas no banco de dados [Spr25].
+
+31
+
+Essas funcionalidades compõem o escopo mínimo viável (MVP) da aplicação, com
+foco em usabilidade, segurança e utilidade prática. Outras funcionalidades adicionais estão
+previstas como parte dos trabalhos futuros.
+
+Camadas Técnicas e Arquitetura
+
+A arquitetura full-stack será dividida nas seguintes camadas:
+Frontend: Interface desenvolvida em React.js [Met25], com utilização de bibliotecas como
+Chart.js ou Recharts para geração de gráficos e Axios para comunicação com a API;
+Backend: Implementado com Spring Boot, contendo APIs RESTful, controle de autenticação com Spring Security [Spr25], e persistência dos dados com Spring Data JPA;
+Persistência: Utilização do MySQL [Ora25], com configuração via Docker para facilitar
+testes e ambientes isolados;
+Gerenciamento de Código: Versionamento com Git e repositório no GitHub.
+
+Segurança e Privacidade
+
+A aplicação contará com autenticação baseada em JWT (JSON Web Token), criptografia das senhas com algoritmos como bcrypt e validações para prevenir injeções e vulnerabilidades comuns no OWASP Top 10 [Spr25]. As boas práticas de segurança visam
+proteger a integridade e a confidencialidade dos dados sensíveis dos usuários.
+
+Planejamento Metodológico
+
+A proposta será implementada seguindo o modelo incremental e o método ágil
+Kanban, que proporciona visibilidade e flexibilidade durante o desenvolvimento. As tarefas
+serão organizadas por meio da ferramenta Trello [Atl25], com entrega contínua de funcionalidades e validação progressiva com o orientador. A adoção do Kanban é justificada pela sua
+capacidade de adaptar-se rapidamente a mudanças e permitir evolução contínua [And10].
+
+32
+
+Metodologia de Desenvolvimento
+
+A metodologia adotada baseia-se em princípios da engenharia de software moderna e do desenvolvimento ágil. O projeto será dividido em etapas bem definidas:
+• Levantamento de Requisitos: coleta inicial com base em referências, análise de
+mercado e objetivos definidos na introdução;
+• Modelagem da Solução: elaboração de diagramas e definição da arquitetura do sistema;
+• Configuração de Infraestrutura: preparação do ambiente com Docker, repositórios
+e integração contínua;
+• Desenvolvimento Incremental: implementação do sistema por partes (MVP, funcionalidades secundárias, testes);
+• Validação Contínua: testes manuais e com usuários, coleta de feedback e refinamento com base em observações;
+• Revisão e Documentação: registro das decisões de projeto, escrita do TCC e preparação para apresentação final.
+Essa metodologia garante alinhamento com os objetivos da solução e permite monitoramento constante da evolução do projeto, com entregas incrementais e foco na qualidade final do produto. Em síntese, o planejamento descrito mantém as entregas técnicas
+conectadas à proposta de oferecer uma ferramenta educativa, segura e acessível para o
+controle financeiro pessoal.
+
+Situação Atual do Desenvolvimento (02/10/2025)
+
+Até a data de 02 de outubro de 2025, o projeto apresenta avanços concretos tanto
+no serviço responsável pelas operações financeiras quanto no serviço de cadastro e autenticação. A seguir são descritos os principais resultados técnicos alcançados, evidenciando
+como o desenvolvimento está alinhado ao cronograma proposto.
+
+Serviço de Operações Financeiras
+
+O microserviço denominado Dashboard Financeiro foi implementado com Spring
+Boot 3.5.5 (Java 25) e segue arquitetura em camadas (web, application, domain, infrastruc-
+
+33
+
+ture), o que favorece a separação de responsabilidades entre controladores REST, regras
+de negócio e acesso a dados. Lombok é aplicado para reduzir boilerplate e Bean Validation
+garante a validação dos DTOs recebidos. Entre as funcionalidades já entregues destacamse: gestão de contas bancárias (BankAccountController e BankAccountService), com verificação de duplicidade por usuário e normalização de campos antes da persistência; e
+gestão de transações (TransactionController e TransactionService), permitindo lançamentos de receitas, despesas e transferências, sempre verificando se a conta pertence ao
+usuário e ajustando o saldo conforme o tipo de transação. Também foi implementado um
+tratamento consistente de exceções (ApiExceptionHandler), que converte erros de negócio
+e de validação em respostas padronizadas com carimbo de tempo e caminho requisitado. A
+modelagem de domínio conta com enumerados para tipo de conta (AccountType) e transação (TransactionType), além de exceções especializadas para cenários de inconsistência
+ou inexistência de recursos.
+Na camada de persistência, o serviço utiliza Spring Data JPA conectado a banco
+SQL Server. As entidades BankAccountJpaEntity e TransactionJpaEntity mapeiam as
+tabelas bank_accounts e transactions. O controle de esquema é realizado com Liquibase, cujo changelog mestre (db/changelog/db.changelog-master.xml) referencia o script
+db/changelog/scripts/0001_create_bank_and_transactions.sql. Esse script cria tabelas, índices e chaves estrangeiras com cláusula ON DELETE CASCADE. A atualização do saldo
+ocorre dentro da mesma transação JPA que grava a movimentação, evitando inconsistências. Do ponto de vista de infraestrutura, o serviço já está preparado para executar junto ao
+docker-compose.yml do projeto, consumindo o SQL Server (sqlserver) e o cluster Kafka
+(zookeeper, kafka, kafka-ui) oferecidos pelo ambiente containerizado. O profile docker
+ajusta a URL do datasource para a rede dashboard-network e mantém as configurações de
+Kafka apontando para localhost:9092. Em relação à qualidade, os testes automatizados
+ainda se limitam ao carregamento do contexto (DashboardFinanceiroApplicationTests),
+sinalizando a necessidade de ampliar a cobertura nas próximas iterações.
+No aspecto de segurança, o módulo possui configuração inicial de Spring Security (SecurityConfig) com CSRF desabilitado, liberação de rotas públicas (/api/v1/auth/**,
+/api/v1/dashboard, /api/v1/bank-accounts/**, /api/v1/transactions/**) e disponibilização de BCryptPasswordEncoder para criptografia de credenciais. Há configuração preliminar de OAuth2 Client para login com Google (variáveis GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET), bem como dependências de mensageria (spring-kafka) prontas para futuras integrações assíncronas.
+
+34
+
+Serviço de Cadastro e Autenticação
+
+O microserviço de Cadastro e Autenticação compartilha a mesma base tecnológica (Spring Boot 3.5.5 e Java 25) e também se estrutura em camadas (web, application,
+infrastructure), com validação de DTOs e uso extensivo de Lombok. Suas dependências
+centrais abrangem Spring Security, Spring Data JPA, Bean Validation, Liquibase e a biblioteca jjwt para emissão e leitura de tokens JWT. No tocante às funcionalidades, foram entregues endpoints de cadastro de usuários, administrados por UserController e UserService,
+que aplicam validação de e-mail único, armazenam senhas com BCryptPasswordEncoder e
+disponibilizam a consulta GET /api/v1/users/{id}. A autenticação JWT é viabilizada por
+AuthController, AuthService e JwtService, expondo os fluxos:
+• POST /api/v1/auth/login — emissão de tokens access (15 minutos) e refresh (7
+dias);
+• POST /api/v1/auth/refresh — renovação do token de acesso;
+• POST /api/v1/auth/logout — logout sem estado, apenas do lado do cliente;
+• GET /api/v1/auth/me — consulta do usuário autenticado.
+A configuração de CORS e segurança libera rotas de cadastro/autenticação, exige autenticação para os demais endpoints e autoriza a origem http://localhost:5173, incluindo o
+cabeçalho Authorization para integração com o frontend.
+Quanto à persistência, a entidade UserJpaEntity representa a tabela users, contemplando dados pessoais, endereço e indicadores (emailVerified, active), além de anotações de ciclo de vida (@PrePersist, @PreUpdate) para controle de auditoria. O repositório
+UserJpaRepository provê buscas por e-mail e CPF, sustentando regras de unicidade. O
+changelog Liquibase incorpora o script db/changelog/scripts/0001_create_table_users.
+sql, que cria a estrutura base com índices e restrições pertinentes. Em termos de tokens,
+JwtService gera JWTs com HS256 a partir de chave secreta codificada, permitindo emissão e verificação do subject; BCryptPasswordEncoder padroniza o armazenamento das senhas. Assim como no serviço financeiro, os testes automatizados restringem-se ao carregamento de contexto (ApplicationTests) e demandam evolução para cobrir as regras de
+autenticação. O módulo integra-se ao mesmo docker-compose.yml, utilizando o banco SQL
+Server (sqlserver) e prevendo integrações futuras com Kafka (kafka:9092) dentro da rede
+dashboard-network.
+Esse panorama demonstra que o projeto avançou de forma consistente na construção das fundações técnicas: serviços implantados com arquitetura definida, pipelines de
+persistência versionados, componentes de segurança configurados e ambiente containerizado preparado. As próximas etapas concentram-se na ampliação de testes automatiza-
+
+35
+
+dos, na evolução das funcionalidades (especialmente integrações com Kafka e OAuth2) e
+na convergência com o frontend para validação conjunta das jornadas do usuário.
+
+36
+
+5.
+
+RECURSOS A SEREM UTILIZADOS
+
+O desenvolvimento do Dashboard Financeiro requer o uso de ferramentas modernas e acessíveis, adequadas ao desenvolvimento web full-stack, além de recursos computacionais que garantam eficiência e organização ao longo do projeto.
+
+Recursos Computacionais
+
+O projeto será desenvolvido em um computador pessoal com capacidade adequada para executar múltiplas tarefas simultâneas, como servidores locais, contêineres
+Docker e editores de código.
+Será necessário também acesso contínuo à internet, tanto para consulta de documentações e artigos técnicos quanto para integração de bibliotecas externas, acesso a
+plataformas de versionamento e hospedagem de repositórios.
+
+Ambiente de Desenvolvimento
+
+As ferramentas e recursos utilizados no projeto são:
+• Visual Studio Code – IDE utilizada para o desenvolvimento do frontend em React.js
+[Met25];
+• IntelliJ IDEA – IDE para o desenvolvimento do backend utilizando Spring Boot;
+• Docker – para criação de contêineres com o banco de dados MySQL e simulação de
+ambientes de produção;
+• Git e GitHub – para versionamento e hospedagem do código-fonte, promovendo rastreabilidade, controle de alterações e colaboração;
+• Navegadores modernos – como Google Chrome e Firefox, para testes de interface
+e comportamento da aplicação;
+• Trello ou Jira – para organização e acompanhamento das tarefas com uso do modelo
+Kanban [Atl25];
+• MySQL – banco de dados relacional executado localmente via contêiner Docker [Ora25];
+• Spring Boot e Spring Security – frameworks utilizados para estruturação da API
+RESTful, autenticação e segurança [Spr25].
+
+37
+
+Organização das Atividades
+
+O gerenciamento das atividades será realizado com base nos princípios das metodologias ágeis, com foco na entrega contínua de valor. O quadro Kanban será utilizado
+como ferramenta visual para acompanhamento das etapas do projeto, facilitando a identificação de gargalos, o cumprimento dos prazos e a adaptação rápida às mudanças.
+A escolha dessas ferramentas visa garantir o uso de tecnologias consolidadas
+no mercado, além de proporcionar um ambiente de desenvolvimento produtivo, seguro e
+facilmente replicável. Com esse conjunto de recursos, espera-se alcançar um alto nível de
+qualidade técnica e organizacional no desenvolvimento do sistema.
+
+Imagem não disponível
+figs/arquitetura-geral.png
+
+Figura 5.1 – Arquitetura geral prevista para o Dashboard Financeiro.
+
+Arquitetura da Solução
+
+A arquitetura geral do sistema foi estruturada com base na separação de responsabilidades entre frontend, backend e banco de dados. A Figura 5.1 ilustra a composição
+das principais camadas envolvidas.
+
+Modelo de Dados
+
+O modelo relacional do banco de dados define a estrutura de entidades como
+usuários, contas bancárias, transações e metas financeiras. A Figura 5.2 apresenta a modelagem adotada para o sistema.
+
+38
+
+Imagem não disponível
+database.png
+
+Figura 5.2 – Modelo relacional do banco de dados do sistema Dashboard Financeiro.
+
+Modelagem de Casos de Uso
+
+A modelagem de casos de uso auxilia na identificação dos principais atores e
+funcionalidades envolvidas na aplicação. A Figura 5.3 representa os casos de uso previstos
+para o sistema.
+
+Imagem não disponível
+diagrama_casos_uso.png
+
+Figura 5.3 – Diagrama de casos de uso do sistema Dashboard Financeiro.
+
+39
+
+6.
+
+CONSIDERAÇÕES FINAIS
+
+Esta proposta apresenta o desenvolvimento de uma aplicação prática e funcional
+voltada à organização das finanças pessoais, utilizando boas práticas de engenharia de
+software e tecnologias modernas. Espera-se que o projeto entregue valor real ao usuário
+final, contribuindo também para a aplicação prática dos conhecimentos adquiridos ao longo
+da graduação em Sistemas de Informação.
+O Dashboard Financeiro representa não apenas uma entrega técnica, mas também uma jornada de crescimento pessoal e profissional do autor. Ao unir experiências
+adquiridas durante o estágio com os fundamentos teóricos aprendidos ao longo da graduação, o projeto se configura como uma oportunidade de consolidação do aprendizado e
+validação prática das competências desenvolvidas.
+
+Impacto Esperado
+
+Diante do cenário econômico atual, em que milhões de brasileiros enfrentam dificuldades para manter o controle financeiro, a aplicação proposta possui potencial de gerar
+impacto direto na vida dos usuários. Segundo o Banco Central do Brasil, o acesso à informação financeira é essencial para a autonomia econômica e a redução do endividamento,
+conforme o Relatório de Cidadania Financeira 2023 [Ban23].
+Além disso, estudos do Cetic.br indicam que a compreensão sobre os próprios
+hábitos financeiros, aliada ao uso de ferramentas digitais, desempenha papel determinante
+na melhoria da qualidade de vida e no combate ao endividamento crônico [Cet23]. O sistema oferecerá recursos visuais e funcionais para o acompanhamento de despesas, planejamento de metas e reflexão sobre hábitos de consumo. Dessa forma, espera-se que o
+usuário possa identificar padrões, corrigir excessos e traçar estratégias mais conscientes
+para uma vida financeira equilibrada.
+
+Contribuição Social e Educacional
+
+Mais do que um software, esta proposta se posiciona como uma ferramenta de
+transformação. Relatórios internacionais, como o estudo da OCDE sobre alfabetização
+financeira, apontam que programas de educação financeira reduzem desigualdades e ampliam o bem-estar coletivo [OEC23]. Ao permitir que os usuários compreendam e administrem melhor seus recursos, o sistema atua como catalisador de mudanças comportamentais.
+
+40
+
+Segundo Gitman e Joehnk, o planejamento financeiro pessoal é essencial para
+alcançar objetivos de longo prazo e garantir estabilidade econômica [GJB18]. Alinhado a
+essa visão, o Dashboard Financeiro possui potencial de impactar positivamente não apenas o cotidiano dos usuários, mas também seu futuro financeiro e capacidade de tomada
+de decisão.
+Além disso, a proposta reforça o compromisso acadêmico com o desenvolvimento
+de soluções que combinem tecnologia, acessibilidade e impacto social, consolidando-se
+como um exemplo de como projetos acadêmicos podem gerar valor fora do ambiente universitário.
+
+Limitações Encontradas
+
+Durante a elaboração da proposta, algumas limitações foram identificadas e deverão ser tratadas ao longo da implementação:
+• A validação de funcionalidades será limitada a testes manuais e feedback informal,
+pois não será conduzido um estudo de caso com amostragem estatística significativa;
+• A versão inicial da aplicação será construída com foco em funcionalidades principais
+(MVP), o que pode restringir a profundidade analítica desejada nesta etapa;
+• A escalabilidade da aplicação em produção dependerá de ajustes futuros em infraestrutura e balanceamento de carga, especialmente em cenários com maior volume de
+usuários;
+• A arquitetura do sistema, apesar de modular e bem definida, poderá demandar refinamentos com base em métricas reais de uso, principalmente no que diz respeito à
+segurança, performance e experiência do usuário.
+Apesar dessas limitações, o projeto mantém sua relevância prática e acadêmica,
+com grande potencial de evolução e refinamento contínuo.
+
+Trabalhos Futuros
+
+Como perspectivas de continuidade e evolução, propõem-se:
+• Integração com APIs bancárias para importação automática e segura de transações;
+• Inclusão de inteligência artificial para análise preditiva do comportamento financeiro
+dos usuários;
+
+41
+
+• Desenvolvimento de uma versão mobile com publicação nas lojas de aplicativos;
+• Criação de um modo educacional com tutoriais e dicas personalizadas de finanças
+pessoais;
+• Aplicação de testes de usabilidade com usuários reais e coleta sistemática de métricas
+de desempenho e satisfação [Nie94];
+• Monitoramento contínuo de performance e escalabilidade, com uso de ferramentas
+como Prometheus e Grafana para ambientes em nuvem.
+Esses aprimoramentos visam transformar o Dashboard Financeiro em uma solução cada vez mais completa, acessível e impactante, contribuindo efetivamente para o
+bem-estar financeiro da população.
+
+42
+
+REFERÊNCIAS BIBLIOGRÁFICAS
+
+[And10] Anderson, D. J. “Kanban: Successful Evolutionary Change for Your Technology
+Business”. Blue Hole Press, 2010.
+[AP24]
+
+ANBIMA; Plano CDE. “Educação financeira: um retrato das iniciativas no
+brasil (2017–2024)”. Acesso em: 20 mar. 2025, Capturado em: https:
+//www.anbima.com.br/data/files/9B/54/F2/61/48B5791010999579B82BA2A8/
+relatorio_ANBIMA_mapa_iniciativas_educacao_financeira.pdf, 2024.
+
+[Atl25]
+
+Atlassian. “Guia trello: o que é kanban?” Acesso em: 20 mar. 2025, Capturado
+em: https://trello.com/pt-BR/guide/what-is-kanban, 2025.
+
+[Ban23] Banco Central do Brasil. “Relatório de cidadania financeira 2023”. Acesso
+em: 20 mar. 2025, Capturado em: https://www.bcb.gov.br/estabilidadefinanceira/
+relatoriodecidadaniafinanceira, 2023.
+[Ban24] Banco Central do Brasil. “I-sfb: a saúde financeira no país melhorou em 2024”.
+Acesso em: 20 mar. 2025, Capturado em: https://www.bcb.gov.br/detalhenoticia/
+20387/noticia, 2024.
+[Cet23]
+
+Cetic.br | NIC.br. “Pesquisa tic domicílios 2023 — principais resultados”. Acesso
+em: 20 mar. 2025, Capturado em: https://cetic.br/pt/pesquisa/domicilios/, 2023.
+
+[CNN25] CNN Brasil. “Mais de 57 milhões de brasileiros estão endividados
+(e nem sabem disso), diz pesquisa da serasa”. Acesso em: 20 mar.
+2025,
+Capturado em:
+https://www.cnnbrasil.com.br/economia/financas/
+mais-de-57-milhoes-de-brasileiros-estao-endividados-e-nem-sabem-diz-pesquisa-da-seras
+2025.
+[Con25] Confederação Nacional do Comércio de Bens, Serviços e Turismo. “Pesquisa de
+endividamento e inadimplência do consumidor — janeiro de 2025”. Acesso em:
+20 mar. 2025, Capturado em: https://portaldocomercio.org.br/publicacoes_posts/
+pesquisa-de-endividamento-e-inadimplencia-do-consumidor-peic-janeiro-de-2025/,
+2025.
+[FEB22] FEBRABAN. “Segunda rodada do i-sfb aponta média de 56,0 em 2022”. Acesso
+em: 20 mar. 2025, Capturado em: https://portal.febraban.org.br/noticia/3856/
+pt-br/, 2022.
+[FEB24] FEBRABAN. “A saúde financeira do brasileiro 2024”. Relatório I-SFB. Acesso em:
+20 mar. 2025, Capturado em: https://portal.febraban.org.br/noticia/4317/pt-br/,
+2024.
+
+43
+
+[Few17] Few, S. “Information Dashboard Design:
+Monitoring”. Analytics Press, 2017, 2 ed..
+[FI25]
+
+Displaying Data for At-a-Glance
+
+FEBRABAN; IPESPE. “17ª edição do observatório febraban: maioria dos
+brasileiros admite entender pouco ou nada de educação financeira”. Acesso em:
+20 mar. 2025, Capturado em: https://portal.febraban.org.br/noticia/4324/pt-br/,
+2025.
+
+[GJB18] Gitman, L. J.; Joehnk, M. D.; Billingsley, R. S. “Personal Financial Planning”.
+Cengage Learning, 2018, 14 ed..
+[Met25] Meta Platforms, Inc. “React: A javascript library for building user interfaces”.
+Acesso em: 20 mar. 2025, Capturado em: https://react.dev/, 2025.
+[Mun14] Munzner, T. “Visualization Analysis and Design”. CRC Press, 2014.
+[Nie94]
+
+Nielsen, J. “Usability Engineering”. Morgan Kaufmann, 1994.
+
+[OEC23] OECD/INFE. “2023 international survey of adult financial literacy”. Acesso
+em: 20 mar. 2025, Capturado em: https://www.oecd.org/financial/education/
+oecd-infe-2023-international-survey-adult-financial-literacy.htm, 2023.
+[Ora25] Oracle Corporation. “Mysql 8.0 reference manual”. Acesso em: 20 mar. 2025,
+Capturado em: https://dev.mysql.com/doc/refman/8.0/en/, 2025.
+[Ser25]
+
+Serasa
+Experian.
+“Mapa
+da
+inadimplência
+e
+renegociação
+de
+dívidas no brasil — dezembro de 2024”. Acesso em: 20 mar. 2025,
+Capturado
+em:
+https://www.serasa.com.br/limpa-nome-online/blog/
+mapa-da-inadimplencia-e-renegociacao-de-dividas-no-brasil/, 2025.
+
+[Spr25]
+
+Spring Framework Team. “Spring security reference documentation”. Acesso em:
+20 mar. 2025, Capturado em: https://spring.io/projects/spring-security, 2025.
+
+44
+
+APÊNDICE A – MEU PRIMEIRO APÊNDICE
+
+45
+
+APÊNDICE B – MY SECOND APPENDIX
+
+46
+
+ANEXO A – Meu primeiro anexo
+
+47
+
+ANEXO B – My second attachment
+
+

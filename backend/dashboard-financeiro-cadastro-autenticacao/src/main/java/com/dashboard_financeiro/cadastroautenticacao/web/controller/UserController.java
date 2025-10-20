@@ -1,12 +1,15 @@
 package com.dashboard_financeiro.cadastroautenticacao.web.controller;
 
 import com.dashboard_financeiro.cadastroautenticacao.application.UserService;
+import com.dashboard_financeiro.cadastroautenticacao.security.AuthenticatedUser;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.CreateUserRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +27,15 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getById(@PathVariable UUID id) {
+    public ResponseEntity<UserDTO> getById(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!id.equals(currentUser.id()) && !currentUser.hasRole("ADMIN")) {
+            throw new AccessDeniedException("Acesso negado para consultar outro usuário");
+        }
+
         return ResponseEntity.ok(service.getById(id));
     }
 }
