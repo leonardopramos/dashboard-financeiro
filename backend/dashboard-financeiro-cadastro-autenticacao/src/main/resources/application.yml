@@ -51,6 +51,14 @@ logging:
 messaging:
   topics:
     user-events: user.events
+    email-verification-events: user.verification
+
+verification:
+  email:
+    code-length: ${VERIFICATION_CODE_LENGTH:6}
+    expiration-minutes: ${VERIFICATION_EXPIRATION_MINUTES:30}
+    resend-cooldown-minutes: ${VERIFICATION_RESEND_COOLDOWN_MINUTES:2}
+    max-attempts: ${VERIFICATION_MAX_ATTEMPTS:5}
 
 ---
 spring:

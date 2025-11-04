@@ -1,23 +1,55 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { PENDING_EMAIL_KEY } from '../../services/api';
 
 const Login = () => {
   const { login, isLoading } = useAuth();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [formData, setFormData] = useState(() => ({
+    email: sessionStorage.getItem(PENDING_EMAIL_KEY) ?? '',
+    password: '',
+  }));
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+
+  useEffect(() => {
+    if (!location.state) {
+      return;
+    }
+
+    const state = location.state as { email?: string; verified?: boolean };
+    if (state.email) {
+      setFormData((prev) => ({ ...prev, email: state.email ?? '' }));
+      sessionStorage.setItem(PENDING_EMAIL_KEY, state.email ?? '');
+    }
+    if (state.verified) {
+      setInfo('E-mail verificado com sucesso! Faça login para continuar.');
+    }
+    navigate('/login', { replace: true });
+  }, [location.state, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+    setInfo('');
+
     try {
       await login(formData);
+      sessionStorage.removeItem(PENDING_EMAIL_KEY);
+      navigate('/app', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao fazer login');
+      const detail = err.response?.data?.detail ?? err.response?.data?.message ?? 'Erro ao fazer login';
+      if (detail?.toLowerCase().includes('e-mail não verificado')) {
+        sessionStorage.setItem(PENDING_EMAIL_KEY, formData.email.trim());
+        navigate('/verify-email', {
+          replace: true,
+          state: { email: formData.email.trim() },
+        });
+        return;
+      }
+      setError(detail);
     }
   };
 
@@ -46,6 +78,12 @@ const Login = () => {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-lg mb-6 text-sm mx-10">
             {error}
+          </div>
+        )}
+
+        {info && !error && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg mb-6 text-sm mx-10">
+            {info}
           </div>
         )}
 

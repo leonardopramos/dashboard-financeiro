@@ -10,11 +10,15 @@ import jakarta.validation.constraints.NotBlank;
 public record NotificationEmailProperties(
         @NotBlank String from,
         boolean enabled,
-        String fallback
+        String fallback,
+        String dashboardUrl
 ) {
     public NotificationEmailProperties {
         if (fallback == null || fallback.isBlank()) {
             fallback = from;
+        }
+        if (dashboardUrl == null || dashboardUrl.isBlank()) {
+            dashboardUrl = "https://app.dashboard-financeiro.local";
         }
     }
 }

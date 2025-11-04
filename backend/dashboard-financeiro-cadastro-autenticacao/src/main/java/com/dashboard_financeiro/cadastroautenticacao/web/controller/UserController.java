@@ -3,6 +3,7 @@ package com.dashboard_financeiro.cadastroautenticacao.web.controller;
 import com.dashboard_financeiro.cadastroautenticacao.application.UserService;
 import com.dashboard_financeiro.cadastroautenticacao.security.AuthenticatedUser;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.CreateUserRequest;
+import com.dashboard_financeiro.cadastroautenticacao.web.dto.UpdateUserRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,20 @@ public class UserController {
         }
 
         return ResponseEntity.ok(service.getById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> update(@PathVariable UUID id,
+                                          @AuthenticationPrincipal AuthenticatedUser currentUser,
+                                          @Valid @RequestBody UpdateUserRequest request) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!id.equals(currentUser.id()) && !currentUser.hasRole("ADMIN")) {
+            throw new AccessDeniedException("Acesso negado para atualizar outro usuário");
+        }
+
+        return ResponseEntity.ok(service.update(id, request));
     }
 }

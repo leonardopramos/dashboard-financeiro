@@ -16,4 +16,6 @@ public interface TransactionJpaRepository extends JpaRepository<TransactionJpaEn
     Optional<TransactionJpaEntity> findByIdAndBankAccountUserId(UUID id, UUID userId);
 
     List<TransactionJpaEntity> findByBankAccountUserIdAndTransactionDateBetween(UUID userId, java.time.LocalDate start, java.time.LocalDate end);
+
+    boolean existsByBankAccountId(UUID bankAccountId);
 }

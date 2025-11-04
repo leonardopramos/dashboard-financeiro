@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${subject}">Atualização de meta financeira</title>
+</head>
+<body style="margin:0;padding:0;background-color:#fff7ed;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#1f2937;">
+<div style="display:none;font-size:1px;color:#fff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+    Atualização sobre a sua meta financeira no Dashboard Financeiro.
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff7ed;padding:32px 16px;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background-color:#ffffff;border-radius:24px;border:1px solid #ffedd5;overflow:hidden;box-shadow:0 20px 45px rgba(255,107,53,0.08);">
+                <tr>
+                    <td style="background-color:#FF6B35;padding:24px 28px;">
+                        <span style="display:inline-block;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;" th:text="${brandName}">Dashboard Financeiro</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:32px 28px 0 28px;">
+                        <p style="margin:0;font-size:18px;font-weight:600;color:#111827;">Olá, <span th:text="${userName}">Usuário</span>!</p>
+                        <p style="margin:12px 0 0 0;font-size:15px;line-height:1.6;color:#4b5563;">
+                            Temos novidades sobre a meta <strong style="color:#FF6B35;" th:text="${goalName}">Minha meta</strong>. Veja o status detalhado e continue acompanhando sua jornada financeira.
+                        </p>
+                    </td>
+                </tr>
+                <tr th:if="${achieved}">
+                    <td style="padding:24px 28px 0 28px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ecfdf5;border:1px solid #bbf7d0;border-radius:20px;">
+                            <tr>
+                                <td style="padding:20px 24px;">
+                                    <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#059669;">Parabéns!</p>
+                                    <p style="margin:8px 0 0 0;font-size:15px;color:#047857;">
+                                        Você atingiu a meta <strong th:text="${goalName}">Meta</strong>. Continue construindo o seu futuro financeiro.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr th:if="${exceeded}">
+                    <td style="padding:24px 28px 0 28px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fef2f2;border:1px solid #fecaca;border-radius:20px;">
+                            <tr>
+                                <td style="padding:20px 24px;">
+                                    <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#dc2626;">Atenção!</p>
+                                    <p style="margin:8px 0 0 0;font-size:15px;color:#b91c1c;">
+                                        A meta <strong th:text="${goalName}">Meta</strong> foi excedida. Reveja seu planejamento para manter o equilíbrio financeiro.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:28px 28px 24px 28px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;background-color:#fff7ed;border:1px solid #fed7aa;border-radius:20px;">
+                            <tr>
+                                <td style="padding:20px 24px;border-bottom:1px solid #ffe0b8;">
+                                    <p style="margin:0;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#fb923c;">Resumo da meta</p>
+                                    <h2 style="margin:8px 0 0 0;font-size:22px;font-weight:700;color:#111827;" th:text="${progress}">R$ 0,00 / R$ 0,00</h2>
+                                    <p style="margin:4px 0 0 0;font-size:13px;font-weight:500;color:#FF6B35;text-transform:uppercase;" th:text="${goalType}">Categoria</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:20px 24px;">
+                                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;color:#374151;">
+                                        <tr>
+                                            <td style="padding-bottom:12px;">
+                                                <strong style="color:#111827;">Período</strong><br/>
+                                                <span th:text="${goalPeriod}">01/01/2024 até 31/12/2024</span>
+                                            </td>
+                                            <td style="padding-bottom:12px;">
+                                                <strong style="color:#111827;">Status</strong><br/>
+                                                <span style="font-weight:600;color:#FF6B35;" th:text="${goalStatusLabel}">Meta alcançada</span>
+                                                <span th:if="${goalStatus != null}" style="display:block;margin-top:2px;font-size:11px;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase;" th:text="${goalStatus}">ACHIEVED</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${hasCategory}">
+                                            <td colspan="2" style="padding-top:4px;">
+                                                <strong style="color:#111827;">Categoria vinculada</strong><br/>
+                                                <span th:text="${categoryName}">Investimentos</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${achievedAt != null}">
+                                            <td colspan="2" style="padding-top:12px;font-size:12px;color:#047857;">
+                                                Meta concluída em <span th:text="${achievedAt}">00/00/0000 às 00:00</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${updatedAt != null}">
+                                            <td colspan="2" style="padding-top:4px;font-size:12px;color:#6b7280;">
+                                                Última atualização em <span th:text="${updatedAt}">00/00/0000 às 00:00</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0 28px 32px 28px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td align="center" style="padding:0 0 16px 0;">
+                                    <a th:href="${dashboardUrl}" style="display:inline-block;padding:14px 32px;background-color:#FF6B35;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:999px;box-shadow:0 12px 24px rgba(255,107,53,0.25);">
+                                        Acompanhar metas
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <p style="margin:0;font-size:13px;color:#6b7280;">
+                                        Precisa de ajuda? Fale conosco em
+                                        <a th:href="'mailto:' + ${supportEmail}" style="color:#FF6B35;font-weight:600;text-decoration:none;" th:text="${supportEmail}">suporte@dashboard-financeiro.local</a>.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color:#fff1e6;padding:20px 28px;text-align:center;">
+                        <p style="margin:0;font-size:12px;color:#9a3412;">
+                            Mantenha o foco nas suas metas com o <strong style="font-weight:600;color:#c2410c;" th:text="${brandName}">Dashboard Financeiro</strong>.
+                        </p>
+                        <p style="margin:8px 0 0 0;font-size:11px;color:#b45309;">
+                            Este é um e-mail automático. Não responda diretamente a esta mensagem.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

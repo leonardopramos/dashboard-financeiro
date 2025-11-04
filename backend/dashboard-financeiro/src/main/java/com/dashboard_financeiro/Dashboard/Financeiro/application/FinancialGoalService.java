@@ -1,5 +1,6 @@
 package com.dashboard_financeiro.Dashboard.Financeiro.application;
 
+import com.dashboard_financeiro.Dashboard.Financeiro.application.DashboardRange;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.exception.BusinessException;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.exception.ResourceNotFoundException;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.model.GoalStatus;
@@ -7,22 +8,29 @@ import com.dashboard_financeiro.Dashboard.Financeiro.domain.model.GoalType;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.model.TransactionType;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.CategoryJpaEntity;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.FinancialGoalJpaEntity;
+import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.GoalContributionJpaEntity;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.TransactionJpaEntity;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.FinancialGoalJpaRepository;
+import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.GoalContributionJpaRepository;
+import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.TransactionJpaRepository;
+import com.dashboard_financeiro.Dashboard.Financeiro.messaging.DomainEventPublisher;
+import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.AllocateGoalAmountRequest;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.CreateFinancialGoalRequest;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.FinancialGoalResponse;
+import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.GoalAllocationOverviewResponse;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.UpdateFinancialGoalRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Slf4j
@@ -30,8 +38,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FinancialGoalService {
 
+    private static final DashboardRange DEFAULT_SAVINGS_RANGE = DashboardRange.LAST_12_MONTHS;
+
     private final FinancialGoalJpaRepository goalRepository;
+    private final GoalContributionJpaRepository goalContributionRepository;
+    private final TransactionJpaRepository transactionRepository;
     private final CategoryService categoryService;
+    private final DomainEventPublisher eventPublisher;
 
     @Transactional
     public FinancialGoalResponse create(UUID userId, CreateFinancialGoalRequest request) {
@@ -112,73 +125,138 @@ public class FinancialGoalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Meta financeira não encontrada"));
     }
 
+    @Transactional(readOnly = true)
+    public GoalAllocationOverviewResponse getAllocationOverview(UUID userId, DashboardRange range) {
+        SavingsWindow window = computeSavingsWindow(userId, range);
+
+        List<GoalAllocationOverviewResponse.GoalAllocationItem> goals = goalRepository
+                .findByUserIdAndActiveTrueOrderByEndDateAsc(userId)
+                .stream()
+                .map(goal -> {
+                    BigDecimal target = scale(goal.getTargetAmount());
+                    BigDecimal current = scale(goal.getCurrentAmount());
+                    BigDecimal remaining = target.subtract(current);
+                    if (remaining.signum() < 0) {
+                        remaining = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+                    }
+                    return new GoalAllocationOverviewResponse.GoalAllocationItem(
+                            goal.getId(),
+                            goal.getName(),
+                            goal.getStatus(),
+                            target,
+                            current,
+                            remaining,
+                            goal.getEndDate()
+                    );
+                })
+                .toList();
+
+        GoalAllocationOverviewResponse.TimeRange timeRange = new GoalAllocationOverviewResponse.TimeRange(
+                window.start(),
+                window.end(),
+                window.range().label(Locale.getDefault())
+        );
+
+        return new GoalAllocationOverviewResponse(
+                timeRange,
+                window.range().getQueryValue(),
+                window.accumulated(),
+                window.allocated(),
+                window.available(),
+                goals
+        );
+    }
+
     @Transactional
-    public List<GoalStatusChange> processTransaction(UUID userId, TransactionJpaEntity transaction) {
-        List<FinancialGoalJpaEntity> goals = goalRepository.findByUserIdAndActiveTrueOrderByEndDateAsc(userId);
-        if (goals.isEmpty()) {
-            return List.of();
+    public FinancialGoalResponse allocate(UUID userId, UUID goalId, AllocateGoalAmountRequest request) {
+        FinancialGoalJpaEntity goal = getEntity(userId, goalId);
+
+        BigDecimal amount = scale(request.amount());
+        if (amount.signum() <= 0) {
+            throw new BusinessException("Informe um valor positivo para destinar à meta.");
         }
 
-        List<GoalStatusChange> statusChanges = new ArrayList<>();
-
-        for (FinancialGoalJpaEntity goal : goals) {
-            if (!matchesGoal(goal, transaction)) {
-                continue;
-            }
-
-            BigDecimal delta = computeDelta(goal.getType(), transaction);
-            if (delta.signum() == 0) {
-                continue;
-            }
-
-            BigDecimal newAmount = scale(goal.getCurrentAmount().add(delta));
-            goal.setCurrentAmount(newAmount);
-
-            GoalStatus previous = goal.getStatus();
-            evaluateGoalStatus(goal);
-
-            goalRepository.save(goal);
-
-            if (previous != goal.getStatus()
-                    || (goal.getStatus() == GoalStatus.ACHIEVED && goal.isNotifyOnAchieve())
-                    || (goal.getStatus() == GoalStatus.EXCEEDED && goal.isNotifyOnExceed())) {
-                statusChanges.add(new GoalStatusChange(goal, previous));
-            }
+        SavingsWindow window = computeSavingsWindow(userId, DEFAULT_SAVINGS_RANGE);
+        if (amount.compareTo(window.available()) > 0) {
+            throw new BusinessException("Saldo acumulado insuficiente para essa destinação.");
         }
 
-        return statusChanges;
+        BigDecimal remaining = scale(goal.getTargetAmount()).subtract(scale(goal.getCurrentAmount()));
+        if (remaining.signum() <= 0) {
+            throw new BusinessException("Esta meta já foi concluída.");
+        }
+        if (amount.compareTo(remaining) > 0) {
+            throw new BusinessException("O valor informado excede o saldo necessário para concluir a meta.");
+        }
+
+        GoalContributionJpaEntity contribution = GoalContributionJpaEntity.builder()
+                .goal(goal)
+                .userId(userId)
+                .amount(amount)
+                .description(StringUtils.hasText(request.description()) ? request.description().trim() : null)
+                .allocationDate(LocalDate.now())
+                .build();
+        goalContributionRepository.save(contribution);
+
+        BigDecimal newAmount = scale(goal.getCurrentAmount().add(amount));
+        goal.setCurrentAmount(newAmount);
+
+        GoalStatus previous = goal.getStatus();
+        evaluateGoalStatus(goal);
+        FinancialGoalJpaEntity saved = goalRepository.save(goal);
+
+        if (previous != saved.getStatus()) {
+            eventPublisher.publishGoalStatusChanges(List.of(new GoalStatusChange(saved, previous)));
+        }
+
+        log.info("Destinação de {} aplicada à meta {} do usuário {}", amount, goal.getId(), userId);
+        return FinancialGoalResponse.from(saved);
     }
 
-    private boolean matchesGoal(FinancialGoalJpaEntity goal, TransactionJpaEntity transaction) {
-        if (goal.getCategory() != null) {
-            if (transaction.getCategory() == null) {
-                return false;
-            }
-            if (!goal.getCategory().getId().equals(transaction.getCategory().getId())) {
-                return false;
-            }
+    private SavingsWindow computeSavingsWindow(UUID userId, DashboardRange requestedRange) {
+        DashboardRange effectiveRange = requestedRange != null ? requestedRange : DEFAULT_SAVINGS_RANGE;
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = effectiveRange.resolveStartDate(endDate);
+
+        List<TransactionJpaEntity> transactions = transactionRepository
+                .findByBankAccountUserIdAndTransactionDateBetween(userId, startDate, endDate);
+
+        BigDecimal accumulated = sumIncome(transactions).subtract(sumExpenses(transactions));
+        if (accumulated.signum() < 0) {
+            accumulated = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
 
-        if (goal.getType() == GoalType.SAVINGS) {
-            return isIncome(transaction);
+        BigDecimal allocated = goalContributionRepository.sumByUserBetween(userId, startDate, endDate);
+        if (allocated == null) {
+            allocated = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        } else {
+            allocated = allocated.setScale(2, RoundingMode.HALF_UP);
         }
 
-        if (goal.getType() == GoalType.EXPENSE_LIMIT) {
-            return isExpense(transaction);
+        BigDecimal available = accumulated.subtract(allocated);
+        if (available.signum() < 0) {
+            available = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        } else {
+            available = available.setScale(2, RoundingMode.HALF_UP);
         }
 
-        return false;
+        return new SavingsWindow(effectiveRange, startDate, endDate, accumulated.setScale(2, RoundingMode.HALF_UP), allocated, available);
     }
 
-    private BigDecimal computeDelta(GoalType goalType, TransactionJpaEntity transaction) {
-        BigDecimal amount = transaction.getAmount().setScale(2, RoundingMode.HALF_UP);
-        if (goalType == GoalType.SAVINGS && isIncome(transaction)) {
-            return amount;
-        }
-        if (goalType == GoalType.EXPENSE_LIMIT && isExpense(transaction)) {
-            return amount;
-        }
-        return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal sumIncome(List<TransactionJpaEntity> transactions) {
+        return transactions.stream()
+                .filter(this::isIncome)
+                .map(TransactionJpaEntity::getAmount)
+                .reduce(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal sumExpenses(List<TransactionJpaEntity> transactions) {
+        return transactions.stream()
+                .filter(this::isExpense)
+                .map(TransactionJpaEntity::getAmount)
+                .reduce(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     private void evaluateGoalStatus(FinancialGoalJpaEntity goal) {
@@ -212,6 +290,16 @@ public class FinancialGoalService {
 
     private boolean isExpense(TransactionJpaEntity transaction) {
         return transaction.getType() == TransactionType.EXPENSE || transaction.getType() == TransactionType.TRANSFER_OUT;
+    }
+
+    private record SavingsWindow(
+            DashboardRange range,
+            LocalDate start,
+            LocalDate end,
+            BigDecimal accumulated,
+            BigDecimal allocated,
+            BigDecimal available
+    ) {
     }
 
     private void validateDates(LocalDate start, LocalDate end) {

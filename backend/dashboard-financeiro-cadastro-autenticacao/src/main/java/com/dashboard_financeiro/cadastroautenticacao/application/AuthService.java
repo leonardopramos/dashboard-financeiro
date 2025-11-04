@@ -23,6 +23,9 @@ public class AuthService {
     private final UserJpaRepository userJpaRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailVerificationService emailVerificationService;
+
+    private static final String RESEND_REASON = "RESEND";
 
     public AuthResponse login(LoginRequest request) {
         String normalizedEmail = normalizeEmail(request.email());
@@ -36,6 +39,10 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new IllegalArgumentException("Credenciais inválidas");
+        }
+
+        if (!user.isEmailVerified()) {
+            throw new IllegalArgumentException("E-mail não verificado. Verifique sua caixa de entrada.");
         }
 
         String accessToken = jwtService.generateAccessToken(user);
@@ -86,6 +93,36 @@ public class AuthService {
         }
 
         return UserDTO.from(user);
+    }
+
+    @Transactional
+    public void verifyEmail(String email, String code) {
+        String normalizedEmail = normalizeEmail(email);
+        if (!StringUtils.hasText(code)) {
+            throw new IllegalArgumentException("Código de verificação não informado.");
+        }
+
+        UserJpaEntity user = userJpaRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        if (user.isEmailVerified()) {
+            throw new IllegalArgumentException("E-mail já verificado.");
+        }
+
+        emailVerificationService.verify(user, code.trim());
+    }
+
+    @Transactional
+    public void resendVerification(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        UserJpaEntity user = userJpaRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        if (user.isEmailVerified()) {
+            throw new IllegalArgumentException("E-mail já verificado.");
+        }
+
+        emailVerificationService.createTokenFor(user, RESEND_REASON);
     }
 
     private String normalizeEmail(String email) {

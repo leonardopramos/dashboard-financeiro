@@ -3,9 +3,11 @@ package com.dashboard_financeiro.Dashboard.Financeiro.application;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.exception.BusinessException;
 import com.dashboard_financeiro.Dashboard.Financeiro.domain.exception.ResourceNotFoundException;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.entity.BankAccountJpaEntity;
+import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.TransactionJpaRepository;
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.BankAccountJpaRepository;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.BankAccountResponse;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.CreateBankAccountRequest;
+import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.UpdateBankAccountRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class BankAccountService {
 
     private final BankAccountJpaRepository repository;
+    private final TransactionJpaRepository transactionRepository;
 
     @Transactional
     public BankAccountResponse register(UUID userId, CreateBankAccountRequest request) {
@@ -77,6 +80,47 @@ public class BankAccountService {
     @Transactional(readOnly = true)
     public BankAccountResponse findById(UUID userId, UUID id) {
         return BankAccountResponse.from(getEntity(userId, id));
+    }
+
+    @Transactional
+    public BankAccountResponse update(UUID userId, UUID id, UpdateBankAccountRequest request) {
+        BankAccountJpaEntity entity = getEntity(userId, id);
+
+        String institutionName = request.institutionName().trim();
+        String branchNumber = request.branchNumber().trim();
+        String accountNumber = request.accountNumber().trim();
+        String accountDigit = request.accountDigit() != null ? request.accountDigit().trim() : "";
+
+        repository.findByUserIdAndInstitutionNameAndAccountNumberAndAccountDigitAndBranchNumber(
+                        userId,
+                        institutionName,
+                        accountNumber,
+                        accountDigit,
+                        branchNumber
+                ).ifPresent(existing -> {
+                    if (!existing.getId().equals(entity.getId())) {
+                        throw new BusinessException("Conta bancária já cadastrada para este usuário");
+                    }
+                });
+
+        entity.setInstitutionName(institutionName);
+        entity.setBranchNumber(branchNumber);
+        entity.setAccountNumber(accountNumber);
+        entity.setAccountDigit(accountDigit);
+        entity.setAccountType(request.accountType());
+        entity.setNickname(request.nickname() != null ? request.nickname().trim() : null);
+
+        return BankAccountResponse.from(repository.save(entity));
+    }
+
+    @Transactional
+    public void delete(UUID userId, UUID id) {
+        BankAccountJpaEntity entity = getEntity(userId, id);
+        if (transactionRepository.existsByBankAccountId(entity.getId())) {
+            throw new BusinessException("Conta bancária possui transações vinculadas e não pode ser removida");
+        }
+
+        repository.delete(entity);
     }
 
     @Transactional(readOnly = true)

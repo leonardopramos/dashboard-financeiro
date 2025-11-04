@@ -5,6 +5,7 @@ import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.
 import com.dashboard_financeiro.cadastroautenticacao.messaging.UserEventProducer;
 import com.dashboard_financeiro.cadastroautenticacao.messaging.event.UserRegisteredEvent;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.CreateUserRequest;
+import com.dashboard_financeiro.cadastroautenticacao.web.dto.UpdateUserRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserJpaRepository repo;
     private final PasswordEncoder encoder;
     private final UserEventProducer eventProducer;
+    private final EmailVerificationService emailVerificationService;
 
     @Transactional
     public UserDTO register(CreateUserRequest req) {
@@ -56,6 +58,7 @@ public class UserService {
                 .build();
 
         UserJpaEntity saved = repo.save(entity);
+        emailVerificationService.createTokenFor(saved);
         enqueueUserRegisteredEvent(saved);
         log.info("Usuário cadastrado com sucesso: {}", saved.getId());
         return UserDTO.from(saved);
@@ -66,6 +69,29 @@ public class UserService {
         return repo.findById(id)
                 .map(UserDTO::from)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+    }
+
+    @Transactional
+    public UserDTO update(UUID id, UpdateUserRequest request) {
+        UserJpaEntity entity = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        String normalizedCpf = request.cpf().trim();
+        repo.findByCpf(normalizedCpf)
+                .filter(found -> !found.getId().equals(id))
+                .ifPresent(u -> { throw new IllegalArgumentException("CPF já cadastrado"); });
+
+        entity.setCpf(normalizedCpf);
+        entity.setName(request.name().trim());
+        entity.setStreet(trimToNull(request.street()));
+        entity.setNumber(request.number());
+        entity.setNeighborhood(trimToNull(request.neighborhood()));
+        entity.setComplement(trimToNull(request.complement()));
+        entity.setCity(trimToNull(request.city()));
+        entity.setState(trimToNull(request.state() != null ? request.state().toUpperCase() : null));
+        entity.setZipCode(normalizeZipCode(request.zipCode()));
+
+        return UserDTO.from(entity);
     }
 
     private void enqueueUserRegisteredEvent(UserJpaEntity entity) {
@@ -103,5 +129,20 @@ public class UserService {
 
     private String normalizeEmail(String email) {
         return email == null ? null : email.trim().toLowerCase();
+    }
+
+    private String trimToNull(String value) {
+        return StringUtils.hasText(value) ? value.trim() : null;
+    }
+
+    private String normalizeZipCode(String zipCode) {
+        if (!StringUtils.hasText(zipCode)) {
+            return null;
+        }
+        String digits = zipCode.replaceAll("\\D", "");
+        if (digits.length() != 8) {
+            return zipCode.trim();
+        }
+        return digits.substring(0, 5) + "-" + digits.substring(5);
     }
 }

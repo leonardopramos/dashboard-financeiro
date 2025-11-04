@@ -1,5 +1,6 @@
 package com.dashboard_financeiro.Dashboard.Financeiro.web.controller;
 
+import com.dashboard_financeiro.Dashboard.Financeiro.application.DashboardRange;
 import com.dashboard_financeiro.Dashboard.Financeiro.application.DashboardService;
 import com.dashboard_financeiro.Dashboard.Financeiro.security.AuthenticatedUser;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.DashboardOverviewResponse;
@@ -23,9 +24,11 @@ public class DashboardController {
     @GetMapping("/overview")
     public ResponseEntity<DashboardOverviewResponse> overview(@AuthenticationPrincipal AuthenticatedUser currentUser,
                                                               @RequestParam(required = false) Integer year,
-                                                              @RequestParam(required = false) Integer month) {
+                                                              @RequestParam(required = false) Integer month,
+                                                              @RequestParam(name = "range", required = false) String rawRange) {
         YearMonth reference = parseYearMonth(year, month);
-        return ResponseEntity.ok(dashboardService.getOverview(currentUser.id(), reference));
+        DashboardRange range = DashboardRange.fromQueryValue(rawRange).orElse(null);
+        return ResponseEntity.ok(dashboardService.getOverview(currentUser.id(), reference, range));
     }
 
     private YearMonth parseYearMonth(Integer year, Integer month) {

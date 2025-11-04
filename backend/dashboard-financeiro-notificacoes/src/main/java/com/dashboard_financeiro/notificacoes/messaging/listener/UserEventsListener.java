@@ -1,6 +1,8 @@
 package com.dashboard_financeiro.notificacoes.messaging.listener;
 
+import com.dashboard_financeiro.notificacoes.application.EmailNotificationService;
 import com.dashboard_financeiro.notificacoes.application.NotificationUserService;
+import com.dashboard_financeiro.notificacoes.infrastructure.persistence.entity.NotificationUserEntity;
 import com.dashboard_financeiro.notificacoes.messaging.event.UserCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class UserEventsListener {
 
     private final NotificationUserService userService;
+    private final EmailNotificationService emailNotificationService;
 
     @KafkaListener(
             topics = "${messaging.topics.user-events}",
@@ -20,6 +23,12 @@ public class UserEventsListener {
     )
     public void handle(UserCreatedEvent event) {
         log.debug("Recebido evento de usuário {}", event.userId());
-        userService.upsertUser(event.userId(), event.email(), event.name(), true);
+        NotificationUserEntity existing = userService.findById(event.userId());
+        NotificationUserEntity user = userService.upsertUser(event.userId(), event.email(), event.name(), true);
+        if (existing == null) {
+            emailNotificationService.sendWelcomeEmail(event, user);
+        } else {
+            log.debug("Usuário {} já sincronizado anteriormente. Bem-vindo não reenviado.", event.userId());
+        }
     }
 }

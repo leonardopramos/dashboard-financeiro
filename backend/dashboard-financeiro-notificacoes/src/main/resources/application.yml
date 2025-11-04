@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: dashboard-financeiro-notificacoes
 
@@ -62,12 +64,14 @@ messaging:
     user-events: user.events
     transaction-events: transactions.events
     goal-events: goals.events
+    email-verification-events: user.verification
 
 notifications:
   email:
     from: ${MAIL_FROM:no-reply@dashboard-financeiro.local}
     enabled: ${MAIL_ENABLED:true}
     fallback: ${MAIL_FALLBACK:suporte@dashboard-financeiro.local}
+    dashboard-url: ${APP_DASHBOARD_URL:https://app.dashboard-financeiro.local}
 
 logging:
   level:

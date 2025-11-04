@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 public record NotificationTopicsProperties(
         String userEvents,
         String transactionEvents,
-        String goalEvents
+        String goalEvents,
+        String emailVerificationEvents
 ) {
 }

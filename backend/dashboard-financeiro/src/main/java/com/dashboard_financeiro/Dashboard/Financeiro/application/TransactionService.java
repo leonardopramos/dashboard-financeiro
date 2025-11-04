@@ -8,6 +8,7 @@ import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.
 import com.dashboard_financeiro.Dashboard.Financeiro.infrastructure.persistence.repository.TransactionJpaRepository;
 import com.dashboard_financeiro.Dashboard.Financeiro.messaging.DomainEventPublisher;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.CreateTransactionRequest;
+import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.UpdateTransactionRequest;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.TransactionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ public class TransactionService {
     private final TransactionJpaRepository transactionRepository;
     private final BankAccountService bankAccountService;
     private final CategoryService categoryService;
-    private final FinancialGoalService financialGoalService;
     private final DomainEventPublisher eventPublisher;
 
     @Transactional
@@ -55,11 +55,7 @@ public class TransactionService {
 
         var saved = transactionRepository.save(entity);
         bankAccountService.save(managedBankAccount);
-        var goalStatusChanges = financialGoalService.processTransaction(userId, saved);
         eventPublisher.publishTransactionCreated(saved);
-        if (!goalStatusChanges.isEmpty()) {
-            eventPublisher.publishGoalStatusChanges(goalStatusChanges);
-        }
 
         return TransactionResponse.from(saved);
     }
@@ -69,6 +65,61 @@ public class TransactionService {
         return transactionRepository.findByIdAndBankAccountUserId(id, userId)
                 .map(TransactionResponse::from)
                 .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
+    }
+
+    @Transactional
+    public TransactionResponse update(UUID userId, UUID transactionId, UpdateTransactionRequest request) {
+        TransactionJpaEntity transaction = getEntity(userId, transactionId);
+
+        BankAccountJpaEntity originalAccount = transaction.getBankAccount();
+        var originalType = transaction.getType();
+        var originalAmount = transaction.getAmount();
+
+        reverseBalanceChange(originalAccount, originalType, originalAmount);
+
+        BankAccountJpaEntity targetAccount = originalAccount;
+        if (!originalAccount.getId().equals(request.bankAccountId())) {
+            targetAccount = bankAccountService.getEntity(userId, request.bankAccountId());
+        }
+
+        CategoryJpaEntity category = null;
+        if (request.categoryId() != null) {
+            category = categoryService.getEntity(userId, request.categoryId());
+        }
+
+        var amount = request.amount().setScale(2, RoundingMode.HALF_UP);
+
+        transaction.setBankAccount(targetAccount);
+        transaction.setType(request.type());
+        transaction.setAmount(amount);
+        transaction.setTransactionDate(request.transactionDate());
+        transaction.setDescription(request.description());
+        transaction.setCategory(category);
+        transaction.setNotes(request.notes());
+
+        applyBalanceChange(targetAccount, transaction.getType(), transaction.getAmount());
+
+        TransactionJpaEntity saved = transactionRepository.save(transaction);
+
+        if (originalAccount.getId().equals(targetAccount.getId())) {
+            bankAccountService.save(targetAccount);
+        } else {
+            bankAccountService.save(originalAccount);
+            bankAccountService.save(targetAccount);
+        }
+
+        return TransactionResponse.from(saved);
+    }
+
+    @Transactional
+    public void delete(UUID userId, UUID transactionId) {
+        TransactionJpaEntity transaction = getEntity(userId, transactionId);
+
+        BankAccountJpaEntity bankAccount = transaction.getBankAccount();
+        reverseBalanceChange(bankAccount, transaction.getType(), transaction.getAmount());
+
+        transactionRepository.delete(transaction);
+        bankAccountService.save(bankAccount);
     }
 
     @Transactional(readOnly = true)
@@ -88,6 +139,11 @@ public class TransactionService {
                 .toList();
     }
 
+    private TransactionJpaEntity getEntity(UUID userId, UUID transactionId) {
+        return transactionRepository.findByIdAndBankAccountUserId(transactionId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
+    }
+
     private void applyBalanceChange(BankAccountJpaEntity bankAccount, TransactionType type, BigDecimal amount) {
         BigDecimal current = bankAccount.getCurrentBalance();
         if (current == null) {
@@ -102,6 +158,23 @@ public class TransactionService {
             bankAccount.setCurrentBalance(current.subtract(value));
         } else {
             bankAccount.setCurrentBalance(current.add(value));
+        }
+    }
+
+    private void reverseBalanceChange(BankAccountJpaEntity bankAccount, TransactionType type, BigDecimal amount) {
+        BigDecimal current = bankAccount.getCurrentBalance();
+        if (current == null) {
+            current = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        current = current.setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal value = amount.setScale(2, RoundingMode.HALF_UP);
+
+        if (type == TransactionType.EXPENSE || type == TransactionType.TRANSFER_OUT) {
+            bankAccount.setCurrentBalance(current.add(value));
+        } else {
+            bankAccount.setCurrentBalance(current.subtract(value));
         }
     }
 }

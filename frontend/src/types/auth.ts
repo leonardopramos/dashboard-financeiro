@@ -1,9 +1,20 @@
 // Interfaces para autenticação
 export interface User {
   id: string;
-  email: string;
+  cpf?: string;
   name: string;
+  email: string;
   role?: string;
+  street?: string;
+  number?: number;
+  neighborhood?: string;
+  complement?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  active?: boolean;
+  emailVerified?: boolean;
+  registeredAt?: string;
 }
 
 export interface LoginCredentials {
@@ -16,6 +27,14 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   cpf: string;
+  role?: string;
+  street?: string;
+  number?: number;
+  neighborhood?: string;
+  complement?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
 }
 
 // Interfaces para requisições da API (mantidas para compatibilidade futura)
@@ -39,12 +58,35 @@ export interface CreateUserRequest {
   zipCode?: string;
 }
 
+export interface UpdateUserRequest {
+  cpf: string;
+  name: string;
+  street?: string;
+  number?: number;
+  neighborhood?: string;
+  complement?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+}
+
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
   user: User;
 }
 
 export interface ApiError {
   message: string;
   status: number;
+}
+
+export interface VerifyEmailPayload {
+  email: string;
+  code: string;
+}
+
+export interface ResendVerificationPayload {
+  email: string;
 }

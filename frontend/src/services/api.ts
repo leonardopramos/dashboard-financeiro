@@ -1,31 +1,45 @@
 import axios from 'axios';
-import type { LoginRequest, CreateUserRequest, AuthResponse, User } from '../types/auth';
+import type {
+  AuthResponse,
+  CreateUserRequest,
+  LoginRequest,
+  UpdateUserRequest,
+  User,
+  VerifyEmailPayload,
+  ResendVerificationPayload,
+} from '../types/auth';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8089/api';
+
+export const ACCESS_TOKEN_KEY = 'dashboard-financeiro/accessToken';
+export const REFRESH_TOKEN_KEY = 'dashboard-financeiro/refreshToken';
+export const PENDING_EMAIL_KEY = 'dashboard-financeiro/pendingEmail';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 20000,
 });
 
-// Interceptor para adicionar token de autorização
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Interceptor para tratar respostas de erro
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -33,23 +47,44 @@ api.interceptors.response.use(
 
 export const authService = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await api.post('/auth/login', credentials);
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
     return response.data;
   },
 
-  register: async (userData: CreateUserRequest): Promise<AuthResponse> => {
-    const response = await api.post('/users', userData);
+  refresh: async (refreshToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/auth/refresh', { refreshToken });
+    return response.data;
+  },
+
+  register: async (userData: CreateUserRequest): Promise<User> => {
+    const response = await api.post<User>('/users', userData);
     return response.data;
   },
 
   getCurrentUser: async (): Promise<User> => {
-    const response = await api.get('/auth/me');
+    const response = await api.get<User>('/auth/me');
     return response.data;
   },
 
-  logout: async (): Promise<void> => {
-    await api.post('/auth/logout');
-    localStorage.removeItem('token');
+  updateUser: async (userId: string, payload: UpdateUserRequest): Promise<User> => {
+    const response = await api.put<User>(`/users/${userId}`, payload);
+    return response.data;
+  },
+
+  logout: async (refreshToken?: string): Promise<void> => {
+    if (refreshToken) {
+      await api.post('/auth/logout', { refreshToken });
+    }
+  },
+
+  verifyEmail: async (payload: VerifyEmailPayload): Promise<string> => {
+    const response = await api.post<{ message: string }>('/auth/verify-email', payload);
+    return response.data.message;
+  },
+
+  resendVerification: async (payload: ResendVerificationPayload): Promise<string> => {
+    const response = await api.post<{ message: string }>('/auth/verify-email/resend', payload);
+    return response.data.message;
   },
 };
 

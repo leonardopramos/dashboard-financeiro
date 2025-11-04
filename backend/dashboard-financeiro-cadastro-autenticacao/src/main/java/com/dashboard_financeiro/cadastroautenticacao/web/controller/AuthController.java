@@ -4,12 +4,16 @@ import com.dashboard_financeiro.cadastroautenticacao.application.AuthService;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.AuthResponse;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.LoginRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.RefreshTokenRequest;
+import com.dashboard_financeiro.cadastroautenticacao.web.dto.ResendVerificationRequest;
+import com.dashboard_financeiro.cadastroautenticacao.web.dto.VerifyEmailRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -43,5 +47,17 @@ public class AuthController {
         String jwt = token.substring(7);
         UserDTO current = authService.getCurrentUser(jwt);
         return ResponseEntity.ok(current);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<Map<String, String>> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+        authService.verifyEmail(request.email(), request.code());
+        return ResponseEntity.ok(Map.of("message", "E-mail verificado com sucesso. Você já pode fazer login."));
+    }
+
+    @PostMapping("/verify-email/resend")
+    public ResponseEntity<Map<String, String>> resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+        authService.resendVerification(request.email());
+        return ResponseEntity.ok(Map.of("message", "Um novo código de verificação foi enviado para o seu e-mail."));
     }
 }

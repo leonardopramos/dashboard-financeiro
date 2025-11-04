@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { PENDING_EMAIL_KEY } from '../../services/api';
+import { formatCpf } from '../../utils/format';
 
 const Register = () => {
   const { register, isLoading } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,15 +32,25 @@ const Register = () => {
         password: formData.password,
         cpf: formData.cpf
       });
+      sessionStorage.setItem(PENDING_EMAIL_KEY, formData.email.trim());
+      navigate('/verify-email', {
+        replace: true,
+        state: {
+          email: formData.email.trim(),
+          name: formData.name,
+        },
+      });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao criar conta');
+      const detail = err.response?.data?.detail ?? err.response?.data?.message ?? 'Erro ao criar conta';
+      setError(detail);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: name === 'cpf' ? formatCpf(value) : value
     });
   };
 
@@ -84,6 +97,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder="000.000.000-00"
               required
+              maxLength={14}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all duration-200 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-100 focus:outline-none"
             />
           </div>

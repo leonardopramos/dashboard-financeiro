@@ -20,6 +20,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,16 +33,20 @@ public class DashboardService {
     private final FinancialGoalJpaRepository financialGoalRepository;
 
     @Transactional(readOnly = true)
-    public DashboardOverviewResponse getOverview(UUID userId, YearMonth reference) {
-        YearMonth period = reference != null ? reference : YearMonth.now();
-        LocalDate startOfMonth = period.atDay(1);
-        LocalDate endOfMonth = period.atEndOfMonth();
+    public DashboardOverviewResponse getOverview(UUID userId, YearMonth reference, DashboardRange range) {
+        LocalDate today = LocalDate.now();
+        YearMonth basePeriod = reference != null ? reference : YearMonth.from(today);
+        LocalDate defaultStart = basePeriod.atDay(1);
+        LocalDate defaultEnd = basePeriod.atEndOfMonth();
 
-        List<TransactionJpaEntity> monthlyTransactions = transactionRepository
-                .findByBankAccountUserIdAndTransactionDateBetween(userId, startOfMonth, endOfMonth);
+        LocalDate rangeStart = range != null ? range.resolveStartDate(today) : defaultStart;
+        LocalDate rangeEnd = range != null ? today : defaultEnd;
 
-        BigDecimal totalIncome = sumIncome(monthlyTransactions);
-        BigDecimal totalExpenses = sumExpenses(monthlyTransactions);
+        List<TransactionJpaEntity> scopedTransactions = transactionRepository
+                .findByBankAccountUserIdAndTransactionDateBetween(userId, rangeStart, rangeEnd);
+
+        BigDecimal totalIncome = sumIncome(scopedTransactions);
+        BigDecimal totalExpenses = sumExpenses(scopedTransactions);
         BigDecimal netBalance = totalIncome.subtract(totalExpenses).setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal totalBalance = bankAccountRepository.findByUserId(userId)
@@ -50,18 +55,30 @@ public class DashboardService {
                 .reduce(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), BigDecimal::add)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        List<DashboardOverviewResponse.CategoryAggregation> categoryAggregations = buildCategoryBreakdown(monthlyTransactions);
+        List<DashboardOverviewResponse.CategoryAggregation> categoryAggregations = buildCategoryBreakdown(scopedTransactions);
 
-        YearMonth startTrendPeriod = period.minusMonths(5);
-        LocalDate trendStart = startTrendPeriod.atDay(1);
-        List<TransactionJpaEntity> trendTransactions = transactionRepository
-                .findByBankAccountUserIdAndTransactionDateBetween(userId, trendStart, endOfMonth);
-        List<DashboardOverviewResponse.MonthlyTrendPoint> trendPoints = buildTrend(trendTransactions, period);
+        List<DashboardOverviewResponse.MonthlyTrendPoint> trendPoints;
+        if (range != null) {
+            trendPoints = buildTrend(scopedTransactions, rangeStart, rangeEnd);
+        } else {
+            YearMonth startTrendPeriod = basePeriod.minusMonths(5);
+            LocalDate trendStart = startTrendPeriod.atDay(1);
+            List<TransactionJpaEntity> trendTransactions = transactionRepository
+                    .findByBankAccountUserIdAndTransactionDateBetween(userId, trendStart, defaultEnd);
+            trendPoints = buildTrend(trendTransactions, trendStart, defaultEnd);
+        }
 
         DashboardOverviewResponse.GoalsSnapshot goalsSnapshot = buildGoalsSnapshot(userId);
+        DashboardOverviewResponse.TimeRange timeRange = new DashboardOverviewResponse.TimeRange(
+                rangeStart,
+                rangeEnd,
+                range != null ? range.label(Locale.getDefault()) : null
+        );
 
         return new DashboardOverviewResponse(
-                DashboardOverviewResponse.PeriodReference.from(period),
+                DashboardOverviewResponse.PeriodReference.from(YearMonth.from(rangeEnd)),
+                timeRange,
+                range != null ? range.getQueryValue() : null,
                 totalIncome,
                 totalExpenses,
                 netBalance,
@@ -106,13 +123,16 @@ public class DashboardService {
                 .toList();
     }
 
-    private List<DashboardOverviewResponse.MonthlyTrendPoint> buildTrend(List<TransactionJpaEntity> transactions, YearMonth reference) {
+    private List<DashboardOverviewResponse.MonthlyTrendPoint> buildTrend(List<TransactionJpaEntity> transactions,
+                                                                         LocalDate startInclusive,
+                                                                         LocalDate endInclusive) {
         Map<YearMonth, TrendAccumulator> map = new HashMap<>();
-        YearMonth start = reference.minusMonths(5);
+        YearMonth startMonth = YearMonth.from(startInclusive);
+        YearMonth endMonth = YearMonth.from(endInclusive);
 
         for (TransactionJpaEntity transaction : transactions) {
             YearMonth ym = YearMonth.from(transaction.getTransactionDate());
-            if (ym.isBefore(start)) {
+            if (ym.isBefore(startMonth) || ym.isAfter(endMonth)) {
                 continue;
             }
 
@@ -125,18 +145,19 @@ public class DashboardService {
         }
 
         List<DashboardOverviewResponse.MonthlyTrendPoint> points = new ArrayList<>();
-        for (int i = 5; i >= 0; i--) {
-            YearMonth current = reference.minusMonths(5 - i);
-            TrendAccumulator accumulator = map.getOrDefault(current, new TrendAccumulator());
+        YearMonth cursor = startMonth;
+        while (!cursor.isAfter(endMonth)) {
+            TrendAccumulator accumulator = map.getOrDefault(cursor, new TrendAccumulator());
             BigDecimal income = accumulator.income.setScale(2, RoundingMode.HALF_UP);
             BigDecimal expenses = accumulator.expense.setScale(2, RoundingMode.HALF_UP);
             points.add(new DashboardOverviewResponse.MonthlyTrendPoint(
-                    current.getYear(),
-                    current.getMonthValue(),
+                    cursor.getYear(),
+                    cursor.getMonthValue(),
                     income,
                     expenses,
                     income.subtract(expenses).setScale(2, RoundingMode.HALF_UP)
             ));
+            cursor = cursor.plusMonths(1);
         }
 
         return points;
