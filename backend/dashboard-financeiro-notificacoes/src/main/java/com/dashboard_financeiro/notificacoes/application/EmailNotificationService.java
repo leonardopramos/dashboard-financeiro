@@ -2,20 +2,18 @@ package com.dashboard_financeiro.notificacoes.application;
 
 import com.dashboard_financeiro.notificacoes.config.NotificationEmailProperties;
 import com.dashboard_financeiro.notificacoes.infrastructure.persistence.entity.NotificationUserEntity;
+import com.dashboard_financeiro.notificacoes.infrastructure.resend.ResendEmailClient;
+import com.dashboard_financeiro.notificacoes.infrastructure.resend.ResendEmailResponse;
 import com.dashboard_financeiro.notificacoes.messaging.event.EmailVerificationRequestedEvent;
 import com.dashboard_financeiro.notificacoes.messaging.event.GoalStatusChangedEvent;
 import com.dashboard_financeiro.notificacoes.messaging.event.TransactionCreatedEvent;
 import com.dashboard_financeiro.notificacoes.messaging.event.UserCreatedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -35,7 +33,7 @@ public class EmailNotificationService {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm", LOCALE_PT_BR);
 
-    private final JavaMailSender mailSender;
+    private final ResendEmailClient emailClient;
     private final NotificationEmailProperties emailProperties;
     private final NotificationLogService logService;
     private final ObjectMapper objectMapper;
@@ -215,15 +213,16 @@ public class EmailNotificationService {
             templateModel.putIfAbsent("dashboardUrl", emailProperties.dashboardUrl());
             templateModel.putIfAbsent("supportEmail", emailProperties.fallback());
             String body = templateService.render(templateView, templateModel);
+            ResendEmailResponse response = emailClient.send(
+                    emailProperties.from(),
+                    recipient,
+                    subject,
+                    body
+            );
 
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
-            helper.setFrom(emailProperties.from());
-            helper.setTo(recipient);
-            helper.setSubject(subject);
-            helper.setText(body, true);
-
-            mailSender.send(message);
+            if (response != null && response.id() != null) {
+                log.debug("E-mail enviado via Resend (id: {}) para {}", response.id(), recipient);
+            }
             logService.record(user, recipient, subject, template, payload, "SENT", null);
         } catch (Exception ex) {
             log.error("Erro ao enviar e-mail para {}: {}", recipient, ex.getMessage(), ex);

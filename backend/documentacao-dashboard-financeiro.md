@@ -18,7 +18,7 @@
 - **Dashboard consolidado** (`DashboardController`/`DashboardService`): fornece visão mensal com totais de receitas/despesas, saldo agregado nas contas, evolução dos últimos 6 meses, breakdown por categoria e snapshot das metas ativas.
 
 ## Persistência e migrações
-- SQL Server com JPA/Hibernate; Liquibase controla o schema via `db/changelog/db.changelog-master.xml`.
+- MySQL 8 com JPA/Hibernate; Liquibase controla o schema via `db/changelog/db.changelog-master.xml`.
 - `0001_create_bank_and_transactions.sql`: tabelas `bank_accounts` e `transactions`.
 - `0002_create_categories_and_goals.sql`: tabelas `categories` e `financial_goals`, além do relacionamento `transactions.category_id`.
 - Índices otimizando busca por usuário e integridade de chaves estrangeiras (`categories`, `financial_goals`, `transactions`).
@@ -35,4 +35,4 @@
 
 ## Testes e observações
 - Mantém `DashboardFinanceiroApplicationTests` (carregamento de contexto). Cobertura adicional recomendada para serviços de categorias, metas e agregações.
-- Projeto Gradle com `spring-boot-devtools`, `spring-kafka-test` e suporte a profiles (`docker`) para execução integrada com Docker Compose (`sqlserver`, `kafka`, `kafka-ui`).
+- Projeto Gradle com `spring-boot-devtools`, `spring-kafka-test` e suporte a profiles (`docker`) para execução integrada com Docker Compose (`mysql`, `kafka`, `kafka-ui`).

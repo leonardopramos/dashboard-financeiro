@@ -14,6 +14,8 @@
 - **Cadastro e consulta de usuários** (`UserController`/`UserService`):
   - `POST /api/v1/users` registra usuário com validação de e-mail/CPF únicos, senha cifrada (`BCryptPasswordEncoder`) e dados de endereço.
   - `GET /api/v1/users/{id}` exige autenticação JWT, só permitindo acesso ao próprio registro ou a perfis com `ROLE_ADMIN`.
+  - `PUT /api/v1/users/{id}` atualiza dados cadastrais e de endereço com as mesmas regras de acesso do `GET`.
+  - `DELETE /api/v1/users/{id}` remove o perfil definitivamente, restringindo a ação ao próprio usuário ou administradores; responde `204 No Content`.
 - **Autenticação JWT** (`AuthController`, `AuthService`, `JwtService`):
   - `POST /api/v1/auth/login` gera par de tokens (`access` configurável, `refresh` padrão 7 dias) com claims `sub` (UUID), `email`, `name`, `role`.
   - `POST /api/v1/auth/refresh` valida refresh token, reemite access token e mantém o refresh original.
@@ -26,7 +28,7 @@
   - Handler global (`ApiExceptionHandler`) padroniza falhas de validação, `IllegalArgumentException`, regras de negócio e erros inesperados.
 
 ## Persistência e migração
-- Banco SQL Server com tabela `users` criada via `0001_create_table_users.sql`.
+- Banco MySQL com tabela `users` criada via `0001_create_table_users.sql`.
 - Campos de auditoria (`registered_at`, `updated_at`) gerenciados por `@PrePersist/@PreUpdate`.
 - Repositório `UserJpaRepository` oferece consultas por e-mail/CPF e busca por id.
 

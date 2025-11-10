@@ -23,7 +23,7 @@ interface ProfileFormState {
 }
 
 const Profile = () => {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const [formData, setFormData] = useState<ProfileFormState>({
     name: '',
     cpf: '',
@@ -38,6 +38,7 @@ const Profile = () => {
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isFetchingCep, setIsFetchingCep] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -145,6 +146,37 @@ const Profile = () => {
       setFeedback({ type: 'error', message: detail });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Tem certeza de que deseja excluir sua conta? Essa ação é permanente e não pode ser desfeita.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setFeedback(null);
+
+    try {
+      await authService.deleteUser(user.id);
+      logout();
+    } catch (error: any) {
+      console.error('Erro ao excluir perfil:', error);
+      const detail =
+        error.response?.data?.detail ??
+        error.response?.data?.message ??
+        'Não foi possível excluir seu perfil no momento.';
+      setFeedback({ type: 'error', message: detail });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -300,6 +332,25 @@ const Profile = () => {
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="rounded-3xl border border-red-100 bg-white p-6 shadow-lg shadow-red-100/50">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Encerrar conta</h3>
+            <p className="text-sm text-gray-500">
+              A exclusão é permanente e removerá todos os seus dados deste ambiente.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleDeleteAccount}
+            disabled={isDeleting}
+            className="rounded-2xl border border-red-200 px-6 py-3 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isDeleting ? 'Excluindo...' : 'Excluir conta'}
+          </button>
+        </div>
       </div>
     </section>
   );

@@ -3,17 +3,17 @@ spring:
     name: dashboard-financeiro
 
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=dashboard_financeiro;encrypt=false;trustServerCertificate=true
-    username: sa
-    password: Strong@Passw0rd
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: ${FINANCE_DB_URL:jdbc:mysql://localhost:3306/dashboard_financeiro?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     open-in-view: false
 
@@ -22,7 +22,7 @@ spring:
     enabled: true
 
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     consumer:
       group-id: dashboard-financeiro-consumers
       auto-offset-reset: earliest
@@ -43,8 +43,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID:dummy-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:dummy-secret}
             scope: openid,profile,email
         provider:
           google:
@@ -52,11 +52,11 @@ spring:
 
 security:
   jwt:
-    issuer: dashboard-financeiro-auth
-    secret: ${JWT_SECRET:bG9jYWwtand0LXNoYXJlZC1zZWNyZXQtMzItYnl0ZXMhIQ==}
+    issuer: ${JWT_ISSUER:dashboard-financeiro-auth}
+    secret: ${JWT_SECRET}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 logging:
   level:
@@ -68,14 +68,3 @@ messaging:
   topics:
     transaction-events: transactions.events
     goal-events: goals.events
-
----
-spring:
-  config:
-    activate:
-      on-profile: docker
-
-  datasource:
-    url: jdbc:sqlserver://sqlserver:1433;databaseName=dashboard_financeiro;encrypt=false;trustServerCertificate=true
-    username: sa
-    password: YourStrong@Passw0rd

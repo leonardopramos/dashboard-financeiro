@@ -54,4 +54,19 @@ public class UserController {
 
         return ResponseEntity.ok(service.update(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id,
+                                       @AuthenticationPrincipal AuthenticatedUser currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!id.equals(currentUser.id()) && !currentUser.hasRole("ADMIN")) {
+            throw new AccessDeniedException("Acesso negado para excluir outro usuário");
+        }
+
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

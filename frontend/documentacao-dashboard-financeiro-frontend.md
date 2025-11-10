@@ -21,7 +21,7 @@
 ## Integração com serviços backend
 - A camada de serviços consome endpoints disponibilizados pelos microserviços Java: `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me` e `/users`.
 - O token salvo localmente segue o contrato esperado por `AuthController` do serviço de cadastro/autenticação.
-- O ambiente de desenvolvimento assume a stack do `docker-compose.yml` da pasta backend: o front consome a API em `http://localhost:8080`, que por sua vez conecta ao SQL Server e Kafka definidos no compose.
+- O ambiente de desenvolvimento assume a stack do `docker-compose.yml` da pasta backend: o front consome a API em `http://localhost:8080`, que por sua vez conecta ao MySQL e Kafka definidos no compose.
 
 ## Ferramentas de desenvolvimento
 - Scripts disponíveis: `npm run dev` (servidor Vite), `build`, `lint`, `preview`.

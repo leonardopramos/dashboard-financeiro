@@ -5,17 +5,17 @@ spring:
     name: dashboard-financeiro-notificacoes
 
   datasource:
-    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=dashboard_financeiro_notificacoes;encrypt=false;trustServerCertificate=true}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:Strong@Passw0rd}
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: ${NOTIFICATIONS_DB_URL:jdbc:mysql://localhost:3306/dashboard_financeiro_notificacoes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
     open-in-view: false
 
@@ -44,18 +44,6 @@ spring:
             type:
               headers: false
 
-  mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1025}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: ${MAIL_SMTP_AUTH:false}
-          starttls:
-            enable: ${MAIL_SMTP_STARTTLS:false}
-
 server:
   port: ${SERVER_PORT:8083}
 
@@ -71,7 +59,10 @@ notifications:
     from: ${MAIL_FROM:no-reply@dashboard-financeiro.local}
     enabled: ${MAIL_ENABLED:true}
     fallback: ${MAIL_FALLBACK:suporte@dashboard-financeiro.local}
-    dashboard-url: ${APP_DASHBOARD_URL:https://app.dashboard-financeiro.local}
+    dashboard-url: ${APP_DASHBOARD_URL:https://dashboard-financeiro-frontend-production-9e02.up.railway.app/login}
+    resend:
+      api-key: ${RESEND_API_KEY:}
+      base-url: ${RESEND_BASE_URL:https://api.resend.com}
 
 logging:
   level:

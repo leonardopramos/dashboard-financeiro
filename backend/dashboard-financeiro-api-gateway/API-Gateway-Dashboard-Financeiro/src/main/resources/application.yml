@@ -40,8 +40,8 @@ services:
 
 security:
   jwt:
-    issuer: dashboard-financeiro-auth
-    secret: bG9jYWwtand0LXNoYXJlZC1zZWNyZXQtMzItYnl0ZXMhIQ==
+    issuer: ${JWT_ISSUER:dashboard-financeiro-auth}
+    secret: ${JWT_SECRET}
 
 gateway:
   security:
@@ -53,13 +53,7 @@ gateway:
   cors:
     allowed-origins:
       - http://localhost:5173
-    allowed-methods:
-      - GET
-      - POST
-      - PUT
-      - PATCH
-      - DELETE
-      - OPTIONS
+      - http://localhost:8080
 
 server:
   port: ${SERVER_PORT:8089}

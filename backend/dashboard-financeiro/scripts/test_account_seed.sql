@@ -1,34 +1,23 @@
 /*
-    Script de carga inicial para montar uma conta completa com dados suficientes
+    Script de carga inicial (MySQL) para montar uma conta completa com dados suficientes
     para testar os gráficos do dashboard financeiro.
 
     ⚠️ Ajuste o valor de @UserId para o identificador do usuário que será usado nos testes,
     de acordo com o cadastro existente no serviço de autenticação.
 */
 
-USE [dashboard_financeiro];
-GO
+USE dashboard_financeiro;
+SET @UserId = UUID_TO_BIN('311B8AF3-1790-4BA9-929D-A52172B81A17');
+SET @Now = UTC_TIMESTAMP(6);
 
-SET NOCOUNT ON;
-SET XACT_ABORT ON;
+SET @Month0 = DATE_SUB(DATE(@Now), INTERVAL (DAY(@Now) - 1) DAY); -- mês corrente
+SET @Month1 = DATE_ADD(@Month0, INTERVAL -1 MONTH);
+SET @Month2 = DATE_ADD(@Month0, INTERVAL -2 MONTH);
+SET @Month3 = DATE_ADD(@Month0, INTERVAL -3 MONTH);
+SET @Month4 = DATE_ADD(@Month0, INTERVAL -4 MONTH);
+SET @Month5 = DATE_ADD(@Month0, INTERVAL -5 MONTH);
 
-DECLARE @UserId UNIQUEIDENTIFIER = TRY_CONVERT(UNIQUEIDENTIFIER, '311B8AF3-1790-4BA9-929D-A52172B81A17');
-DECLARE @Now DATETIME2(0) = SYSUTCDATETIME();
-
-IF @UserId IS NULL
-BEGIN
-    RAISERROR('Defina um identificador de usuário válido antes de executar o script.', 16, 1);
-    RETURN;
-END;
-
-DECLARE @Month0 DATE = DATEFROMPARTS(YEAR(@Now), MONTH(@Now), 1); -- mês corrente
-DECLARE @Month1 DATE = DATEADD(MONTH, -1, @Month0);
-DECLARE @Month2 DATE = DATEADD(MONTH, -2, @Month0);
-DECLARE @Month3 DATE = DATEADD(MONTH, -3, @Month0);
-DECLARE @Month4 DATE = DATEADD(MONTH, -4, @Month0);
-DECLARE @Month5 DATE = DATEADD(MONTH, -5, @Month0);
-
-BEGIN TRANSACTION;
+START TRANSACTION;
 
     -- Limpa dados anteriores do usuário alvo
     DELETE t
@@ -46,156 +35,155 @@ BEGIN TRANSACTION;
     WHERE user_id = @UserId;
 
     -- Identificadores reutilizados
-    DECLARE @CheckingAccountId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @SavingsAccountId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CreditCardAccountId UNIQUEIDENTIFIER = NEWID();
-
-    DECLARE @CategorySalaryId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategorySideIncomeId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryInvestmentIncomeId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryRentId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryGroceriesId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryTransportId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryLeisureId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryUtilitiesId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryTransferId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryHealthId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryDiningId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryTravelId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryCreditId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @CategoryShoppingId UNIQUEIDENTIFIER = NEWID();
+SET @CheckingAccountId = UUID_TO_BIN(UUID());
+SET @SavingsAccountId = UUID_TO_BIN(UUID());
+SET @CreditCardAccountId = UUID_TO_BIN(UUID());
+SET @CategorySalaryId = UUID_TO_BIN(UUID());
+SET @CategorySideIncomeId = UUID_TO_BIN(UUID());
+SET @CategoryInvestmentIncomeId = UUID_TO_BIN(UUID());
+SET @CategoryRentId = UUID_TO_BIN(UUID());
+SET @CategoryGroceriesId = UUID_TO_BIN(UUID());
+SET @CategoryTransportId = UUID_TO_BIN(UUID());
+SET @CategoryLeisureId = UUID_TO_BIN(UUID());
+SET @CategoryUtilitiesId = UUID_TO_BIN(UUID());
+SET @CategoryTransferId = UUID_TO_BIN(UUID());
+SET @CategoryHealthId = UUID_TO_BIN(UUID());
+SET @CategoryDiningId = UUID_TO_BIN(UUID());
+SET @CategoryTravelId = UUID_TO_BIN(UUID());
+SET @CategoryCreditId = UUID_TO_BIN(UUID());
+SET @CategoryShoppingId = UUID_TO_BIN(UUID());
 
     -- Categorias usadas nos gráficos
     INSERT INTO categories (id, user_id, category_type, name, color, icon, active, created_at, updated_at)
     VALUES
-        (@CategorySalaryId, @UserId, 'INCOME',  N'Salario',              '#16A34A', 'mdi-briefcase',            1, @Now, @Now),
-        (@CategorySideIncomeId, @UserId, 'INCOME',  N'Servicos extras',      '#22C55E', 'mdi-cash-plus',           1, @Now, @Now),
-        (@CategoryInvestmentIncomeId, @UserId, 'INCOME',  N'Rendimentos',         '#0EA5E9', 'mdi-trending-up',         1, @Now, @Now),
-        (@CategoryRentId, @UserId, 'EXPENSE', N'Moradia',              '#F97316', 'mdi-home-city',           1, @Now, @Now),
-        (@CategoryGroceriesId, @UserId, 'EXPENSE', N'Mercado',              '#EF4444', 'mdi-cart',                 1, @Now, @Now),
-        (@CategoryTransportId, @UserId, 'EXPENSE', N'Transporte',           '#6366F1', 'mdi-bus',                  1, @Now, @Now),
-        (@CategoryLeisureId, @UserId, 'EXPENSE', N'Lazer',                 '#A855F7', 'mdi-party-popper',        1, @Now, @Now),
-        (@CategoryUtilitiesId, @UserId, 'EXPENSE', N'Servicos',             '#F59E0B', 'mdi-lightbulb-on-outline',1, @Now, @Now),
-        (@CategoryTransferId, @UserId, 'TRANSFER',N'Transferencias',        '#6B7280', 'mdi-swap-horizontal',     1, @Now, @Now),
-        (@CategoryHealthId, @UserId, 'EXPENSE', N'Saude',                 '#DC2626', 'mdi-heart-pulse',         1, @Now, @Now),
-        (@CategoryDiningId, @UserId, 'EXPENSE', N'Restaurantes',          '#FB7185', 'mdi-silverware-fork-knife',1, @Now, @Now),
-        (@CategoryTravelId, @UserId, 'EXPENSE', N'Viagens',               '#0EA5E9', 'mdi-airplane',             1, @Now, @Now),
-        (@CategoryCreditId, @UserId, 'EXPENSE', N'Cartao de credito',     '#FACC15', 'mdi-credit-card',          1, @Now, @Now),
-        (@CategoryShoppingId, @UserId, 'EXPENSE', N'Compras online',       '#EC4899', 'mdi-basket-outline',       1, @Now, @Now);
+        (@CategorySalaryId, @UserId, 'INCOME',  'Salario',              '#16A34A', 'mdi-briefcase',            1, @Now, @Now),
+        (@CategorySideIncomeId, @UserId, 'INCOME',  'Servicos extras',      '#22C55E', 'mdi-cash-plus',           1, @Now, @Now),
+        (@CategoryInvestmentIncomeId, @UserId, 'INCOME',  'Rendimentos',         '#0EA5E9', 'mdi-trending-up',         1, @Now, @Now),
+        (@CategoryRentId, @UserId, 'EXPENSE', 'Moradia',              '#F97316', 'mdi-home-city',           1, @Now, @Now),
+        (@CategoryGroceriesId, @UserId, 'EXPENSE', 'Mercado',              '#EF4444', 'mdi-cart',                 1, @Now, @Now),
+        (@CategoryTransportId, @UserId, 'EXPENSE', 'Transporte',           '#6366F1', 'mdi-bus',                  1, @Now, @Now),
+        (@CategoryLeisureId, @UserId, 'EXPENSE', 'Lazer',                 '#A855F7', 'mdi-party-popper',        1, @Now, @Now),
+        (@CategoryUtilitiesId, @UserId, 'EXPENSE', 'Servicos',             '#F59E0B', 'mdi-lightbulb-on-outline',1, @Now, @Now),
+        (@CategoryTransferId, @UserId, 'TRANSFER','Transferencias',        '#6B7280', 'mdi-swap-horizontal',     1, @Now, @Now),
+        (@CategoryHealthId, @UserId, 'EXPENSE', 'Saude',                 '#DC2626', 'mdi-heart-pulse',         1, @Now, @Now),
+        (@CategoryDiningId, @UserId, 'EXPENSE', 'Restaurantes',          '#FB7185', 'mdi-silverware-fork-knife',1, @Now, @Now),
+        (@CategoryTravelId, @UserId, 'EXPENSE', 'Viagens',               '#0EA5E9', 'mdi-airplane',             1, @Now, @Now),
+        (@CategoryCreditId, @UserId, 'EXPENSE', 'Cartao de credito',     '#FACC15', 'mdi-credit-card',          1, @Now, @Now),
+        (@CategoryShoppingId, @UserId, 'EXPENSE', 'Compras online',       '#EC4899', 'mdi-basket-outline',       1, @Now, @Now);
 
     -- Contas bancárias e cartão
     INSERT INTO bank_accounts (id, user_id, institution_name, branch_number, account_number, account_digit, account_type, nickname, current_balance, created_at, updated_at)
     VALUES
-        (@CheckingAccountId, @UserId, N'Banco Aurora', '0001', '123456', '7', 'CHECKING',   N'Conta principal',     9820.00, DATEADD(HOUR, 9, CAST(@Month5 AS DATETIME2)), @Now),
-        (@SavingsAccountId,  @UserId, N'Banco Aurora', '0001', '789012', '2', 'SAVINGS',    N'Poupanca familia',   14850.00, DATEADD(HOUR, 9, CAST(@Month5 AS DATETIME2)), @Now),
-        (@CreditCardAccountId,@UserId, N'Banco Aurora', '0001', '555000', '9', 'CREDIT_CARD',N'Cartao platinum',   -4950.00, DATEADD(HOUR, 9, CAST(@Month5 AS DATETIME2)), @Now);
+        (@CheckingAccountId, @UserId, 'Banco Aurora', '0001', '123456', '7', 'CHECKING',   'Conta principal',     9820.00, DATE_ADD(CAST(@Month5 AS DATETIME), INTERVAL 9 HOUR), @Now),
+        (@SavingsAccountId,  @UserId, 'Banco Aurora', '0001', '789012', '2', 'SAVINGS',    'Poupanca familia',   14850.00, DATE_ADD(CAST(@Month5 AS DATETIME), INTERVAL 9 HOUR), @Now),
+        (@CreditCardAccountId,@UserId, 'Banco Aurora', '0001', '555000', '9', 'CREDIT_CARD','Cartao platinum',   -4950.00, DATE_ADD(CAST(@Month5 AS DATETIME), INTERVAL 9 HOUR), @Now);
 
     -- Transações da conta corrente (últimos 6 meses)
     INSERT INTO transactions (id, bank_account_id, transaction_type, amount, transaction_date, description, category_id, notes, created_at, updated_at)
     VALUES
-        (NEWID(), @CheckingAccountId, 'INCOME',       7500.00, DATEADD(DAY, 0,  @Month5), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3000.00, DATEADD(DAY, 2,  @Month5), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1050.00, DATEADD(DAY, 4,  @Month5), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       320.00, DATEADD(DAY, 7,  @Month5), N'Transporte urbano',            @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       240.00, DATEADD(DAY, 11, @Month5), N'Cinema com amigos',            @CategoryLeisureId,        NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       600.00, DATEADD(DAY, 14, @Month5), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 14, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 14, @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT',  700.00, DATEADD(DAY, 20, @Month5), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1000.00, DATEADD(DAY, 25, @Month5), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month5) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       7500.00, DATEADD(DAY, 0,  @Month4), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3000.00, DATEADD(DAY, 3,  @Month4), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1100.00, DATEADD(DAY, 5,  @Month4), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       330.00, DATEADD(DAY, 8,  @Month4), N'Combustivel e transporte',     @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       420.00, DATEADD(DAY, 12, @Month4), N'Lazer fim de semana',          @CategoryLeisureId,        NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       620.00, DATEADD(DAY, 15, @Month4), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT',  850.00, DATEADD(DAY, 18, @Month4), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',        800.00, DATEADD(DAY, 20, @Month4), N'Projeto freelance',            @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1100.00, DATEADD(DAY, 25, @Month4), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month4) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       7500.00, DATEADD(DAY, 0,  @Month3), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       1500.00, DATEADD(DAY, 2,  @Month3), N'Bonus trimestral',             @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3000.00, DATEADD(DAY, 3,  @Month3), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1180.00, DATEADD(DAY, 6,  @Month3), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       360.00, DATEADD(DAY, 9,  @Month3), N'Transporte urbano',            @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1200.00, DATEADD(DAY, 12, @Month3), N'Planejamento viagem',          @CategoryTravelId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       610.00, DATEADD(DAY, 15, @Month3), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT', 1100.00, DATEADD(DAY, 18, @Month3), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1200.00, DATEADD(DAY, 24, @Month3), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 24, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 24, @Month3) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       7500.00, DATEADD(DAY, 0,  @Month2), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       1100.00, DATEADD(DAY, 4,  @Month2), N'Projeto consultoria',          @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',        150.00, DATEADD(DAY, 6,  @Month2), N'Reembolso despesas',           @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3100.00, DATEADD(DAY, 2,  @Month2), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1220.00, DATEADD(DAY, 7,  @Month2), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       380.00, DATEADD(DAY, 10, @Month2), N'Transporte urbano',            @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 10, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 10, @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       480.00, DATEADD(DAY, 13, @Month2), N'Passeio cultural',             @CategoryLeisureId,        NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       620.00, DATEADD(DAY, 16, @Month2), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 16, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 16, @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT',  950.00, DATEADD(DAY, 19, @Month2), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 19, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 19, @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1300.00, DATEADD(DAY, 25, @Month2), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month2) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       7500.00, DATEADD(DAY, 0,  @Month1), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',        900.00, DATEADD(DAY, 5,  @Month1), N'Projeto freelance',            @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3100.00, DATEADD(DAY, 2,  @Month1), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1260.00, DATEADD(DAY, 7,  @Month1), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       360.00, DATEADD(DAY, 9,  @Month1), N'Transporte urbano',            @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       420.00, DATEADD(DAY, 12, @Month1), N'Lazer com familia',            @CategoryLeisureId,        NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       590.00, DATEADD(DAY, 15, @Month1), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 15, @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT',  950.00, DATEADD(DAY, 18, @Month1), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 18, @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       450.00, DATEADD(DAY, 21, @Month1), N'Consulta medica',              @CategoryHealthId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 21, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 21, @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1250.00, DATEADD(DAY, 25, @Month1), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month1) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',       7600.00, DATEADD(DAY, 0,  @Month0), N'Salario mensal',               @CategorySalaryId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 0,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',        900.00, DATEADD(DAY, 3,  @Month0), N'Projeto freelance',            @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'INCOME',        250.00, DATEADD(DAY, 5,  @Month0), N'Reembolso despesas',           @CategorySideIncomeId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      3100.00, DATEADD(DAY, 2,  @Month0), N'Aluguel apartamento',          @CategoryRentId,           NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 2,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       680.00, DATEADD(DAY, 6,  @Month0), N'Compras supermercado',         @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       620.00, DATEADD(DAY, 9,  @Month0), N'Reposicao despensa',           @CategoryGroceriesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 9,  @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       390.00, DATEADD(DAY, 11, @Month0), N'Transporte urbano',            @CategoryTransportId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       460.00, DATEADD(DAY, 14, @Month0), N'Lazer fim de semana',          @CategoryLeisureId,        NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 14, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 14, @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       610.00, DATEADD(DAY, 17, @Month0), N'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 17, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 17, @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'TRANSFER_OUT', 1000.00, DATEADD(DAY, 19, @Month0), N'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 19, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 19, @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',       320.00, DATEADD(DAY, 22, @Month0), N'Restaurante com amigos',       @CategoryDiningId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 22, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 22, @Month0) AS DATETIME2))),
-        (NEWID(), @CheckingAccountId, 'EXPENSE',      1400.00, DATEADD(DAY, 25, @Month0), N'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month0) AS DATETIME2)));
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7500.00, DATE_ADD(@Month5, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3000.00, DATE_ADD(@Month5, INTERVAL 2 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1050.00, DATE_ADD(@Month5, INTERVAL 4 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       320.00, DATE_ADD(@Month5, INTERVAL 7 DAY), 'Transporte urbano',            @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       240.00, DATE_ADD(@Month5, INTERVAL 11 DAY), 'Cinema com amigos',            @CategoryLeisureId,        NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       600.00, DATE_ADD(@Month5, INTERVAL 14 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 14 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 14 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT',  700.00, DATE_ADD(@Month5, INTERVAL 20 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1000.00, DATE_ADD(@Month5, INTERVAL 25 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7500.00, DATE_ADD(@Month4, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3000.00, DATE_ADD(@Month4, INTERVAL 3 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1100.00, DATE_ADD(@Month4, INTERVAL 5 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       330.00, DATE_ADD(@Month4, INTERVAL 8 DAY), 'Combustivel e transporte',     @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       420.00, DATE_ADD(@Month4, INTERVAL 12 DAY), 'Lazer fim de semana',          @CategoryLeisureId,        NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       620.00, DATE_ADD(@Month4, INTERVAL 15 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT',  850.00, DATE_ADD(@Month4, INTERVAL 18 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',        800.00, DATE_ADD(@Month4, INTERVAL 20 DAY), 'Projeto freelance',            @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1100.00, DATE_ADD(@Month4, INTERVAL 25 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7500.00, DATE_ADD(@Month3, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       1500.00, DATE_ADD(@Month3, INTERVAL 2 DAY), 'Bonus trimestral',             @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3000.00, DATE_ADD(@Month3, INTERVAL 3 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1180.00, DATE_ADD(@Month3, INTERVAL 6 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       360.00, DATE_ADD(@Month3, INTERVAL 9 DAY), 'Transporte urbano',            @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1200.00, DATE_ADD(@Month3, INTERVAL 12 DAY), 'Planejamento viagem',          @CategoryTravelId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       610.00, DATE_ADD(@Month3, INTERVAL 15 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT', 1100.00, DATE_ADD(@Month3, INTERVAL 18 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1200.00, DATE_ADD(@Month3, INTERVAL 24 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 24 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 24 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7500.00, DATE_ADD(@Month2, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       1100.00, DATE_ADD(@Month2, INTERVAL 4 DAY), 'Projeto consultoria',          @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',        150.00, DATE_ADD(@Month2, INTERVAL 6 DAY), 'Reembolso despesas',           @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3100.00, DATE_ADD(@Month2, INTERVAL 2 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1220.00, DATE_ADD(@Month2, INTERVAL 7 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       380.00, DATE_ADD(@Month2, INTERVAL 10 DAY), 'Transporte urbano',            @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 10 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 10 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       480.00, DATE_ADD(@Month2, INTERVAL 13 DAY), 'Passeio cultural',             @CategoryLeisureId,        NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       620.00, DATE_ADD(@Month2, INTERVAL 16 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 16 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 16 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT',  950.00, DATE_ADD(@Month2, INTERVAL 19 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 19 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 19 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1300.00, DATE_ADD(@Month2, INTERVAL 25 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7500.00, DATE_ADD(@Month1, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',        900.00, DATE_ADD(@Month1, INTERVAL 5 DAY), 'Projeto freelance',            @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3100.00, DATE_ADD(@Month1, INTERVAL 2 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1260.00, DATE_ADD(@Month1, INTERVAL 7 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       360.00, DATE_ADD(@Month1, INTERVAL 9 DAY), 'Transporte urbano',            @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       420.00, DATE_ADD(@Month1, INTERVAL 12 DAY), 'Lazer com familia',            @CategoryLeisureId,        NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       590.00, DATE_ADD(@Month1, INTERVAL 15 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 15 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT',  950.00, DATE_ADD(@Month1, INTERVAL 18 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 18 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       450.00, DATE_ADD(@Month1, INTERVAL 21 DAY), 'Consulta medica',              @CategoryHealthId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 21 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 21 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1250.00, DATE_ADD(@Month1, INTERVAL 25 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',       7600.00, DATE_ADD(@Month0, INTERVAL 0 DAY), 'Salario mensal',               @CategorySalaryId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 0 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',        900.00, DATE_ADD(@Month0, INTERVAL 3 DAY), 'Projeto freelance',            @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'INCOME',        250.00, DATE_ADD(@Month0, INTERVAL 5 DAY), 'Reembolso despesas',           @CategorySideIncomeId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      3100.00, DATE_ADD(@Month0, INTERVAL 2 DAY), 'Aluguel apartamento',          @CategoryRentId,           NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 2 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       680.00, DATE_ADD(@Month0, INTERVAL 6 DAY), 'Compras supermercado',         @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       620.00, DATE_ADD(@Month0, INTERVAL 9 DAY), 'Reposicao despensa',           @CategoryGroceriesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 9 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       390.00, DATE_ADD(@Month0, INTERVAL 11 DAY), 'Transporte urbano',            @CategoryTransportId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       460.00, DATE_ADD(@Month0, INTERVAL 14 DAY), 'Lazer fim de semana',          @CategoryLeisureId,        NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 14 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 14 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       610.00, DATE_ADD(@Month0, INTERVAL 17 DAY), 'Contas de servicos',           @CategoryUtilitiesId,      NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 17 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 17 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'TRANSFER_OUT', 1000.00, DATE_ADD(@Month0, INTERVAL 19 DAY), 'Transferencia para poupanca',  @CategoryTransferId,       NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 19 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 19 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',       320.00, DATE_ADD(@Month0, INTERVAL 22 DAY), 'Restaurante com amigos',       @CategoryDiningId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 22 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 22 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CheckingAccountId, 'EXPENSE',      1400.00, DATE_ADD(@Month0, INTERVAL 25 DAY), 'Pagamento fatura cartao',      @CategoryCreditId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR));
 
     -- Transações da conta poupança
     INSERT INTO transactions (id, bank_account_id, transaction_type, amount, transaction_date, description, category_id, notes, created_at, updated_at)
     VALUES
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN', 700.00, DATEADD(DAY, 20, @Month5), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month5) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        15.00, DATEADD(DAY, 27, @Month5), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month5) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN', 850.00, DATEADD(DAY, 20, @Month4), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month4) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        18.00, DATEADD(DAY, 27, @Month4), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month4) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN', 1100.00, DATEADD(DAY, 20, @Month3), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month3) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        20.00, DATEADD(DAY, 27, @Month3), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month3) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN',  950.00, DATEADD(DAY, 20, @Month2), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month2) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_OUT', 400.00, DATEADD(DAY, 23, @Month2), N'Resgate para emergencias',   @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 23, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 23, @Month2) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        22.00, DATEADD(DAY, 27, @Month2), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month2) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN',  950.00, DATEADD(DAY, 20, @Month1), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month1) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        24.00, DATEADD(DAY, 27, @Month1), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month1) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_IN', 1000.00, DATEADD(DAY, 20, @Month0), N'Transferencia recebida',      @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 20, @Month0) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'TRANSFER_OUT', 500.00, DATEADD(DAY, 22, @Month0), N'Aporte em investimentos',     @CategoryTransferId,         NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 22, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 22, @Month0) AS DATETIME2))),
-        (NEWID(), @SavingsAccountId, 'INCOME',        25.00, DATEADD(DAY, 27, @Month0), N'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 27, @Month0) AS DATETIME2)));
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I', 700.00, DATE_ADD(@Month5, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        15.00, DATE_ADD(@Month5, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I', 850.00, DATE_ADD(@Month4, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        18.00, DATE_ADD(@Month4, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I', 1100.00, DATE_ADD(@Month3, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        20.00, DATE_ADD(@Month3, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I',  950.00, DATE_ADD(@Month2, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_OUT', 400.00, DATE_ADD(@Month2, INTERVAL 23 DAY), 'Resgate para emergencias',   @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 23 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 23 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        22.00, DATE_ADD(@Month2, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I',  950.00, DATE_ADD(@Month1, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        24.00, DATE_ADD(@Month1, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_I', 1000.00, DATE_ADD(@Month0, INTERVAL 20 DAY), 'Transferencia recebida',      @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 20 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'TRANSFER_OUT', 500.00, DATE_ADD(@Month0, INTERVAL 22 DAY), 'Aporte em investimentos',     @CategoryTransferId,         NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 22 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 22 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @SavingsAccountId, 'INCOME',        25.00, DATE_ADD(@Month0, INTERVAL 27 DAY), 'Rendimento poupanca',        @CategoryInvestmentIncomeId, NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 27 DAY) AS DATETIME), INTERVAL 10 HOUR));
 
     -- Transações do cartão de crédito
     INSERT INTO transactions (id, bank_account_id, transaction_type, amount, transaction_date, description, category_id, notes, created_at, updated_at)
     VALUES
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     820.00, DATEADD(DAY, 3,  @Month5), N'Compras online',             @CategoryShoppingId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 3,  @Month5) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     380.00, DATEADD(DAY, 8,  @Month5), N'Jantar fora',                @CategoryDiningId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month5) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1000.00, DATEADD(DAY, 25, @Month5), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month5) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month5) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     940.00, DATEADD(DAY, 4,  @Month4), N'Itens para casa',            @CategoryShoppingId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 4,  @Month4) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     420.00, DATEADD(DAY, 10, @Month4), N'Passeio e lazer',            @CategoryLeisureId,    NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 10, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 10, @Month4) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1100.00, DATEADD(DAY, 25, @Month4), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month4) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month4) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',    1120.00, DATEADD(DAY, 5,  @Month3), N'Reserva de hotel',           @CategoryTravelId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 5,  @Month3) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     460.00, DATEADD(DAY, 11, @Month3), N'Restaurante viagem',         @CategoryDiningId,     NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 11, @Month3) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1200.00, DATEADD(DAY, 24, @Month3), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 24, @Month3) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 24, @Month3) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',    1180.00, DATEADD(DAY, 6,  @Month2), N'Eletronicos',                @CategoryShoppingId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 6,  @Month2) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     520.00, DATEADD(DAY, 12, @Month2), N'Entretenimento',             @CategoryLeisureId,    NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 12, @Month2) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1300.00, DATEADD(DAY, 25, @Month2), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month2) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month2) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',    1100.00, DATEADD(DAY, 7,  @Month1), N'Compras supermercado',        @CategoryGroceriesId,  NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 7,  @Month1) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     480.00, DATEADD(DAY, 13, @Month1), N'Cinema e lanches',            @CategoryLeisureId,    NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month1) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1250.00, DATEADD(DAY, 25, @Month1), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month1) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month1) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',    1050.00, DATEADD(DAY, 8,  @Month0), N'Assinaturas e servicos',      @CategoryUtilitiesId,  NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 8,  @Month0) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'EXPENSE',     530.00, DATEADD(DAY, 13, @Month0), N'Compras online',             @CategoryShoppingId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 13, @Month0) AS DATETIME2))),
-        (NEWID(), @CreditCardAccountId, 'TRANSFER_IN',1400.00, DATEADD(DAY, 25, @Month0), N'Pagamento recebido',         @CategoryTransferId,   NULL, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month0) AS DATETIME2)), DATEADD(HOUR, 10, CAST(DATEADD(DAY, 25, @Month0) AS DATETIME2)));
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     820.00, DATE_ADD(@Month5, INTERVAL 3 DAY), 'Compras online',             @CategoryShoppingId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 3 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     380.00, DATE_ADD(@Month5, INTERVAL 8 DAY), 'Jantar fora',                @CategoryDiningId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1000.00, DATE_ADD(@Month5, INTERVAL 25 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month5, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     940.00, DATE_ADD(@Month4, INTERVAL 4 DAY), 'Itens para casa',            @CategoryShoppingId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 4 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     420.00, DATE_ADD(@Month4, INTERVAL 10 DAY), 'Passeio e lazer',            @CategoryLeisureId,    NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 10 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 10 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1100.00, DATE_ADD(@Month4, INTERVAL 25 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month4, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',    1120.00, DATE_ADD(@Month3, INTERVAL 5 DAY), 'Reserva de hotel',           @CategoryTravelId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 5 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     460.00, DATE_ADD(@Month3, INTERVAL 11 DAY), 'Restaurante viagem',         @CategoryDiningId,     NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 11 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1200.00, DATE_ADD(@Month3, INTERVAL 24 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 24 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month3, INTERVAL 24 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',    1180.00, DATE_ADD(@Month2, INTERVAL 6 DAY), 'Eletronicos',                @CategoryShoppingId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 6 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     520.00, DATE_ADD(@Month2, INTERVAL 12 DAY), 'Entretenimento',             @CategoryLeisureId,    NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 12 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1300.00, DATE_ADD(@Month2, INTERVAL 25 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month2, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',    1100.00, DATE_ADD(@Month1, INTERVAL 7 DAY), 'Compras supermercado',        @CategoryGroceriesId,  NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 7 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     480.00, DATE_ADD(@Month1, INTERVAL 13 DAY), 'Cinema e lanches',            @CategoryLeisureId,    NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1250.00, DATE_ADD(@Month1, INTERVAL 25 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month1, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',    1050.00, DATE_ADD(@Month0, INTERVAL 8 DAY), 'Assinaturas e servicos',      @CategoryUtilitiesId,  NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 8 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'EXPENSE',     530.00, DATE_ADD(@Month0, INTERVAL 13 DAY), 'Compras online',             @CategoryShoppingId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 13 DAY) AS DATETIME), INTERVAL 10 HOUR)),
+        (UUID_TO_BIN(UUID()), @CreditCardAccountId, 'TRANSFER_I',1400.00, DATE_ADD(@Month0, INTERVAL 25 DAY), 'Pagamento recebido',         @CategoryTransferId,   NULL, DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR), DATE_ADD(CAST(DATE_ADD(@Month0, INTERVAL 25 DAY) AS DATETIME), INTERVAL 10 HOUR));
 
     -- Metas financeiras utilizadas nos gráficos
-    DECLARE @GoalEmergencyId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @GoalTripId UNIQUEIDENTIFIER = NEWID();
-    DECLARE @GoalLeisureId UNIQUEIDENTIFIER = NEWID();
+SET @GoalEmergencyId = UUID_TO_BIN(UUID());
+SET @GoalTripId = UUID_TO_BIN(UUID());
+SET @GoalLeisureId = UUID_TO_BIN(UUID());
 
     INSERT INTO financial_goals (
         id,
@@ -217,26 +205,26 @@ BEGIN TRANSACTION;
         updated_at
     )
     VALUES
-        (@GoalEmergencyId, @UserId, N'Reserva de emergencia', 'SAVINGS', NULL,
+        (@GoalEmergencyId, @UserId, 'Reserva de emergencia', 'SAVINGS', NULL,
          20000.00, 15000.00,
-         DATEADD(MONTH, -8, @Month0), DATEADD(MONTH, 4, @Month0),
-         'IN_PROGRESS', N'Construcao de reserva equivalente a seis meses de despesas.',
+         DATE_ADD(@Month0, INTERVAL -8 MONTH), DATE_ADD(@Month0, INTERVAL 4 MONTH),
+         'IN_PROGRESS', 'Construcao de reserva equivalente a seis meses de despesas.',
          1, 1, 1, NULL,
-         DATEADD(MONTH, -8, CAST(@Month0 AS DATETIME2)), @Now),
-        (@GoalTripId, @UserId, N'Viagem internacional', 'SAVINGS', @CategoryTravelId,
+         DATE_ADD(CAST(@Month0 AS DATETIME), INTERVAL -8 MONTH), @Now),
+        (@GoalTripId, @UserId, 'Viagem internacional', 'SAVINGS', @CategoryTravelId,
          8000.00, 8200.00,
-         DATEADD(MONTH, -10, @Month0), DATEADD(MONTH, 2, @Month0),
-         'ACHIEVED', N'Guardar recursos para viagem de ferias no exterior.',
-         1, 1, 1, DATEADD(MONTH, -1, CAST(@Month0 AS DATETIME2)),
-         DATEADD(MONTH, -10, CAST(@Month0 AS DATETIME2)), @Now),
-        (@GoalLeisureId, @UserId, N'Limite de gastos com lazer', 'EXPENSE_LIMIT', @CategoryLeisureId,
+         DATE_ADD(@Month0, INTERVAL -10 MONTH), DATE_ADD(@Month0, INTERVAL 2 MONTH),
+         'ACHIEVED', 'Guardar recursos para viagem de ferias no exterior.',
+         1, 1, 1, DATE_ADD(CAST(@Month0 AS DATETIME), INTERVAL -1 MONTH),
+         DATE_ADD(CAST(@Month0 AS DATETIME), INTERVAL -10 MONTH), @Now),
+        (@GoalLeisureId, @UserId, 'Limite de gastos com lazer', 'EXPENSE_LIMIT', @CategoryLeisureId,
          1000.00, 1250.00,
-         DATEADD(MONTH, -2, @Month0), DATEADD(MONTH, 1, @Month0),
-         'EXCEEDED', N'Manter despesas de lazer sob controle mensal.',
+         DATE_ADD(@Month0, INTERVAL -2 MONTH), DATE_ADD(@Month0, INTERVAL 1 MONTH),
+         'EXCEEDED', 'Manter despesas de lazer sob controle mensal.',
          1, 0, 1, NULL,
-         DATEADD(MONTH, -2, CAST(@Month0 AS DATETIME2)), @Now);
+         DATE_ADD(CAST(@Month0 AS DATETIME), INTERVAL -2 MONTH), @Now);
 
-COMMIT TRANSACTION;
+COMMIT;
 
 -- Visão rápida das inserções
 SELECT ba.id,

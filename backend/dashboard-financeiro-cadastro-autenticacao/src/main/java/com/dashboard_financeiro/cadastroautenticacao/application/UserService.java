@@ -2,6 +2,7 @@ package com.dashboard_financeiro.cadastroautenticacao.application;
 
 import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.entity.UserJpaEntity;
 import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.repository.UserJpaRepository;
+import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.repository.EmailVerificationTokenRepository;
 import com.dashboard_financeiro.cadastroautenticacao.messaging.UserEventProducer;
 import com.dashboard_financeiro.cadastroautenticacao.messaging.event.UserRegisteredEvent;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.CreateUserRequest;
@@ -28,6 +29,7 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final UserEventProducer eventProducer;
     private final EmailVerificationService emailVerificationService;
+    private final EmailVerificationTokenRepository tokenRepository;
 
     @Transactional
     public UserDTO register(CreateUserRequest req) {
@@ -92,6 +94,16 @@ public class UserService {
         entity.setZipCode(normalizeZipCode(request.zipCode()));
 
         return UserDTO.from(entity);
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        UserJpaEntity entity = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        tokenRepository.deleteByUser_Id(id);
+        repo.delete(entity);
+        log.info("Usuário removido com sucesso: {}", id);
     }
 
     private void enqueueUserRegisteredEvent(UserJpaEntity entity) {

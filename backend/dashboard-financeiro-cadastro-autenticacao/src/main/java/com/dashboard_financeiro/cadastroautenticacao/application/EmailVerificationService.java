@@ -4,6 +4,7 @@ import com.dashboard_financeiro.cadastroautenticacao.config.EmailVerificationPro
 import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.entity.EmailVerificationTokenEntity;
 import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.entity.UserJpaEntity;
 import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.repository.EmailVerificationTokenRepository;
+import com.dashboard_financeiro.cadastroautenticacao.infrastructure.persistence.repository.UserJpaRepository;
 import com.dashboard_financeiro.cadastroautenticacao.messaging.UserEventProducer;
 import com.dashboard_financeiro.cadastroautenticacao.messaging.event.EmailVerificationRequestedEvent;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class EmailVerificationService {
     private final EmailVerificationProperties properties;
     private final UserEventProducer userEventProducer;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final UserJpaRepository userJpaRepository;
 
     @Transactional
     public void createTokenFor(UserJpaEntity user) {
@@ -94,6 +96,7 @@ public class EmailVerificationService {
         tokenRepository.markAllAsVerified(user.getId(), now);
 
         user.setEmailVerified(true);
+        userJpaRepository.save(user); // persist verification flag update
         log.info("E-mail do usuário {} verificado com sucesso.", user.getId());
     }
 

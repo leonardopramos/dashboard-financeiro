@@ -18,7 +18,7 @@ public record NotificationEmailProperties(
             fallback = from;
         }
         if (dashboardUrl == null || dashboardUrl.isBlank()) {
-            dashboardUrl = "https://app.dashboard-financeiro.local";
+            dashboardUrl = "https://dashboard-financeiro-frontend-production-9e02.up.railway.app/login";
         }
     }
 }

@@ -8,20 +8,19 @@
   - `/api/auth/**` e `/api/users/**` → serviço de cadastro/autenticação.
   - `/api/finance/**` → serviço financeiro.
   - `/api/notifications/**` → serviço de notificações.
-- Infraestrutura compartilhada: SQL Server (1433), Kafka (9094), Kafka UI (8085) e, opcionalmente, MailHog (SMTP 1025 / UI 8025).
+- Infraestrutura compartilhada: MySQL (3306), Kafka (9094), Kafka UI (8085) e o serviço de e-mails Resend (via API HTTP).
 
 ## 1. Pré-requisitos
 - Java 25 configurado no `PATH`.
 - Docker + Docker Compose.
 - Ferramenta HTTP (`curl`, Insomnia exportado em `backend/dashboard-financeiro/insomnia/dashboard-financeiro-export.yaml`, etc.).
-- Opcional: MailHog para capturar e-mails.
+- Conta Resend com chave de API ativa (ou defina `MAIL_ENABLED=false` em desenvolvimento).
 
 ## 2. Subir infraestrutura compartilhada
 ```bash
 cd backend
-docker compose up -d sqlserver zookeeper kafka kafka-ui
-# Opcional: SMTP fake para testes
-docker run -d --rm --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
+docker compose up -d mysql zookeeper kafka kafka-ui
+# Para desenvolvimento sem envios reais, defina MAIL_ENABLED=false ou use uma chave sandbox da Resend
 ```
 
 ## 3. Variáveis de ambiente comuns
@@ -30,8 +29,10 @@ Crie um arquivo `backend/.env-backend` (ou exporte no shell) com os valores comp
 export JWT_SECRET=uma-chave-segura-com-32-bytes
 export MAIL_FROM=no-reply@dashboard.local
 export MAIL_FALLBACK=suporte@dashboard.local
-export MAIL_HOST=localhost
-export MAIL_PORT=1025
+export MAIL_ENABLED=true            # defina false para suprimir envios locais
+export RESEND_API_KEY=chave-da-resend
+# Opcional: override do endpoint caso use sandbox
+export RESEND_BASE_URL=https://api.resend.com
 ```
 > No Linux/macOS use `source backend/.env-backend` em cada terminal antes de iniciar os serviços. No Windows use `set`/`setx` equivalentes.
 
@@ -156,7 +157,7 @@ export MAIL_PORT=1025
    Resultado esperado:
    - HTTP 201 com a transação criada.
    - Serviço financeiro recalcula saldo e publica `TransactionCreatedEvent` (tópico `transactions.events`) e, se a meta mudou de status, `GoalStatusChangedEvent`.
-   - Serviço de notificações consome o(s) evento(s) e gera log `EmailNotificationService` indicando e-mail enfileirado/enviado. Com MailHog ativo, visualizar em `http://localhost:8025`.
+  - Serviço de notificações consome o(s) evento(s) e gera log `EmailNotificationService` indicando e-mail enfileirado/enviado. Consulte o painel da Resend ou os logs para confirmar o conteúdo.
 
 7. **Consultar dashboard consolidado (Gateway → Financeiro)**
    ```bash
@@ -180,7 +181,7 @@ export MAIL_PORT=1025
 
 ## 6. Monitoramento em paralelo
 - Kafka UI (`http://localhost:8085`) para conferir mensagens nos tópicos `user.events`, `transactions.events` e `goals.events`.
-- MailHog (`http://localhost:8025`) para confirmar o conteúdo dos e-mails.
+- Painel da Resend (ou logs locais) para confirmar o conteúdo dos e-mails enviados.
 - Logs dos serviços:
   - Auth: confirma criação do usuário.
   - Financeiro: mostra publicação dos eventos e cálculo de metas.
@@ -199,6 +200,4 @@ Os comandos validam a compilação e o carregamento de contexto.
 ```bash
 # Interrompa cada serviço com CTRL+C
 docker compose down
-docker stop mailhog 2>/dev/null
 ```
-> Se MailHog foi iniciado com `--rm`, ele é removido automaticamente.

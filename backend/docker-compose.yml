@@ -1,21 +1,26 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: dashboard-sqlserver
+  mysql:
+    image: mysql:8.0
+    container_name: dashboard-mysql
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --explicit_defaults_for_timestamp=1
     ports:
-      - "1433:1433"
+      - "3306:3306"
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Strong@Passw0rd
-      - MSSQL_PID=Express
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_HOST=%
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - mysql_data:/var/lib/mysql
+      - ../scripts/mysql-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Strong@Passw0rd -Q 'SELECT 1'"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 60s
     networks:
       - dashboard-network
     restart: unless-stopped
@@ -72,7 +77,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  sqlserver_data:
+  mysql_data:
   zookeeper_data:
   zookeeper_logs:
   kafka_data:
@@ -80,4 +85,3 @@ volumes:
 networks:
   dashboard-network:
     driver: bridge
-

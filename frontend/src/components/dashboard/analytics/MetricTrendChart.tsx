@@ -82,12 +82,12 @@ const MetricTrendChart = ({
             },
           },
         ]}
-        slotProps={{
-          legend: { hidden: true },
-        }}
         sx={{
           '& .MuiLineElement-root': {
             strokeWidth: 2.5,
+          },
+          '& .MuiChartsLegend-root': {
+            display: 'none',
           },
         }}
       />

@@ -9,7 +9,13 @@ import type {
   ResendVerificationPayload,
 } from '../types/auth';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8089/api';
+const runtimeConfig =
+  typeof window !== 'undefined' ? window.__APP_CONFIG__ : undefined;
+
+const API_BASE_URL =
+  runtimeConfig?.VITE_API_BASE_URL ??
+  import.meta.env.VITE_API_BASE_URL ??
+  'http://localhost:8089/api';
 
 export const ACCESS_TOKEN_KEY = 'dashboard-financeiro/accessToken';
 export const REFRESH_TOKEN_KEY = 'dashboard-financeiro/refreshToken';
@@ -69,6 +75,10 @@ export const authService = {
   updateUser: async (userId: string, payload: UpdateUserRequest): Promise<User> => {
     const response = await api.put<User>(`/users/${userId}`, payload);
     return response.data;
+  },
+
+  deleteUser: async (userId: string): Promise<void> => {
+    await api.delete(`/users/${userId}`);
   },
 
   logout: async (refreshToken?: string): Promise<void> => {

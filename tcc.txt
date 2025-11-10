@@ -814,11 +814,11 @@ e de validação em respostas padronizadas com carimbo de tempo e caminho requis
 modelagem de domínio conta com enumerados para tipo de conta (AccountType) e transação (TransactionType), além de exceções especializadas para cenários de inconsistência
 ou inexistência de recursos.
 Na camada de persistência, o serviço utiliza Spring Data JPA conectado a banco
-SQL Server. As entidades BankAccountJpaEntity e TransactionJpaEntity mapeiam as
+MySQL. As entidades BankAccountJpaEntity e TransactionJpaEntity mapeiam as
 tabelas bank_accounts e transactions. O controle de esquema é realizado com Liquibase, cujo changelog mestre (db/changelog/db.changelog-master.xml) referencia o script
 db/changelog/scripts/0001_create_bank_and_transactions.sql. Esse script cria tabelas, índices e chaves estrangeiras com cláusula ON DELETE CASCADE. A atualização do saldo
 ocorre dentro da mesma transação JPA que grava a movimentação, evitando inconsistências. Do ponto de vista de infraestrutura, o serviço já está preparado para executar junto ao
-docker-compose.yml do projeto, consumindo o SQL Server (sqlserver) e o cluster Kafka
+docker-compose.yml do projeto, consumindo o MySQL (mysql) e o cluster Kafka
 (zookeeper, kafka, kafka-ui) oferecidos pelo ambiente containerizado. O profile docker
 ajusta a URL do datasource para a rede dashboard-network e mantém as configurações de
 Kafka apontando para localhost:9092. Em relação à qualidade, os testes automatizados
@@ -850,7 +850,7 @@ changelog Liquibase incorpora o script db/changelog/scripts/0001_create_table_us
 sql, que cria a estrutura base com índices e restrições pertinentes. Em termos de tokens,
 JwtService gera JWTs com HS256 a partir de chave secreta codificada, permitindo emissão e verificação do subject; BCryptPasswordEncoder padroniza o armazenamento das senhas. Assim como no serviço financeiro, os testes automatizados restringem-se ao carregamento de contexto (ApplicationTests) e demandam evolução para cobrir as regras de
 autenticação. O módulo integra-se ao mesmo docker-compose.yml, utilizando o banco SQL
-Server (sqlserver) e prevendo integrações futuras com Kafka (kafka:9092) dentro da rede
+Server (mysql) e prevendo integrações futuras com Kafka (kafka:9092) dentro da rede
 dashboard-network.
 Esse panorama demonstra que o projeto avançou de forma consistente na construção das fundações técnicas: serviços implantados com arquitetura definida, pipelines de
 persistência versionados, componentes de segurança configurados e ambiente containerizado preparado. As próximas etapas concentram-se na ampliação de testes automatiza-

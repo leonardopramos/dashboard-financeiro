@@ -16,4 +16,7 @@ public interface EmailVerificationTokenRepository extends JpaRepository<EmailVer
     @Modifying(clearAutomatically = true)
     @Query("update EmailVerificationTokenEntity t set t.verifiedAt = :timestamp where t.user.id = :userId and t.verifiedAt is null")
     void markAllAsVerified(UUID userId, LocalDateTime timestamp);
+
+    @Modifying
+    void deleteByUser_Id(UUID userId);
 }

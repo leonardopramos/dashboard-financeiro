@@ -1,0 +1,213 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dashboard-mysql
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --explicit_defaults_for_timestamp=1
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/mysql-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - "-h"
+        - localhost
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: dashboard-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: dashboard-kafka
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: dashboard-kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  finance-service:
+    image: ${DOCKERHUB_NAMESPACE}/dashboard-financeiro-finance:${IMAGE_TAG}
+    build:
+      context: ./backend/dashboard-financeiro
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: ${FINANCE_SERVER_PORT}
+      FINANCE_DB_URL: ${FINANCE_DB_URL_DOCKER}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_DOCKER}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  auth-service:
+    image: ${DOCKERHUB_NAMESPACE}/dashboard-financeiro-auth:${IMAGE_TAG}
+    build:
+      context: ./backend/dashboard-financeiro-cadastro-autenticacao
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: ${AUTH_SERVER_PORT}
+      AUTH_DB_URL: ${AUTH_DB_URL_DOCKER}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_DOCKER}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  notifications-service:
+    image: ${DOCKERHUB_NAMESPACE}/dashboard-financeiro-notifications:${IMAGE_TAG}
+    build:
+      context: ./backend/dashboard-financeiro-notificacoes
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: ${NOTIFICATIONS_SERVER_PORT}
+      NOTIFICATIONS_DB_URL: ${NOTIFICATIONS_DB_URL_DOCKER}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_DOCKER}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_ENABLED: ${MAIL_ENABLED}
+      MAIL_FALLBACK: ${MAIL_FALLBACK}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_BASE_URL: ${RESEND_BASE_URL}
+      APP_DASHBOARD_URL: ${APP_DASHBOARD_URL_DOCKER}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  api-gateway:
+    image: ${DOCKERHUB_NAMESPACE}/dashboard-financeiro-gateway:${IMAGE_TAG}
+    build:
+      context: ./backend/dashboard-financeiro-api-gateway/API-Gateway-Dashboard-Financeiro
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: ${GATEWAY_SERVER_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL_DOCKER}
+      FINANCE_SERVICE_URL: ${FINANCE_SERVICE_URL_DOCKER}
+      NOTIFICATIONS_SERVICE_URL: ${NOTIFICATIONS_SERVICE_URL_DOCKER}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    ports:
+      - "${GATEWAY_SERVER_PORT}:${GATEWAY_SERVER_PORT}"
+    depends_on:
+      auth-service:
+        condition: service_started
+      finance-service:
+        condition: service_started
+      notifications-service:
+        condition: service_started
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  frontend:
+    image: ${DOCKERHUB_NAMESPACE}/dashboard-financeiro-frontend:${IMAGE_TAG}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      PORT: ${FRONTEND_SERVER_PORT}
+    ports:
+      - "${FRONTEND_SERVER_PORT}:8080"
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  zookeeper_data:
+  zookeeper_logs:
+  kafka_data:
+
+networks:
+  dashboard-network:
+    driver: bridge
