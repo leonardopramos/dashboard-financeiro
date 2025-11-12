@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: exemplo.aux
+A level-1 auxiliary file: exemplo-cap1.aux
+A level-1 auxiliary file: exemplo-cap2.aux
+A level-1 auxiliary file: exemplo-cap3.aux
+A level-1 auxiliary file: exemplo-cap4.aux
+A level-1 auxiliary file: exemplo-cap5.aux
+A level-1 auxiliary file: exemplo-cap6.aux
+The style file: tcc-alpha.bst
+Database file #1: exemplo-bib.bib
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty numpages in FEW2017
+Warning--empty numpages in GITMAN2018
+Warning--empty numpages in MUNZNER2014
+Warning--empty numpages in NIELSEN1994
+You've used 18 entries,
+            3325 wiz_defined-function locations,
+            795 strings with 9089 characters,
+and the built_in function-call counts, 8165 in all, are:
+= -- 676
+> -- 180
+< -- 15
++ -- 52
+- -- 51
+* -- 544
+:= -- 1018
+add.period$ -- 54
+call.type$ -- 18
+change.case$ -- 106
+chr.to.int$ -- 18
+cite$ -- 40
+duplicate$ -- 756
+empty$ -- 751
+format.name$ -- 87
+if$ -- 1705
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 158
+newline$ -- 91
+num.names$ -- 54
+pop$ -- 406
+preamble$ -- 1
+purify$ -- 112
+quote$ -- 0
+skip$ -- 249
+stack$ -- 0
+substring$ -- 323
+swap$ -- 270
+text.length$ -- 15
+text.prefix$ -- 15
+top$ -- 0
+type$ -- 128
+warning$ -- 4
+while$ -- 53
+width$ -- 22
+write$ -- 192
+(There were 4 warnings)

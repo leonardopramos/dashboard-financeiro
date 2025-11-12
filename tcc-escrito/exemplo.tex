@@ -1,0 +1,123 @@
+%----------------------------------------------------------------------------------
+% Arquivo principal do TCC usando a classe tcc.cls
+%----------------------------------------------------------------------------------
+
+\documentclass[portuguese,oneside]{tcc}
+
+% Pacotes adicionais (a classe já carrega vários por padrão)
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,shapes.misc,arrows.meta,fit}
+\pgfplotsset{compat=1.18}
+\usepackage{multirow}
+\usepackage{nicefrac}
+\usepackage{algorithmic}
+\usepackage{hyphenat}
+\usepackage[shortcuts]{extdash}
+\newcommand{\safeincludegraphics}[2][]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+    \fbox{\parbox[c][0.3\linewidth][c]{0.6\linewidth}{\centering Imagem não disponível\\\texttt{\detokenize{#2}}}}%
+  }%
+}
+
+%----------------------------------------------------------------
+% Autor e metadados
+%----------------------------------------------------------------
+\author{Leonardo Preczevski Ramos}
+
+\title{Dashboard Financeiro}
+      {Financial Dashboard}
+
+% Tipo de trabalho
+%\tipotrabalho{\ptci}
+%\tipotrabalho{\tci}
+\tipotrabalho{\tcii}
+
+% Curso
+%\curso{\cc}
+\curso{\si}
+%\curso{\es}
+
+% Orientação
+\orientador{Ana Paula Terra Bacelo}
+%\coorientador{Ciclano de Farias}
+
+%----------------------------------------------------------------
+\begin{document}
+
+%----------------------------------------------------------------
+% Dedicatória e epígrafe
+%----------------------------------------------------------------
+\dedicatoria{Dedico este trabalho aos meus pais, que sempre estiveram ao meu lado em todos os momentos.
+Em especial ao meu pai, que passou a vida trabalhando em sua oficina de chapeação e pintura,
+dedicando suas mãos ao ofício com esforço e dignidade, para que eu pudesse construir um futuro diferente.
+Este diploma é tão deles quanto meu.}
+
+\epigrafe{The best way to predict the future is to invent it.}{Alan Kay}
+
+%----------------------------------------------------------------
+% Agradecimentos (opcional)
+%----------------------------------------------------------------
+\begin{agradecimentos}
+Agradeço aos meus pais, pelo suporte constante, esforço e dedicação incansáveis — pilares que sustentaram minha trajetória.
+À minha família e amigos, que sempre acreditaram em mim mesmo quando as dificuldades pareciam maiores que os resultados.
+
+Sou grato também aos colegas e professores que, de alguma forma, contribuíram para meu crescimento acadêmico e pessoal ao longo da graduação.
+Cada troca, desafio e conversa teve seu valor neste caminho de aprendizado.
+\end{agradecimentos}
+
+%----------------------------------------------------------------
+% Resumo e Abstract
+%----------------------------------------------------------------
+\begin{resumo}{educação financeira, microserviços, dashboards, implantação em nuvem, validação}
+Este trabalho consiste na concepção e entrega do \textbf{Dashboard Financeiro}, aplicação web \textit{full-stack} voltada a orientar pessoas diante do cenário brasileiro de endividamento elevado. O documento apresenta o contexto socioeconômico que justifica a proposta, analisa referências teóricas e ferramentas concorrentes, e descreve a solução construída para unir controle financeiro cotidiano, visualizações analíticas e educação no fluxo de uso.
+O leitor encontra a arquitetura detalhada da plataforma, composta por frontend em \textbf{React 19}, quatro microserviços \textbf{Spring Boot} (cadastro/autenticação, operações financeiras, notificações e \textit{API Gateway}), comunicação via Apache Kafka, segurança com \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, persistência distribuída em \textbf{MySQL}~\cite{MYSQL2025} e envio de e-mails transacionais pela Resend. O texto evidencia as principais funcionalidades — onboarding seguro, gestão de contas, categorias e transações, metas com alertas, dashboards resumidos e analíticos e módulo educacional — bem como a implantação efetiva no Railway sob o domínio \texttt{app.tccleonardopreczevski.com.br}, com DNS autenticado na KingHost.
+Os capítulos de cronograma, recursos e considerações finais documentam a rastreabilidade das entregas, os ambientes utilizados e as validações conduzidas com usuários e orientação acadêmica, além de discutir limitações atuais (integrações bancárias automáticas e observabilidade avançada) e os próximos passos planejados.
+\end{resumo}
+
+\begin{abstract}{financial education, microservices, dashboards, cloud deployment, validation}
+This work consists of designing and delivering the \textbf{Financial Dashboard}, a full-stack web application that guides people through personal finance decisions in the face of Brazil’s high household debt rates. The document frames the socioeconomic motivation, revisits theoretical references and competing products, and then describes the solution that combines day-to-day budgeting, analytical dashboards, and embedded education.
+It details the platform architecture: a \textbf{React 19} frontend, four \textbf{Spring Boot} microservices (sign-up/authentication, financial operations, notifications, and the \textit{API Gateway}) connected through Apache Kafka, secured with \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, persisted on distributed \textbf{MySQL}~\cite{MYSQL2025} schemas, and integrated with Resend for transactional e-mails. The main features—secure onboarding, bank-account/category/transaction management, goal tracking with alerts, summary and analytical dashboards, and the educational module—are presented alongside evidence of the production deployment on Railway using the custom domain \texttt{app.tccleonardopreczevski.com.br} authenticated via KingHost.
+Subsequent chapters cover the schedule, resources, and final considerations that record delivery traceability, working environments, and validations carried out with users and faculty, while also discussing current limitations (manual bank integrations and limited observability) and future enhancements. The abstract therefore previews the complete journey from the problem statement to the verified, cloud-hosted solution.
+\end{abstract}
+
+%----------------------------------------------------------------
+% Listas e Sumário (mantenha sem texto entre as linhas)
+%----------------------------------------------------------------
+\listoffigures       % (OPCIONAL)
+\listoftables        % (OPCIONAL)
+\listofalgorithms    % (OPCIONAL)
+\listofacronyms      % (OPCIONAL)
+\listofabbreviations % (OPCIONAL)
+\listofsymbols       % (OPCIONAL)
+\tableofcontents     % (OBRIGATÓRIO)
+
+%----------------------------------------------------------------
+% Capítulos (NÃO coloque conteúdo de capítulos aqui)
+%----------------------------------------------------------------
+\include{exemplo-cap1} % Introdução
+\include{exemplo-cap2} % Fundamentação Teórica
+\include{exemplo-cap3} % Proposta
+\include{exemplo-cap4}
+\include{exemplo-cap5}
+\include{exemplo-cap6}
+
+%----------------------------------------------------------------
+% Bibliografia
+%----------------------------------------------------------------
+\bibliographystyle{tcc-alpha}
+\bibliography{exemplo-bib}
+
+%----------------------------------------------------------------
+% Apêndices e Anexos
+%----------------------------------------------------------------
+\appendix
+\chapter{Meu primeiro apêndice}
+\chapter{My second appendix}
+
+\anexos
+\chapter{Meu primeiro anexo}
+\chapter{My second attachment}
+
+\end{document}

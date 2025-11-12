@@ -1,0 +1,86 @@
+\chapter{\label{chap:chap5}Recursos a Serem Utilizados}
+
+O desenvolvimento do \textbf{Dashboard Financeiro} exigiu o uso de ferramentas modernas e acessíveis, adequadas ao desenvolvimento web full-stack, além de recursos computacionais que garantissem eficiência e organização ao longo do projeto.
+
+\section*{Recursos Computacionais}
+
+O projeto foi desenvolvido em um \textbf{computador pessoal} com capacidade adequada para executar múltiplas tarefas simultâneas, como servidores locais, contêineres Docker e editores de código.
+
+Foi necessário também acesso contínuo à \textbf{internet}, tanto para consulta de documentações e artigos técnicos quanto para integração de bibliotecas externas, acesso a plataformas de versionamento e hospedagem de repositórios.
+
+\section*{Ambiente de Desenvolvimento}
+
+As ferramentas e recursos utilizados no projeto foram:
+
+\begin{itemize}
+    \item \textbf{Visual Studio Code} – IDE utilizada para o desenvolvimento do frontend em React.js \cite{REACT2025};
+    \item \textbf{IntelliJ IDEA} – IDE para o desenvolvimento do backend utilizando Spring Boot;
+    \item \textbf{Docker} – para criação de contêineres com o banco de dados MySQL, Kafka e execução local dos microserviços;
+    \item \textbf{Git e GitHub} – para versionamento e hospedagem do código-fonte, promovendo rastreabilidade, controle de alterações e colaboração;
+    \item \textbf{Navegadores modernos} – como Google Chrome e Firefox, para testes de interface e comportamento da aplicação;
+    \item \textbf{KingHost} – provedor de domínio e DNS utilizado para validar o envio de e-mails transacionais e preparar a camada pública do sistema;
+    \item \textbf{MySQL} – banco de dados relacional executado localmente via contêiner Docker \cite{MYSQL2025};
+    \item \textbf{Spring Boot, Spring Security e Spring Cloud Gateway} – frameworks utilizados para estruturação da API RESTful, autenticação, roteamento e segurança \cite{SPRINGSECURITY2025};
+    \item \textbf{Apache Kafka} – barramento de eventos para desacoplar microserviços e acionar o serviço de notificações;
+    \item \textbf{Resend} – plataforma de e-mails transacionais utilizada em conjunto com domínio próprio.
+\end{itemize}
+
+\section*{Organização das Atividades}
+
+O gerenciamento das atividades seguiu princípios ágeis, porém de forma direta: o fluxo de trabalho ficou registrado no Git (issues, commits e pull requests) e em anotações compartilhadas com o orientador, garantindo ciclos curtos de revisão e priorização sem depender de quadros formais.
+
+A escolha dessas ferramentas garantiu o uso de tecnologias consolidadas no mercado, além de proporcionar um ambiente de desenvolvimento produtivo, seguro e facilmente replicável. Com esse conjunto de recursos, foi possível alcançar um alto nível de qualidade técnica e organizacional no desenvolvimento do sistema.
+
+\section*{Arquitetura da Solução}
+
+A arquitetura geral do sistema foi estruturada com base na separação de responsabilidades entre frontend, backend e infraestrutura compartilhada. Para ilustrar o ambiente real em produção, a Figura~\ref{fig:arquitetura-geral} mostra a disposição dos contêineres Docker dentro do Railway, agrupados nos blocos de serviços, infraestrutura e frontend conforme captura da implantação.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/railway.png}
+\caption{Ambiente de produção no Railway com os contêineres do \textit{Dashboard Financeiro}.}
+\label{fig:arquitetura-geral}
+\end{figure}
+
+\section*{Modelo de Domínio}
+
+Antes de derivar o banco de dados, o domínio foi modelado considerando entidades, agregados e relacionamentos principais (Figura~\ref{fig:modelo-dominio}). O diagrama foi gerado com PlantUML a partir das entidades reais do backend e segue a notação de classes UML para evidenciar multiplicidades e atributos relevantes às regras de negócio.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/modelo-dominio.png}
+\caption{Modelo de domínio do \textit{Dashboard Financeiro}.}
+\label{fig:modelo-dominio}
+\end{figure}
+
+\section*{Modelo de Dados}
+
+Derivado do modelo de domínio, o modelo relacional foi normalizado no MySQL conforme a Figura~\ref{fig:esquema-banco}. A modelagem considera três \textit{schemas} independentes (cadastro, financeiro e notificações), migrações versionadas por Liquibase e chaves estrangeiras alinhadas às multiplicidades anteriores. O diagrama foi exportado automaticamente a partir do arquivo PlantUML \texttt{figs/modelo-dados.puml}, garantindo aderência às entidades implementadas.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/modelo-dados.jpg}
+\caption{Modelo relacional consolidado no MySQL.}
+\label{fig:esquema-banco}
+\end{figure}
+
+\section*{Modelagem de Casos de Uso}
+
+A modelagem de casos de uso (Figura~\ref{fig:casos-uso}) segue a notação UML e está compatibilizada com a lista de funcionalidades apresentada no Capítulo~\ref{chap:chap3}. O diagrama foi exportado com PlantUML, refletindo exatamente os fluxos exercitados no PASSO-A-PASSO.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.9\textwidth]{figs/modelo-uso.jpg}
+\caption{Diagrama de casos de uso compatível com as funcionalidades descritas.}
+\label{fig:casos-uso}
+\end{figure}
+
+\section*{Implantação em Nuvem, Domínio e E-mails}
+
+O Volume I previa o deploy no Google Cloud, porém durante o TC~II optou-se pelo \textbf{Railway}, que oferece \textit{build} automatizado a partir dos Dockerfiles já presentes no repositório e gerenciamento simplificado de múltiplos serviços com variáveis de ambiente compartilhadas. Cada microserviço (cadastro/autenticação, financeiro, notificações, gateway e frontend) possui imagem própria publicada no Railway e conectada a instâncias gerenciadas de MySQL e Kafka.
+
+Para garantir identidade própria, foi adquirido junto à \textbf{KingHost} o domínio \texttt{tcc\-leonardopreczevski.com.br}. O subdomínio \texttt{app.tcc\-leonardopreczevski.com.br} aponta via CNAME para o frontend publicado no Railway, tornando-se o endereço público adotado em toda a comunicação (frontend, gateway e notificações).
+
+O mesmo domínio foi validado na plataforma \textbf{Resend} para envio de e-mails transacionais. Os registros DNS (SPF, DKIM e \textit{tracking}) foram configurados no painel da KingHost e replicados dentro da Resend, permitindo que o serviço de notificações envie mensagens autenticadas com remetente \texttt{no-reply@app.tcc\-leonardopreczevski.com.br}. Além disso, a Resend utiliza o domínio como assinatura criptográfica, aumentando a entregabilidade dos alertas de metas e das confirmações de cadastro.
+
+Por fim, o gateway e os demais serviços hospedados no Railway reutilizam esse mesmo subdomínio autorizado, garantindo que todas as camadas reconheçam \texttt{app.tcc\-leonardopreczevski.com.br} como origem oficial, em conformidade com o requisito institucional de implantação em nuvem.

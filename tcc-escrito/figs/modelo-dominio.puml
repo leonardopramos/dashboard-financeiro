@@ -1,0 +1,110 @@
+@startuml
+skinparam backgroundColor #ffffff
+skinparam shadowing false
+skinparam class {
+  BackgroundColor white
+  BorderColor #111111
+  ArrowColor #444444
+  FontSize 11
+}
+hide empty members
+hide circle
+
+class User {
+  +UUID id
+  +String name
+  +String email
+  +String cpf
+  +String password
+  +boolean emailVerified
+  +boolean active
+}
+
+class BankAccount {
+  +UUID id
+  +UUID userId
+  +String institutionName
+  +String branchNumber
+  +String accountNumber
+  +AccountType accountType
+  +BigDecimal currentBalance
+  +LocalDateTime updatedAt
+}
+
+class Transaction {
+  +UUID id
+  +TransactionType type
+  +BigDecimal amount
+  +LocalDate transactionDate
+  +String description
+  +String notes
+}
+
+class Category {
+  +UUID id
+  +UUID userId
+  +CategoryType type
+  +String name
+  +String color
+  +boolean active
+}
+
+class FinancialGoal {
+  +UUID id
+  +UUID userId
+  +GoalType type
+  +GoalStatus status
+  +BigDecimal targetAmount
+  +BigDecimal currentAmount
+  +LocalDate startDate
+  +LocalDate endDate
+  +boolean notifyOnAchieve
+  +boolean notifyOnExceed
+}
+
+class GoalContribution {
+  +UUID id
+  +UUID userId
+  +BigDecimal amount
+  +LocalDate allocationDate
+  +String description
+}
+
+class NotificationUser {
+  +UUID id
+  +String email
+  +String name
+  +boolean active
+}
+
+class EmailNotificationLog {
+  +UUID id
+  +String template
+  +String status
+  +String errorMessage
+  +LocalDateTime createdAt
+}
+
+User "1" -- "0..*" BankAccount : possui >
+BankAccount "1" -- "0..*" Transaction : registra >
+Transaction "0..*" -- "0..1" Category : classifica >
+User "1" -- "0..*" Category : organiza >
+User "1" -- "0..*" FinancialGoal : estabelece >
+FinancialGoal "0..1" -- "0..*" Category : monitora >
+FinancialGoal "1" -- "0..*" GoalContribution : recebe >
+Transaction "0..*" ..> "0..*" FinancialGoal : atualiza progresso
+
+User "1" ..> "0..1" NotificationUser : replica contato
+NotificationUser "1" -- "0..*" EmailNotificationLog : gera >
+
+note bottom of GoalContribution
+  Alocações registram aportes manuais
+  e são agregadas no progresso da meta.
+end note
+
+note bottom of Transaction
+  Cada transação publicada gera eventos Kafka
+  que alimentam os dashboards e notificações.
+end note
+
+@enduml

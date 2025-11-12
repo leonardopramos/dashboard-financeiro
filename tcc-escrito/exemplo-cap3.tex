@@ -1,0 +1,94 @@
+\chapter{\label{chap:chap3}Proposta}
+
+Este capítulo descreve a solução entregue do \textbf{Dashboard Financeiro}, uma aplicação web voltada ao controle e à análise de finanças pessoais. O sistema já se encontra publicado e combina uma interface moderna, intuitiva e educativa com um backend orientado a serviços capaz de sustentar o crescimento de usuários e integrações.
+
+\section*{Objetivo da Solução}
+
+Oferecer uma ferramenta funcional que atenda a necessidades reais dos usuários e, ao mesmo tempo, estimule o aprendizado e a prática de uma gestão financeira mais consciente. O volume atual demonstra que o sistema completo, educativo e seguro foi efetivamente implementado e encontra-se disponível para uso.
+
+\section*{Organização e Planejamento Metodológico}
+
+A implementação ocorreu de forma incremental e pragmática, priorizando aquilo que agregava mais valor ao produto em cada momento. As entregas eram revisadas diretamente com o orientador e com usuários envolvidos nos testes exploratórios, o que guiou ajustes rápidos sem depender de um board formal ou cerimônias rígidas.
+
+O repositório Git concentrou todas as tarefas, \textit{pull requests} e documentações dos microserviços. Revisões de código, testes locais via Docker Compose e integrações contínuas acompanharam cada incremento, permitindo ajustes rápidos conforme feedback acadêmico e dos usuários envolvidos nos testes exploratórios.
+
+\section*{Funcionalidades Principais}
+
+A aplicação disponibiliza, em produção, as seguintes funcionalidades:
+
+\begin{itemize}
+    \item \textbf{Onboarding completo}: cadastro, atualização e exclusão de usuários com validação de CPF/e\hyp mail, autenticação JWT, refresh token, proteção de rotas e preenchimento automático de endereço via integração com a API do ViaCEP no perfil;
+    \item \textbf{Gestão financeira diária}: registro de entradas e saídas, categorização flexível (cores e tipos), filtros por período e exportação em tela;
+    \item \textbf{Contas bancárias}: múltiplas contas com apelidos, tipos e saldo atualizado automaticamente a cada transação;
+    \item \textbf{Metas financeiras}: criação por tipo (\textit{SAVINGS} ou \textit{EXPENSE\_LIMIT}), cálculo de progresso, alocação manual e alertas configuráveis;
+    \item \textbf{Dashboards}: visão resumida (cartões, ranking de categorias, metas críticas) e visão analítica (tendência mensal, fluxo diário, distribuição por contas e impacto por categoria);
+    \item \textbf{Módulo educacional}: checklists, rituais de aprendizado e dicas contextualizadas com base nos indicadores do usuário;
+    \item \textbf{Notificações}: disparo de e\hyp mails via Resend quando metas mudam de status ou novas transações relevantes são registradas;
+    \item \textbf{Acesso responsivo}: interface construída com Tailwind e componentes reutilizáveis, adaptada para desktop e dispositivos móveis, sem paywall.
+\end{itemize}
+
+Essas funcionalidades compõem o núcleo do produto viável. Evoluções avançadas (integração automática com bancos, análises preditivas e aplicativos móveis) permanecem listadas como trabalhos futuros.
+
+\section*{Definição do MVP}
+
+O MVP referenciado no cronograma corresponde ao conjunto mínimo publicado para validar a proposta com usuários reais. Ele inclui:
+\begin{enumerate}
+    \item onboarding completo (cadastro, autenticação, verificação e exclusão);
+    \item cadastro e gestão de contas bancárias, categorias e transações com atualização automática de saldos;
+    \item definição de metas com alertas em tela e via e-mail (metas atingidas/excedidas);
+    \item dashboards (resumo + analytics) abastecidos pelos dados reais do usuário;
+    \item módulo educacional acoplado às métricas do período.
+\end{enumerate}
+Esses itens foram priorizados e entregues entre junho e agosto (vide Tabela~\ref{tab:cronograma}); funcionalidades adicionais acrescidas após a validação MVP estão descritas no Capítulo~\ref{chap:chap4}.
+
+\section*{Arquitetura da Aplicação}
+
+A arquitetura organiza-se em serviços especializados que se comunicam por \textbf{APIs REST} e eventos Kafka, seguindo separação de responsabilidades e favorecendo escalabilidade e manutenção.
+
+\subsection*{Componentes Principais}
+
+\begin{itemize}
+    \item \textbf{Frontend (React 19 + Vite + Tailwind):} camada de experiência com roteamento protegido, contexto de autenticação e bibliotecas próprias de gráficos;
+    \item \textbf{API Gateway (Spring Cloud Gateway):} ponto único de entrada, aplicando autenticação JWT, regras de CORS e roteando chamadas para os demais microserviços;
+    \item \textbf{Serviço de Cadastro e Autenticação:} Spring Boot 3.5.5 + Spring Security, responsável por usuários, criptografia de senhas (BCrypt), tokens JWT e publicação de eventos \textit{user.events};
+    \item \textbf{Serviço Financeiro}: Spring Boot 3.5.5, Spring Data JPA, Liquibase e Kafka; controla contas, categorias, metas, transações e agregações do dashboard, emitindo eventos \textit{transactions.events} e \textit{goals.events};
+    \item \textbf{Serviço de Notificações}: Spring Boot 3.5.5, consumidores Kafka e cliente HTTP para Resend; mantém o cache local de contatos e envia e\hyp mails transacionais;
+    \item \textbf{Banco de Dados MySQL}: três esquemas independentes (cadastro, financeiro e notificações) com migrações versionadas por Liquibase.
+\end{itemize}
+
+\subsection*{Fluxo de Uso (Exemplo)}
+
+\begin{enumerate}
+    \item O usuário acessa a interface (React), que solicita ``\textit{buscar transações do mês}'' para o \textbf{API Gateway};
+    \item O gateway valida o \textbf{JWT} (Spring Security) e encaminha a requisição ao \textbf{Serviço Financeiro};
+    \item O serviço consulta o \textbf{MySQL} correspondente, recalcula saldos e publica eventos em Kafka quando necessário;
+    \item A resposta agregada retorna ao \textbf{Frontend}, que atualiza os gráficos de resumo ou da visão analítica;
+    \item Se metas mudarem de status, o evento é consumido pelo \textbf{Serviço de Notificações}, que envia e\hyp mails via Resend com o domínio autenticado.
+\end{enumerate}
+
+\subsection*{Diagrama de Arquitetura}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/diagramaarquitetura.png}
+\caption{Arquitetura proposta para o \textbf{Dashboard Financeiro}.}
+\label{fig:arquitetura}
+\end{figure}
+
+\paragraph{Cadastro e Autenticação.}
+Criação de conta, autenticação (login), refresh token, gestão de perfil e exclusão são atendidos pelo microserviço \texttt{dashboard-financeiro-cadastro-autenticacao}, que utiliza Spring Security, JWT e MySQL dedicado.
+
+\paragraph{Gestão Financeira.}
+CRUD de contas, categorias, transações e metas são tratados pelo microserviço \texttt{dashboard-financeiro}, que centraliza validações, regras de consistência e fechamento mensal, além de publicar eventos Kafka.
+
+\paragraph{Dashboards e Indicadores.}
+As consultas agregadas (período, categoria, tendência e metas) são executadas pelo \texttt{DashboardService}, exposto pelo mesmo microserviço financeiro e consumido pelo frontend nas visões ``Quadros'' e ``Analytics''.
+
+\paragraph{Notificações.}
+Eventos de usuários, transações e metas são consumidos pelo microserviço \texttt{dashboard-financeiro-notificacoes}, que utiliza Resend para enviar e\hyp mails autenticados com o domínio próprio e persiste logs para auditoria.
+
+\section*{Considerações sobre Distribuição de Funcionalidades entre Componentes}
+
+A separação entre \textit{Serviço de Gestão Financeira} e \textit{Serviço de Dashboard} permite otimizar consultas analíticas sem comprometer a camada transacional. Estratégias como materialized views, índices e endpoints específicos para agregações serão consideradas para garantir desempenho. Autenticação e autorização ficam centralizadas na camada de API para uniformizar políticas de segurança (uso de JWT, roles e scoping mínimo).
+
+O modelo proposto facilita testes unitários e de integração, implantação independente dos serviços e escala horizontal seletiva de componentes com maior demanda (por exemplo, Serviço de Dashboard). Foram implementados testes unitários tanto no frontend (componentes e hooks principais) quanto no backend (serviços de domínio dos microserviços), reforçando a verificação local antes das validações com usuários.

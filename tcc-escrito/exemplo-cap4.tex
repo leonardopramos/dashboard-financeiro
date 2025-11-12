@@ -1,0 +1,156 @@
+\chapter{\label{chap:chap4}Cronograma}
+
+A Tabela~\ref{tab:cronograma} apresenta o cronograma de atividades para o desenvolvimento do Trabalho de Conclusão de Curso, distribuídas entre os meses de abril e dezembro de 2025. Cada coluna (Abr–Dez) refere-se a um mês calendário contado a partir de \textbf{abril/2025}, início formal do TC~II, encerrando em \textbf{dezembro/2025}, mês de defesa. As etapas foram planejadas de forma a garantir organização, entregas incrementais e revisões contínuas ao longo do processo.
+
+Desde abril de 2025, foram realizadas atividades como levantamento de requisitos, planejamento técnico e estruturação da proposta. As etapas seguintes concentram-se no desenvolvimento da solução e na elaboração do Volume II do TCC, até sua entrega e defesa.
+
+\begin{table}[htb]
+\centering
+\caption{\label{tab:cronograma}Cronograma de atividades por mês (Abril a Dezembro de 2025)}
+\setlength{\tabcolsep}{0.25cm}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{6.3cm}|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Atividades} & \textbf{Abr} & \textbf{Mai} & \textbf{Jun} & \textbf{Jul} & \textbf{Ago} & \textbf{Set} & \textbf{Out} & \textbf{Nov} & \textbf{Dez} \\
+\hline
+Levantamento de requisitos iniciais e estudo de viabilidade & X & X &   &   &   &   &   &   &   \\
+Modelagem da aplicação e arquitetura do sistema             &   & X & X &   &   &   &   &   &   \\
+Configuração do ambiente de desenvolvimento (Docker, repositórios) &   &   & X &   &   &   &   &   &   \\
+Início do desenvolvimento (MVP)                             &   &   & X & X &   &   &   &   &   \\
+Desenvolvimento do backend e frontend                       &   &   &   & X & X & X &   &   &   \\
+Validação de funcionalidades com feedback de usuários       &   &   &   &   &   & X & X &   &   \\
+Refinamento do sistema, testes finais e correções           &   &   &   &   &   &   & X & X &   \\
+Escrita e revisão do Volume II do TCC                       &   &   &   &   &   &   & X & X & X \\
+Preparação da apresentação final                            &   &   &   &   &   &   &   & X & X \\
+Entrega e defesa do TCC                                     &   &   &   &   &   &   &   &   & X \\
+\hline
+\end{tabular}
+\end{table}
+
+As marcações com “X” indicam os meses em que cada atividade será executada. O cronograma foi elaborado com foco no avanço progressivo do projeto, prevendo entregas parciais, revisões constantes com o orientador e tempo hábil para ajustes, testes e documentação final.
+
+\section*{Funcionalidades Implementadas}
+
+Todas as funcionalidades previstas na fase de planejamento foram entregues. A Tabela~\ref{tab:rastreabilidade-funcionalidades} relaciona cada item com sua implementação no código e no frontend.
+
+\begin{table}[htb]
+\centering
+\caption{\label{tab:rastreabilidade-funcionalidades}Funcionalidades implementadas no TC~I.}
+\setlength{\tabcolsep}{0.25cm}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{4.8cm}|p{10cm}|}
+\hline
+\textbf{Funcionalidade planejada} & \textbf{Implementação entregue} \\
+\hline
+Cadastro de usuários e autenticação segura & Microserviço \path{dashboard-financeiro-cadastro-autenticacao} (endpoints \texttt{/api/v1/users} e \texttt{/api/v1/auth}), camadas \texttt{AuthController/AuthService} com JWT e criptografia, telas \texttt{Login.tsx} e \texttt{Register.tsx} com guarda de rotas no frontend. \\
+\hline
+Gerenciamento de contas bancárias & Endpoints \texttt{/finance/bank-accounts}, entidades \texttt{BankAccountJpaEntity} e tela \texttt{BankAccounts.tsx} com formulários modais e paginação. \\
+\hline
+Registro/categorização de transações & \texttt{TransactionController} e \texttt{TransactionService} com recalculo automático de saldos e emissão de eventos; tela \texttt{Transactions.tsx} com filtros e notas detalhadas. \\
+\hline
+Metas financeiras com alertas & \texttt{FinancialGoalController} + \texttt{GoalAllocation} no backend; tela \texttt{Goals.tsx} e visão de alocação; notificações por e-mail via serviço de notificações e Resend quando metas são atingidas/extrapoladas. \\
+\hline
+Dashboards e indicadores analíticos & \texttt{DashboardService} agregando receitas, despesas, tendências e metas; componentes \texttt{SummaryView} e \texttt{AnalyticsView} com gráficos (MUI Charts) e rankings de categorias. \\
+\hline
+Orientação e educação financeira & Módulo \texttt{Education.tsx} com checklists, rituais e guias contextuais alimentados pelos dados do usuário. \\
+\hline
+Notificações transacionais & Microserviço \path{dashboard-financeiro-notificacoes} consumindo Kafka e enviando e-mails via Resend com domínio autenticado, além do log \texttt{email\_notification\_log}. \\
+\hline
+\end{tabular}
+\end{table}
+
+Os fluxos foram exercitados pelo roteiro descrito em \texttt{PASSO-A-PASSO.md}, garantindo que cada módulo respondesse às regras de negócio definidas nos capítulos anteriores.
+
+\section*{Funcionalidades do Sistema}
+
+O sistema \textbf{Dashboard Financeiro} foi projetado para proporcionar ao usuário um ambiente intuitivo e eficiente para o controle de suas finanças pessoais. As funcionalidades foram definidas com base nas entidades modeladas no banco de dados e estruturadas para atender às necessidades práticas do cotidiano financeiro. As principais funcionalidades são:
+
+\begin{itemize}
+    \item \textbf{Cadastro de Usuário:} criação de conta com dados pessoais, endereço completo e credenciais de acesso;
+    
+    \item \textbf{Login Seguro:} autenticação via e-mail e senha, com proteção de rotas por meio do Spring Security~\cite{SPRINGSECURITY2025};
+    
+    \item \textbf{Gerenciamento de Contas Bancárias:} cadastro de múltiplas contas com tipo (corrente, poupança etc.), número da conta, agência e saldo atual;
+    
+    \item \textbf{Registro de Transações:} lançamento de entradas e saídas financeiras com valor, data, categoria e tipo (receita ou despesa), atualizando automaticamente o saldo da conta;
+
+    \item \textbf{Classificação por Categoria:} associação de cada transação a uma categoria específica, como alimentação, transporte, moradia, saúde, lazer, entre outras;
+
+    \item \textbf{Visualização de Histórico Financeiro:} exibição do histórico de transações por conta, com filtros por período, tipo e categoria;
+
+    \item \textbf{Metas Financeiras:} definição de objetivos com valor e prazo, permitindo o planejamento e o acompanhamento de metas pessoais;
+
+    \item \textbf{Notificações de Metas:} alertas visuais e e\hyp mails transacionais (via serviço de notificações + Resend) quando metas estão próximas do vencimento ou mudam de status;
+
+    \item \textbf{Painel Resumo:} apresentação gráfica do saldo atual, despesas por categoria, metas ativas e progresso financeiro do usuário;
+
+    \item \textbf{Módulo de Educação Financeira:} orientações, checklists, mantras e rituais diários conectados aos indicadores reais para apoiar novos hábitos;
+
+    \item \textbf{Organização Responsiva:} adaptação da interface a diferentes tamanhos de tela, promovendo usabilidade em computadores e dispositivos móveis;
+
+    \item \textbf{Gerenciamento de Sessão:} controle de login do usuário, com encerramento de sessão e redirecionamento seguro;
+
+    \item \textbf{Segurança dos Dados:} proteção de endpoints, uso de tokens JWT para autenticação e criptografia de senhas no banco de dados~\cite{SPRINGSECURITY2025}.
+\end{itemize}
+
+Essas funcionalidades compõem o escopo mínimo viável (MVP) da aplicação, com foco em usabilidade, segurança e utilidade prática. Outras funcionalidades adicionais estão previstas como parte dos trabalhos futuros.
+
+\section*{Camadas Técnicas e Arquitetura}
+
+A arquitetura full-stack será dividida nas seguintes camadas:
+
+\begin{description}
+    \item[Frontend:] Interface desenvolvida em \textbf{React.js}~\cite{REACT2025}, com utilização de bibliotecas como Chart.js ou Recharts para geração de gráficos e Axios para comunicação com a API;
+    \item[Backend:] Implementado com \textbf{Spring Boot}, contendo APIs RESTful, controle de autenticação com \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, e persistência dos dados com \textbf{Spring Data JPA};
+    \item[Persistência:] Utilização do \textbf{MySQL}~\cite{MYSQL2025}, com configuração via \textbf{Docker} para facilitar testes e ambientes isolados;
+    \item[Gerenciamento de Código:] Versionamento com Git e repositório no GitHub.
+\end{description}
+
+\section*{Segurança e Privacidade}
+
+A aplicação contará com autenticação baseada em \textbf{JWT (JSON Web Token)}, criptografia das senhas com algoritmos como \texttt{bcrypt} e validações para prevenir injeções e vulnerabilidades comuns no OWASP Top 10~\cite{SPRINGSECURITY2025}. As boas práticas de segurança visam proteger a integridade e a confidencialidade dos dados sensíveis dos usuários.
+
+\section*{Planejamento Metodológico}
+
+O planejamento adotado permaneceu simples e incremental, priorizando o que gerava mais valor em cada ciclo curto. As tarefas foram organizadas diretamente no repositório Git e em anotações compartilhadas com o orientador, com revisões frequentes para validar funcionalidades e ajustar prioridades conforme feedback.
+
+\section*{Metodologia de Desenvolvimento}
+
+A metodologia adotada baseia-se em princípios da engenharia de software moderna e do desenvolvimento ágil. O projeto será dividido em etapas bem definidas:
+
+\begin{itemize}
+    \item \textbf{Levantamento de Requisitos:} coleta inicial com base em referências, análise de mercado e objetivos definidos na introdução;
+    \item \textbf{Modelagem da Solução:} elaboração de diagramas e definição da arquitetura do sistema;
+    \item \textbf{Configuração de Infraestrutura:} preparação do ambiente com Docker, repositórios e integração contínua;
+    \item \textbf{Desenvolvimento Incremental:} implementação do sistema por partes (MVP, funcionalidades secundárias, testes);
+    \item \textbf{Validação Contínua:} testes manuais e com usuários, coleta de feedback e refinamento com base em observações;
+    \item \textbf{Revisão e Documentação:} registro das decisões de projeto, escrita do TCC e preparação para apresentação final.
+\end{itemize}
+
+Essa metodologia garante alinhamento com os objetivos da solução e permite monitoramento constante da evolução do projeto, com entregas incrementais e foco na qualidade final do produto. Em síntese, o planejamento descrito mantém as entregas técnicas conectadas à proposta de oferecer uma ferramenta educativa, segura e acessível para o controle financeiro pessoal.
+
+\section*{Trilha de Desenvolvimento}
+
+Como o produto está finalizado, esta seção resume a trajetória descrita em \texttt{documentacao-final.md}, detalhando o que foi construído em cada marco:
+
+\begin{itemize}
+    \item \textbf{16/09/2025 — Bootstrap do monorepo.} O repositório foi criado com um serviço Spring Boot básico (Gradle + Java 25) e um frontend React/Vite totalmente funcional. Esse commit inicial garantiu scripts de build, hot reload e testes mínimos, permitindo que o time executasse `./gradlew bootRun` e `npm run dev` sem ajustes adicionais.
+
+    \item \textbf{17/09/2025 — Configuração de infraestrutura.} Logo após o bootstrap foram adicionados o \texttt{docker-compose} com SQL Server, Kafka e Zookeeper, além do \texttt{application.yml} parametrizado e da estrutura inicial do Liquibase. Esse passo padronizou ambientes e evitou inconsistências entre máquinas.
+
+    \item \textbf{17/09/2025 — Multiplicação de serviços.} No mesmo dia surgiu o layout completo dos microserviços: domínio financeiro, cadastro/autenticação, notificações e API Gateway. Cada projeto ganhou Gradle Wrapper específico, dependências enxutas, empacotamento individual e documentação de suporte.
+
+    \item \textbf{02/10/2025 — Fluxos de autenticação e primeira tela.} O frontend recebeu contexto de autenticação, formulários de login/cadastro, rotas protegidas e integração com Axios. No backend foram implementados os endpoints JWT (\texttt{/api/v1/auth}, \texttt{/api/v1/users}), filtros de segurança e CORS alinhado ao cliente, abrindo espaço para sessões completas.
+
+    \item \textbf{02/10/2025 — Persistência financeira.} O serviço financeiro ganhou entidades JPA de contas e transações, controllers, serviços, regras de saldo e o \texttt{ApiExceptionHandler}. Esse marco estabeleceu o núcleo transacional e preparou o terreno para dashboards reais.
+
+    \item \textbf{02/10/2025 — Ferramentas de apoio.} Na mesma data foram registrados scripts de migração externa, coleções Insomnia, guias por microserviço e documentação de endpoints, permitindo que novos colaboradores reproduzissem os fluxos rapidamente.
+
+    \item \textbf{20/10/2025 — Camada analítica e eventos.} Entraram categorias, metas, dashboard agregado com \texttt{monthlyTrend}, \texttt{categoryBreakdown} e \texttt{goals}, além de eventos Kafka (\texttt{transactions.events}, \texttt{goals.events}, \texttt{user.events}). Também foi criado o guia operacional \texttt{PASSO-A-PASSO.md}, descrevendo a jornada completa (cadastro → login → contas → metas → dashboard).
+
+    \item \textbf{04/11/2025 — Primeira versão ponta a ponta.} Foram adicionados verificação de e-mail, templates HTML, listener de confirmação, gráficos avançados na tela Analytics, páginas CRUD para contas, categorias, metas, transações e perfil, bem como seeds SQL para demonstração. Essa fase consolidou o MVP completo descrito no Capítulo~\ref{chap:chap3}.
+
+    \item \textbf{10/11/2025 — Preparação para deploy e hardening.} A stack migrou de SQL Server para MySQL, cada serviço recebeu Dockerfile próprio, o compose foi movido para a raiz, implementou-se o client Resend dedicado e foram higienizados segredos, garantindo que a solução pudesse ser provisionada em produção de forma repetível.
+\end{itemize}
+
+Além desses marcos datados, o período final envolveu ajustes finos no frontend (runtime-config para múltiplos ambientes, componentes de dashboard em MUI Charts, responsividade com Tailwind) e no backend (perfis Docker, scripts de inicialização do MySQL, logs estruturados). A documentação resultante — linha do tempo, guias operacionais e rastreabilidade de funcionalidades — assegura que o leitor compreenda exatamente o que foi construído desde o esqueleto inicial até o produto final hospedável.
