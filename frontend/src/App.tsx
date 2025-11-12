@@ -11,6 +11,7 @@ import BankAccounts from './pages/BankAccounts';
 import Transactions from './pages/Transactions';
 import Categories from './pages/Categories';
 import Goals from './pages/Goals';
+import Education from './pages/Education';
 
 const InitialRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -83,6 +84,7 @@ function App() {
               <Route path="transacoes" element={<Transactions />} />
               <Route path="categorias" element={<Categories />} />
               <Route path="metas" element={<Goals />} />
+              <Route path="educacao" element={<Education />} />
             </Route>
 
             {/* Rota 404 - redireciona para login */}

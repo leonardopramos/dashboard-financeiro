@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import {
-  LineChart,
-  UserRound,
-  Landmark,
   ArrowRightLeft,
+  GraduationCap,
+  Landmark,
+  LineChart,
+  LogOut,
   Tags,
   Target,
-  LogOut,
+  UserRound,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -25,6 +26,7 @@ const navItems: NavItem[] = [
   { label: 'Transações', to: '/app/transacoes', icon: ArrowRightLeft },
   { label: 'Metas', to: '/app/metas', icon: Target },
   { label: 'Perfil', to: '/app/perfil', icon: UserRound },
+  { label: 'Educação', to: '/app/educacao', icon: GraduationCap },
 ];
 
 const Sidebar = () => {
