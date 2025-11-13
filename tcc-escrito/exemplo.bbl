@@ -60,9 +60,21 @@ Few, S. \enquote{Information Dashboard Design: Displaying Data for At-a-Glance M
 Gitman, L.~J.; Joehnk, M.~D.; Billingsley, R.~S. \enquote{Personal Financial Planning}. Cengage Learning, 2018, 14 \bbledn{}.
 \bibAnnoteFile{GITMAN2018}
 
+\bibitem[{Gui}21]{GUIABOLSO2021}
+{Guiabolso}. \enquote{Guiabolso --- aplicativo de finanças pessoais}. Acesso em: 21 mar. 2025, \urlprefix\url{https://www.guiabolso.com.br/}, 2021.
+\bibAnnoteFile{GUIABOLSO2021}
+
 \bibitem[{Met}25]{REACT2025}
 {Meta Platforms, Inc.} \enquote{React: A javascript library for building user interfaces}. Acesso em: 20 mar. 2025, \urlprefix\url{https://react.dev/}, 2025.
 \bibAnnoteFile{REACT2025}
+
+\bibitem[{Min}25]{MINHASECONOMIAS2025}
+{Minhas Economias}. \enquote{Minhas economias --- planejamento financeiro online}. Acesso em: 21 mar. 2025, \urlprefix\url{https://www.minhaseconomias.com.br/}, 2025.
+\bibAnnoteFile{MINHASECONOMIAS2025}
+
+\bibitem[{Mob}25]{MOBILLS2025}
+{Mobills}. \enquote{Mobills --- controle financeiro e orçamento}. Acesso em: 21 mar. 2025, \urlprefix\url{https://www.mobills.com.br/}, 2025.
+\bibAnnoteFile{MOBILLS2025}
 
 \bibitem[Mun14]{MUNZNER2014}
 Munzner, T. \enquote{Visualization Analysis and Design}. CRC Press, 2014.
@@ -79,6 +91,10 @@ Nielsen, J. \enquote{Usability Engineering}. Morgan Kaufmann, 1994.
 \bibitem[{Ora}25]{MYSQL2025}
 {Oracle Corporation}. \enquote{Mysql 8.0 reference manual}. Acesso em: 20 mar. 2025, \urlprefix\url{https://dev.mysql.com/doc/refman/8.0/en/}, 2025.
 \bibAnnoteFile{MYSQL2025}
+
+\bibitem[{Org}25]{ORGANIZZE2025}
+{Organizze Tecnologia Financeira}. \enquote{Organizze --- controle financeiro pessoal}. Acesso em: 21 mar. 2025, \urlprefix\url{https://www.organizze.com.br/}, 2025.
+\bibAnnoteFile{ORGANIZZE2025}
 
 \bibitem[{Ser}25]{SERASA2024}
 {Serasa Experian}. \enquote{Mapa da inadimplência e renegociação de dívidas no brasil --- dezembro de 2024}. Acesso em: 20 mar. 2025, \urlprefix\url{https://www.serasa.com.br/limpa-nome-online/blog/mapa-da-inadimplencia-e-renegociacao-de-dividas-no-brasil/}, 2025.

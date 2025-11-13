@@ -1,37 +1,48 @@
-\chapter{\label{chap:chap3}Proposta}
+\chapter{\label{chap:chap3}Dashboard Financeiro}
 
 Este capítulo descreve a solução entregue do \textbf{Dashboard Financeiro}, uma aplicação web voltada ao controle e à análise de finanças pessoais. O sistema já se encontra publicado e combina uma interface moderna, intuitiva e educativa com um backend orientado a serviços capaz de sustentar o crescimento de usuários e integrações.
 
-\section*{Objetivo da Solução}
+\section{Objetivo da Solução}
 
 Oferecer uma ferramenta funcional que atenda a necessidades reais dos usuários e, ao mesmo tempo, estimule o aprendizado e a prática de uma gestão financeira mais consciente. O volume atual demonstra que o sistema completo, educativo e seguro foi efetivamente implementado e encontra-se disponível para uso.
 
-\section*{Organização e Planejamento Metodológico}
+\section{Organização e Planejamento Metodológico}
 
 A implementação ocorreu de forma incremental e pragmática, priorizando aquilo que agregava mais valor ao produto em cada momento. As entregas eram revisadas diretamente com o orientador e com usuários envolvidos nos testes exploratórios, o que guiou ajustes rápidos sem depender de um board formal ou cerimônias rígidas.
 
 O repositório Git concentrou todas as tarefas, \textit{pull requests} e documentações dos microserviços. Revisões de código, testes locais via Docker Compose e integrações contínuas acompanharam cada incremento, permitindo ajustes rápidos conforme feedback acadêmico e dos usuários envolvidos nos testes exploratórios.
 
-\section*{Funcionalidades Principais}
+\section{Funcionalidades Principais}
 
-A aplicação disponibiliza, em produção, as seguintes funcionalidades:
+\subsection{Onboarding completo}
+O fluxo inicial contempla cadastro, atualização e exclusão de usuários, com validação automática de CPF e e\hyp mail. A autenticação via JWT, o uso de refresh tokens e a proteção de rotas garantem segurança, enquanto o preenchimento automático de endereço através da API ViaCEP acelera o registro do perfil.
 
-\begin{itemize}
-    \item \textbf{Onboarding completo}: cadastro, atualização e exclusão de usuários com validação de CPF/e\hyp mail, autenticação JWT, refresh token, proteção de rotas e preenchimento automático de endereço via integração com a API do ViaCEP no perfil;
-    \item \textbf{Gestão financeira diária}: registro de entradas e saídas, categorização flexível (cores e tipos), filtros por período e exportação em tela;
-    \item \textbf{Contas bancárias}: múltiplas contas com apelidos, tipos e saldo atualizado automaticamente a cada transação;
-    \item \textbf{Metas financeiras}: criação por tipo (\textit{SAVINGS} ou \textit{EXPENSE\_LIMIT}), cálculo de progresso, alocação manual e alertas configuráveis;
-    \item \textbf{Dashboards}: visão resumida (cartões, ranking de categorias, metas críticas) e visão analítica (tendência mensal, fluxo diário, distribuição por contas e impacto por categoria);
-    \item \textbf{Módulo educacional}: checklists, rituais de aprendizado e dicas contextualizadas com base nos indicadores do usuário;
-    \item \textbf{Notificações}: disparo de e\hyp mails via Resend quando metas mudam de status ou novas transações relevantes são registradas;
-    \item \textbf{Acesso responsivo}: interface construída com Tailwind e componentes reutilizáveis, adaptada para desktop e dispositivos móveis, sem paywall.
-\end{itemize}
+\subsection{Gestão financeira diária}
+Transações de entrada e saída podem ser registradas com categorização flexível (cores e tipos). Filtros por período, buscas rápidas e exportação direta em tela permitem análises detalhadas sem sair do ambiente principal.
+
+\subsection{Contas bancárias}
+O usuário mantém múltiplas contas com apelidos, tipos e saldos. Cada lançamento atualiza automaticamente os valores consolidados, preservando a coerência entre contas, categorias e dashboards.
+
+\subsection{Metas financeiras}
+Metas podem ser criadas nos formatos \textit{SAVINGS} (acúmulo) ou \textit{EXPENSE\_LIMIT} (limite de gastos). O sistema calcula progresso em tempo real, permite alocações manuais e dispara alertas configuráveis quando o desempenho sai do planejado.
+
+\subsection{Dashboards}
+A visão resumida reúne cartões de receitas, despesas e saldo líquido, além do ranking de categorias e das metas críticas. A visão analítica adiciona gráficos de tendência mensal, fluxo diário, distribuição por contas e impacto por categoria para orientar decisões.
+
+\subsection{Módulo educacional}
+Checklists, rituais de aprendizado e dicas contextuais são exibidos conforme os indicadores do usuário, reforçando o aspecto pedagógico do produto e incentivando novos hábitos financeiros.
+
+\subsection{Notificações}
+Eventos relevantes (metas atingidas ou ultrapassadas, transações específicas) geram e\hyp mails transacionais enviados pela Resend, garantindo acompanhamento mesmo fora da interface web.
+
+\subsection{Acesso responsivo}
+A interface construída com Tailwind e componentes reutilizáveis adapta-se a desktops e dispositivos móveis. Todo o conteúdo permanece acessível sem paywall, reforçando a proposta inclusiva do Dashboard.
 
 Essas funcionalidades compõem o núcleo do produto viável. Evoluções avançadas (integração automática com bancos, análises preditivas e aplicativos móveis) permanecem listadas como trabalhos futuros.
 
-\section*{Definição do MVP}
+\section{Definição do MVP}
 
-O MVP referenciado no cronograma corresponde ao conjunto mínimo publicado para validar a proposta com usuários reais. Ele inclui:
+O MVP definido no planejamento do projeto corresponde ao conjunto mínimo publicado para validar a proposta com usuários reais. Ele inclui:
 \begin{enumerate}
     \item onboarding completo (cadastro, autenticação, verificação e exclusão);
     \item cadastro e gestão de contas bancárias, categorias e transações com atualização automática de saldos;
@@ -39,13 +50,57 @@ O MVP referenciado no cronograma corresponde ao conjunto mínimo publicado para 
     \item dashboards (resumo + analytics) abastecidos pelos dados reais do usuário;
     \item módulo educacional acoplado às métricas do período.
 \end{enumerate}
-Esses itens foram priorizados e entregues entre junho e agosto (vide Tabela~\ref{tab:cronograma}); funcionalidades adicionais acrescidas após a validação MVP estão descritas no Capítulo~\ref{chap:chap4}.
+Esses itens foram priorizados e entregues entre junho e agosto; funcionalidades adicionais acrescidas após a validação MVP estão descritas no Capítulo~\ref{chap:chap4}.
 
-\section*{Arquitetura da Aplicação}
+\section{Adaptação de Metodologias Ágeis}
+
+Apesar de o projeto não seguir à risca as cerimônias das metodologias ágeis tradicionais (Scrum, Kanban), os princípios fundamentais foram adotados como base para planejar, priorizar e revisar entregas. O backlog derivado das entrevistas e das personas foi quebrado em incrementos curtos, com checkpoints semanais com o orientador e validações contínuas em ambiente local (Docker Compose) antes de cada publicação. Essa abordagem pragmática permitiu incorporar feedback rapidamente, manter o foco no MVP descrito anteriormente e reduzir o tempo entre concepção da história e disponibilização da funcionalidade em produção.
+
+\section{Personas}
+
+As personas foram derivadas das entrevistas iniciais, dos relatos coletados durante os testes exploratórios e do estudo das métricas do Índice de Saúde Financeira do Brasileiro. Elas expressam a diversidade de perfis que o Dashboard precisa atender e justificam a priorização do MVP focado em onboarding seguro, registro granular de transações, metas inteligentes, dashboards analíticos e notificações proativas.
+
+\subsection{Larissa (24) — Analista Júnior}
+\textbf{Contexto:} Recém-formada e moradora de São Paulo, Larissa passou a receber salário fixo e benefícios variáveis, mas ainda mistura gastos pessoais e profissionais em um único cartão. Ela acompanha conteúdos de educação financeira no celular, prefere experiências responsivas e busca alertas que a mantenham engajada sem precisar abrir planilhas.
+
+\subsection{Ricardo (38) — Microempreendedor Individual}
+\textbf{Contexto:} Ricardo possui um pequeno estúdio de design e alterna entre contas PJ e PF. Ele precisa visualizar fluxo de caixa consolidado, controlar gastos recorrentes com fornecedores e justificar decisões para o contador. A mobilidade não é prioridade; o foco está em ter dashboards completos no desktop e backups consistentes das informações.
+
+\subsection{Patrícia (46) — Mentora de Educação Financeira Comunitária}
+\textbf{Contexto:} Patrícia atua como voluntária em oficinas de finanças pessoais e auxilia famílias endividadas. Ela precisa demonstrar rapidamente a situação de cada participante, sugerir rituais de revisão semanal e disparar lembretes externos quando alguém deixa de atualizar o painel.
+
+\section{Histórias de Usuário}
+
+As histórias abaixo foram extraídas diretamente das entrevistas com cada persona e guiaram o backlog incremental durante todo o TC~II.
+
+\subsection{Larissa — Fluxos priorizados no MVP}
+\begin{itemize}
+    \item Como Larissa, quero concluir o cadastro com validação de CPF e preenchimento automático de endereço via ViaCEP para começar a usar o painel sem erros de digitação.
+    \item Como Larissa, quero registrar receitas e despesas diárias com categorias coloridas, filtros por período e exportação em tela para identificar para onde meu salário está indo.
+    \item Como Larissa, quero definir metas do tipo \textit{SAVINGS} e receber alertas por e-mail quando eu estiver próxima de atingi-las, garantindo que meus objetivos de reserva de emergência sejam cumpridos.
+\end{itemize}
+
+\subsection{Ricardo — Fluxo financeiro consolidado}
+\begin{itemize}
+    \item Como Ricardo, quero cadastrar múltiplas contas bancárias com tipos e saldos independentes para separar o capital da empresa do orçamento familiar.
+    \item Como Ricardo, quero aplicar filtros por categoria, período e conta no histórico de transações para reconciliar recebíveis e despesas fixas antes de enviar dados ao contador.
+    \item Como Ricardo, quero configurar metas \textit{EXPENSE\_LIMIT} para categorias críticas (ex.: softwares e fornecedores) e ser notificado quando ultrapassar o teto definido, evitando descasamentos de caixa.
+\end{itemize}
+
+\subsection{Patrícia — Acompanhamento Educacional}
+\begin{itemize}
+    \item Como Patrícia, quero acessar dashboards analíticos com tendência mensal, distribuição por categoria e impacto por conta para identificar quais famílias precisam de intervenção imediata.
+    \item Como Patrícia, quero ativar checklists e dicas contextuais vinculadas aos indicadores do período para recomendar ações educativas personalizadas durante as oficinas.
+    \item Como Patrícia, quero que o sistema envie e-mails transacionais quando metas ficarem críticas ou forem atingidas, permitindo que eu acompanhe os mentorados mesmo fora dos encontros presenciais.
+\end{itemize}
+
+Essas três personas e seus respectivos conjuntos de histórias de usuário representam o escopo completo utilizado para direcionar as decisões de produto. Elas também explicam por que a solução combina onboarding seguro, gestão financeira detalhada, módulo educativo e notificações integradas antes de avançar para requisitos mais complexos descritos na arquitetura.
+
+\section{Arquitetura da Aplicação}
 
 A arquitetura organiza-se em serviços especializados que se comunicam por \textbf{APIs REST} e eventos Kafka, seguindo separação de responsabilidades e favorecendo escalabilidade e manutenção.
 
-\subsection*{Componentes Principais}
+\subsection{Componentes Principais}
 
 \begin{itemize}
     \item \textbf{Frontend (React 19 + Vite + Tailwind):} camada de experiência com roteamento protegido, contexto de autenticação e bibliotecas próprias de gráficos;
@@ -56,7 +111,28 @@ A arquitetura organiza-se em serviços especializados que se comunicam por \text
     \item \textbf{Banco de Dados MySQL}: três esquemas independentes (cadastro, financeiro e notificações) com migrações versionadas por Liquibase.
 \end{itemize}
 
-\subsection*{Fluxo de Uso (Exemplo)}
+\subsection{Diagrama de Arquitetura}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/diagramaarquitetura.png}
+\caption{Arquitetura proposta para o \textbf{Dashboard Financeiro}.}
+\label{fig:arquitetura}
+\end{figure}
+
+\subsection{Cadastro e Autenticação}
+Criação de conta, autenticação (login), refresh token, gestão de perfil e exclusão são atendidos pelo microserviço \texttt{dashboard-financeiro-cadastro-autenticacao}, que utiliza Spring Security, JWT e MySQL dedicado.
+
+\subsection{Gestão Financeira}
+CRUD de contas, categorias, transações e metas são tratados pelo microserviço \texttt{dashboard-financeiro}, que centraliza validações, regras de consistência e fechamento mensal, além de publicar eventos Kafka.
+
+\subsection{Dashboards e Indicadores}
+As consultas agregadas (período, categoria, tendência e metas) são executadas pelo \texttt{DashboardService}, exposto pelo mesmo microserviço financeiro e consumido pelo frontend nas visões ``Quadros'' e ``Analytics''.
+
+\subsection{Notificações}
+Eventos de usuários, transações e metas são consumidos pelo microserviço \texttt{dashboard-financeiro-notificacoes}, que utiliza Resend para enviar e\hyp mails autenticados com o domínio próprio e persiste logs para auditoria.
+
+\subsection{Fluxo de Uso (Exemplo)}
 
 \begin{enumerate}
     \item O usuário acessa a interface (React), que solicita ``\textit{buscar transações do mês}'' para o \textbf{API Gateway};
@@ -66,28 +142,23 @@ A arquitetura organiza-se em serviços especializados que se comunicam por \text
     \item Se metas mudarem de status, o evento é consumido pelo \textbf{Serviço de Notificações}, que envia e\hyp mails via Resend com o domínio autenticado.
 \end{enumerate}
 
-\subsection*{Diagrama de Arquitetura}
+\section{Banco de Dados e Estrutura}
+\label{sec:banco-dados}
+
+Derivado do modelo de domínio, o modelo relacional foi normalizado no MySQL e dividido em três \textit{schemas} independentes (cadastro, financeiro e notificações). Cada conjunto de tabelas reflete os limites contextuais descritos na arquitetura, permitindo migrações versionadas via Liquibase e isolamento físico para facilitar observabilidade e governança.
+
+As entidades apresentadas na Figura~\ref{fig:esquema-banco} foram exportadas automaticamente a partir do arquivo PlantUML \texttt{figs/modelo-dados.puml}, garantindo aderência entre código e documentação. O desenho explicita relacionamentos chave: usuários autenticados alimentam contas, categorias, transações e metas; eventos financeiros e de metas atualizam dashboards e produzem notificações persistidas em um log dedicado.
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{figs/diagramaarquitetura.png}
-\caption{Arquitetura proposta para o \textbf{Dashboard Financeiro}.}
-\label{fig:arquitetura}
+\safeincludegraphics[width=0.95\textwidth]{figs/modelo-dados.jpg}
+\caption{Modelo relacional consolidado no MySQL.}
+\label{fig:esquema-banco}
 \end{figure}
 
-\paragraph{Cadastro e Autenticação.}
-Criação de conta, autenticação (login), refresh token, gestão de perfil e exclusão são atendidos pelo microserviço \texttt{dashboard-financeiro-cadastro-autenticacao}, que utiliza Spring Security, JWT e MySQL dedicado.
+Esse particionamento facilita replicação dos bancos para os ambientes de desenvolvimento e produção, além de permitir restauração seletiva por domínio (cadastro, financeiro ou notificações) quando necessário.
 
-\paragraph{Gestão Financeira.}
-CRUD de contas, categorias, transações e metas são tratados pelo microserviço \texttt{dashboard-financeiro}, que centraliza validações, regras de consistência e fechamento mensal, além de publicar eventos Kafka.
-
-\paragraph{Dashboards e Indicadores.}
-As consultas agregadas (período, categoria, tendência e metas) são executadas pelo \texttt{DashboardService}, exposto pelo mesmo microserviço financeiro e consumido pelo frontend nas visões ``Quadros'' e ``Analytics''.
-
-\paragraph{Notificações.}
-Eventos de usuários, transações e metas são consumidos pelo microserviço \texttt{dashboard-financeiro-notificacoes}, que utiliza Resend para enviar e\hyp mails autenticados com o domínio próprio e persiste logs para auditoria.
-
-\section*{Considerações sobre Distribuição de Funcionalidades entre Componentes}
+\section{Considerações sobre Distribuição de Funcionalidades entre Componentes}
 
 A separação entre \textit{Serviço de Gestão Financeira} e \textit{Serviço de Dashboard} permite otimizar consultas analíticas sem comprometer a camada transacional. Estratégias como materialized views, índices e endpoints específicos para agregações serão consideradas para garantir desempenho. Autenticação e autorização ficam centralizadas na camada de API para uniformizar políticas de segurança (uso de JWT, roles e scoping mínimo).
 

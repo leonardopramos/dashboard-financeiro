@@ -1,36 +1,67 @@
 \babel@toc {brazil}{}\relax 
 \babel@toc {brazil}{}\relax 
 \babel@toc {brazil}{}\relax 
-\contentsline {chapter}{\numberline {1}\MakeTextUppercase []{Introdução}}{14}{}%
-\contentsline {section}{\numberline {1.1}\MakeTextUppercase []{Potencial de Impacto da Solução}}{15}{}%
-\contentsline {chapter}{\numberline {2}\MakeTextUppercase []{Fundamentação Teórica}}{16}{}%
-\contentsline {section}{\numberline {2.1}\MakeTextUppercase []{Educação Financeira e Controle Pessoal de Gastos}}{16}{}%
-\contentsline {section}{\numberline {2.2}\MakeTextUppercase []{Visualização de Dados, Business Intelligence e Interface Analítica}}{17}{}%
-\contentsline {section}{\numberline {2.3}\MakeTextUppercase []{Exemplos de Ferramentas Semelhantes e Oportunidades de Melhoria}}{19}{}%
-\contentsline {subsection}{\numberline {2.3.1}\MakeTextUppercase []{Guiabolso}}{19}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Pontos fortes.}}{19}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Limitações.}}{20}{}%
-\contentsline {subsection}{\numberline {2.3.2}\MakeTextUppercase []{Organizze}}{20}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Pontos fortes.}}{20}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Limitações.}}{21}{}%
-\contentsline {subsection}{\numberline {2.3.3}\MakeTextUppercase []{Minhas Economias}}{21}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Pontos fortes.}}{22}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Limitações.}}{22}{}%
-\contentsline {subsection}{\numberline {2.3.4}\MakeTextUppercase []{Mobills}}{23}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Pontos fortes.}}{23}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Limitações.}}{23}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Síntese.}}{24}{}%
+\contentsline {chapter}{\numberline {1}\MakeTextUppercase []{Introdução}}{15}{}%
+\contentsline {section}{\numberline {1.1}\MakeTextUppercase []{Objetivos}}{16}{}%
+\contentsline {subsection}{\numberline {1.1.1}\MakeTextUppercase []{Objetivo Geral}}{16}{}%
+\contentsline {subsection}{\numberline {1.1.2}\MakeTextUppercase []{Objetivos Específicos}}{16}{}%
+\contentsline {section}{\numberline {1.2}\MakeTextUppercase []{Potencial de Impacto da Solução}}{16}{}%
+\contentsline {chapter}{\numberline {2}\MakeTextUppercase []{Fundamentação Teórica}}{17}{}%
+\contentsline {section}{\numberline {2.1}\MakeTextUppercase []{Educação Financeira e Controle Pessoal de Gastos}}{17}{}%
+\contentsline {section}{\numberline {2.2}\MakeTextUppercase []{Visualização de Dados, Business Intelligence e Interface Analítica}}{18}{}%
+\contentsline {section}{\numberline {2.3}\MakeTextUppercase []{Exemplos de Ferramentas Semelhantes e Oportunidades de Melhoria}}{20}{}%
+\contentsline {subsection}{\numberline {2.3.1}\MakeTextUppercase []{Guiabolso}}{20}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Pontos fortes}}{21}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Limitações}}{21}{}%
+\contentsline {subsection}{\numberline {2.3.2}\MakeTextUppercase []{Organizze}}{21}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Pontos fortes}}{22}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Limitações}}{22}{}%
+\contentsline {subsection}{\numberline {2.3.3}\MakeTextUppercase []{Minhas Economias}}{22}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Pontos fortes}}{23}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Limitações}}{24}{}%
+\contentsline {subsection}{\numberline {2.3.4}\MakeTextUppercase []{Mobills}}{24}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Pontos fortes}}{24}{}%
+\contentsline {subsubsection}{\MakeTextUppercase []{Limitações}}{25}{}%
 \contentsline {subsection}{\numberline {2.3.5}\MakeTextUppercase []{Cobertura das lacunas identificadas nos concorrentes}}{25}{}%
-\contentsline {chapter}{\numberline {3}\MakeTextUppercase []{Proposta}}{26}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Cadastro e Autenticação.}}{29}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Gestão Financeira.}}{29}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Dashboards e Indicadores.}}{30}{}%
-\contentsline {paragraph}{\MakeTextUppercase []{Notificações.}}{30}{}%
-\contentsline {chapter}{\numberline {4}\MakeTextUppercase []{Cronograma}}{31}{}%
-\contentsline {chapter}{\numberline {5}\MakeTextUppercase []{Recursos a Serem Utilizados}}{37}{}%
-\contentsline {chapter}{\numberline {6}\MakeTextUppercase []{Considerações Finais}}{44}{}%
-\contentsline {chapter}{\numberline {\hbox {}}\uppercase {Refer\^{e}ncias}}{48}{}%
-\contentsline {chapter}{\numberline {}\uppercase {Ap\^endice}\nobreakspace A\nobreakspace --\nobreakspace \normalfont Meu primeiro apêndice}{50}{}%
-\contentsline {chapter}{\numberline {}\uppercase {Ap\^endice}\nobreakspace B\nobreakspace --\nobreakspace \normalfont My second appendix}{51}{}%
-\contentsline {chapter}{\numberline {}\uppercase {Anexo}\nobreakspace A\nobreakspace --\nobreakspace \normalfont Meu primeiro anexo}{52}{}%
-\contentsline {chapter}{\numberline {}\uppercase {Anexo}\nobreakspace B\nobreakspace --\nobreakspace \normalfont My second attachment}{53}{}%
+\contentsline {chapter}{\numberline {3}\MakeTextUppercase []{Dashboard Financeiro}}{26}{}%
+\contentsline {section}{\numberline {3.1}\MakeTextUppercase []{Objetivo da Solução}}{26}{}%
+\contentsline {section}{\numberline {3.2}\MakeTextUppercase []{Organização e Planejamento Metodológico}}{26}{}%
+\contentsline {section}{\numberline {3.3}\MakeTextUppercase []{Funcionalidades Principais}}{26}{}%
+\contentsline {subsection}{\numberline {3.3.1}\MakeTextUppercase []{Onboarding completo}}{26}{}%
+\contentsline {subsection}{\numberline {3.3.2}\MakeTextUppercase []{Gestão financeira diária}}{27}{}%
+\contentsline {subsection}{\numberline {3.3.3}\MakeTextUppercase []{Contas bancárias}}{27}{}%
+\contentsline {subsection}{\numberline {3.3.4}\MakeTextUppercase []{Metas financeiras}}{27}{}%
+\contentsline {subsection}{\numberline {3.3.5}\MakeTextUppercase []{Dashboards}}{27}{}%
+\contentsline {subsection}{\numberline {3.3.6}\MakeTextUppercase []{Módulo educacional}}{27}{}%
+\contentsline {subsection}{\numberline {3.3.7}\MakeTextUppercase []{Notificações}}{28}{}%
+\contentsline {subsection}{\numberline {3.3.8}\MakeTextUppercase []{Acesso responsivo}}{28}{}%
+\contentsline {section}{\numberline {3.4}\MakeTextUppercase []{Definição do MVP}}{28}{}%
+\contentsline {section}{\numberline {3.5}\MakeTextUppercase []{Adaptação de Metodologias Ágeis}}{28}{}%
+\contentsline {section}{\numberline {3.6}\MakeTextUppercase []{Personas}}{29}{}%
+\contentsline {subsection}{\numberline {3.6.1}\MakeTextUppercase []{Larissa (24) — Analista Júnior}}{29}{}%
+\contentsline {subsection}{\numberline {3.6.2}\MakeTextUppercase []{Ricardo (38) — Microempreendedor Individual}}{29}{}%
+\contentsline {subsection}{\numberline {3.6.3}\MakeTextUppercase []{Patrícia (46) — Mentora de Educação Financeira Comunitária}}{29}{}%
+\contentsline {section}{\numberline {3.7}\MakeTextUppercase []{Histórias de Usuário}}{30}{}%
+\contentsline {subsection}{\numberline {3.7.1}\MakeTextUppercase []{Larissa — Fluxos priorizados no MVP}}{30}{}%
+\contentsline {subsection}{\numberline {3.7.2}\MakeTextUppercase []{Ricardo — Fluxo financeiro consolidado}}{30}{}%
+\contentsline {subsection}{\numberline {3.7.3}\MakeTextUppercase []{Patrícia — Acompanhamento Educacional}}{31}{}%
+\contentsline {section}{\numberline {3.8}\MakeTextUppercase []{Arquitetura da Aplicação}}{31}{}%
+\contentsline {subsection}{\numberline {3.8.1}\MakeTextUppercase []{Componentes Principais}}{31}{}%
+\contentsline {subsection}{\numberline {3.8.2}\MakeTextUppercase []{Diagrama de Arquitetura}}{32}{}%
+\contentsline {subsection}{\numberline {3.8.3}\MakeTextUppercase []{Cadastro e Autenticação}}{32}{}%
+\contentsline {subsection}{\numberline {3.8.4}\MakeTextUppercase []{Gestão Financeira}}{33}{}%
+\contentsline {subsection}{\numberline {3.8.5}\MakeTextUppercase []{Dashboards e Indicadores}}{33}{}%
+\contentsline {subsection}{\numberline {3.8.6}\MakeTextUppercase []{Notificações}}{33}{}%
+\contentsline {subsection}{\numberline {3.8.7}\MakeTextUppercase []{Fluxo de Uso (Exemplo)}}{33}{}%
+\contentsline {section}{\numberline {3.9}\MakeTextUppercase []{Banco de Dados e Estrutura}}{34}{}%
+\contentsline {section}{\numberline {3.10}\MakeTextUppercase []{Considerações sobre Distribuição de Funcionalidades entre Componentes}}{35}{}%
+\contentsline {chapter}{\numberline {4}\MakeTextUppercase []{Solução Desenvolvida}}{36}{}%
+\contentsline {chapter}{\numberline {5}\MakeTextUppercase []{Recursos Utilizados}}{54}{}%
+\contentsline {section}{\numberline {5.1}\MakeTextUppercase []{Recursos Computacionais}}{54}{}%
+\contentsline {section}{\numberline {5.2}\MakeTextUppercase []{Modelo de Domínio}}{54}{}%
+\contentsline {section}{\numberline {5.3}\MakeTextUppercase []{Implantação em Nuvem, Domínio e E-mails}}{56}{}%
+\contentsline {section}{\numberline {5.4}\MakeTextUppercase []{Ambiente de Desenvolvimento}}{56}{}%
+\contentsline {paragraph}{\MakeTextUppercase []{}}{56}{}%
+\contentsline {chapter}{\numberline {6}\MakeTextUppercase []{Avaliação da Solução}}{58}{}%
+\contentsline {chapter}{\numberline {7}\MakeTextUppercase []{Considerações Finais}}{59}{}%
+\contentsline {chapter}{\numberline {\hbox {}}\uppercase {Refer\^{e}ncias}}{63}{}%

@@ -1,16 +1,16 @@
-\chapter{\label{chap:chap6}Considerações Finais}
+\chapter{\label{chap:chap7}Considerações Finais}
 
 Este volume consolidou o desenvolvimento, a validação e a implantação do \textbf{Dashboard Financeiro}, uma aplicação prática e funcional voltada à organização das finanças pessoais. O produto final encontra-se publicado em nuvem, oferece dashboards completos, módulo educacional e notificações automáticas, além de servir como laboratório para aplicar na prática os conhecimentos adquiridos ao longo da graduação em Sistemas de Informação.
 
-O projeto representa não apenas uma entrega técnica, mas também uma jornada de crescimento pessoal e profissional. A construção dos microserviços, do frontend e do pipeline de deploy com domínio próprio demonstrou domínio das disciplinas de arquitetura, engenharia de dados e experiência do usuário, reforçando o aprendizado acumulado durante o curso.
+O projeto representa não apenas uma entrega técnica, mas também uma jornada de crescimento pessoal e profissional. A construção dos microserviços, do frontend e do ambiente publicado com domínio próprio demonstrou domínio das disciplinas de arquitetura, engenharia de dados e experiência do usuário, reforçando o aprendizado acumulado durante o curso.
 
 \section*{Atendimento aos apontamentos do TC I}
 
-A banca responsável pela avaliação do TC~I registrou observações críticas na etapa anterior; todas foram tratadas neste volume:
+No contexto da avaliação do TC~I, foram registradas observações críticas na etapa anterior; todas foram tratadas neste volume:
 \begin{itemize}
     \item \textbf{Análise de mercado aprofundada (Seção 2.7).} O Capítulo~\ref{chap:chap2} foi ampliado com descrições detalhadas dos concorrentes, tabela comparativa e subseção específica mostrando como o Dashboard Financeiro cobre as lacunas identificadas.
-    \item \textbf{Estrutura textual consistente.} A organização dos capítulos foi revisada, eliminando repetições (objetivos, funcionalidades e arquitetura aparecem uma única vez nos Capítulos~\ref{chap:intro}--\ref{chap:chap3}). O Capítulo~\ref{chap:chap4} passou a conter apenas cronograma, rastreabilidade e validação das funcionalidades.
-    \item \textbf{Modelagem semântica.} A Figura~\ref{fig:arquitetura-geral} segue a notação C4 (nível \textit{Container}); a Figura~\ref{fig:modelo-dominio} apresenta o modelo de domínio antes do banco; a Figura~\ref{fig:casos-uso} utiliza UML formal e está compatibilizada com a lista de funcionalidades e descrições tipo história de usuário.
+    \item \textbf{Estrutura textual consistente.} A organização dos capítulos foi revisada, eliminando repetições (objetivos, funcionalidades e arquitetura aparecem uma única vez nos Capítulos~\ref{chap:intro}--\ref{chap:chap3}). O Capítulo~\ref{chap:chap4} passou a consolidar rastreabilidade e validação das funcionalidades entregues.
+    \item \textbf{Modelagem semântica.} A Figura~\ref{fig:arquitetura-geral} segue a notação C4 (nível \textit{Container}); a Figura~\ref{fig:modelo-dominio} apresenta o modelo de domínio antes do banco; e a Seção~\ref{sec:banco-dados} detalha o modelo relacional alinhado às personas e histórias de usuário descritas no Capítulo~\ref{chap:chap3}.
     \item \textbf{Casos de uso x funcionalidades}. A Tabela~\ref{tab:rastreabilidade-funcionalidades} (Capítulo~\ref{chap:chap4}) vincula cada funcionalidade planejada aos módulos entregues, e o diagrama de casos de uso reflete exatamente esse escopo.
     \item \textbf{Definição do MVP.} O Capítulo~\ref{chap:chap3} ganhou a seção ``Definição do MVP'', descrevendo os itens construídos entre junho e agosto (cadastro, contas, transações, metas, dashboards e educação).
     \item \textbf{Entrega em nuvem e viabilidade.} O Capítulo~\ref{chap:chap5} descreve o deploy real na Railway, o domínio público, a autenticação de DNS na KingHost e a operação do serviço de notificações via Resend, evidenciando a capacidade de atingir os objetivos propostos.
@@ -28,7 +28,7 @@ Mais do que um software, o Dashboard Financeiro atua como ferramenta de transfor
 
 Segundo Gitman e Joehnk, o planejamento financeiro pessoal é essencial para alcançar objetivos de longo prazo e garantir estabilidade econômica \cite{GITMAN2018}. Alinhado a essa visão, o Dashboard Financeiro auxilia usuários a definir metas tangíveis, acompanhar indicadores e celebrar pequenas vitórias, reforçando a formação continuada em educação financeira.
 
-O projeto também demonstra o compromisso acadêmico com tecnologias acessíveis e impacto social: o código é versionado publicamente, o domínio próprio democratiza o acesso e o pipeline de notificações amplia o alcance das recomendações.
+O projeto também demonstra o compromisso acadêmico com tecnologias acessíveis e impacto social: o código é versionado publicamente, o domínio próprio democratiza o acesso e o sistema de notificações via e-mail amplia o alcance dos alertas enviados aos usuários.
 
 \section*{Limitações Encontradas}
 

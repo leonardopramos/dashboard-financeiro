@@ -70,16 +70,14 @@ Cada troca, desafio e conversa teve seu valor neste caminho de aprendizado.
 %----------------------------------------------------------------
 % Resumo e Abstract
 %----------------------------------------------------------------
-\begin{resumo}{educação financeira, microserviços, dashboards, implantação em nuvem, validação}
-Este trabalho consiste na concepção e entrega do \textbf{Dashboard Financeiro}, aplicação web \textit{full-stack} voltada a orientar pessoas diante do cenário brasileiro de endividamento elevado. O documento apresenta o contexto socioeconômico que justifica a proposta, analisa referências teóricas e ferramentas concorrentes, e descreve a solução construída para unir controle financeiro cotidiano, visualizações analíticas e educação no fluxo de uso.
-O leitor encontra a arquitetura detalhada da plataforma, composta por frontend em \textbf{React 19}, quatro microserviços \textbf{Spring Boot} (cadastro/autenticação, operações financeiras, notificações e \textit{API Gateway}), comunicação via Apache Kafka, segurança com \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, persistência distribuída em \textbf{MySQL}~\cite{MYSQL2025} e envio de e-mails transacionais pela Resend. O texto evidencia as principais funcionalidades — onboarding seguro, gestão de contas, categorias e transações, metas com alertas, dashboards resumidos e analíticos e módulo educacional — bem como a implantação efetiva no Railway sob o domínio \texttt{app.tccleonardopreczevski.com.br}, com DNS autenticado na KingHost.
-Os capítulos de cronograma, recursos e considerações finais documentam a rastreabilidade das entregas, os ambientes utilizados e as validações conduzidas com usuários e orientação acadêmica, além de discutir limitações atuais (integrações bancárias automáticas e observabilidade avançada) e os próximos passos planejados.
+\begin{resumo}{educação financeira, planejamento pessoal, saúde financeira, autonomia econômica, validação com usuários}
+Este trabalho apresenta o processo de concepção, desenvolvimento e validação do Dashboard Financeiro, solução digital criada para apoiar pessoas na organização de suas finanças diante do crescimento do endividamento no país. O texto contextualiza o problema, sintetiza as referências que embasam a proposta e descreve as decisões de produto que guiaram a experiência final: fluxo de acolhimento orientado, registro de receitas e despesas, categorização intuitiva, definição de metas e acompanhamento visual em painéis que integram indicadores, alertas e conteúdos educativos.
+A pesquisa discute como as fases de levantamento de requisitos, prototipação, experimentação com usuários e acompanhamento com a banca orientadora direcionaram ajustes contínuos até a disponibilização pública da solução. Também são registradas as métricas coletadas, as validações conduzidas e as limitações encontradas, indicando caminhos para integrações automáticas com instituições financeiras e para o aprimoramento do monitoramento do produto. O resumo apresenta, portanto, uma visão abrangente da motivação, das entregas e dos próximos passos do projeto.
 \end{resumo}
 
-\begin{abstract}{financial education, microservices, dashboards, cloud deployment, validation}
-This work consists of designing and delivering the \textbf{Financial Dashboard}, a full-stack web application that guides people through personal finance decisions in the face of Brazil’s high household debt rates. The document frames the socioeconomic motivation, revisits theoretical references and competing products, and then describes the solution that combines day-to-day budgeting, analytical dashboards, and embedded education.
-It details the platform architecture: a \textbf{React 19} frontend, four \textbf{Spring Boot} microservices (sign-up/authentication, financial operations, notifications, and the \textit{API Gateway}) connected through Apache Kafka, secured with \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, persisted on distributed \textbf{MySQL}~\cite{MYSQL2025} schemas, and integrated with Resend for transactional e-mails. The main features—secure onboarding, bank-account/category/transaction management, goal tracking with alerts, summary and analytical dashboards, and the educational module—are presented alongside evidence of the production deployment on Railway using the custom domain \texttt{app.tccleonardopreczevski.com.br} authenticated via KingHost.
-Subsequent chapters cover the schedule, resources, and final considerations that record delivery traceability, working environments, and validations carried out with users and faculty, while also discussing current limitations (manual bank integrations and limited observability) and future enhancements. The abstract therefore previews the complete journey from the problem statement to the verified, cloud-hosted solution.
+\begin{abstract}{financial education, personal budgeting, user validation, financial wellbeing, roadmap}
+This work presents the conception, development, and validation of the Financial Dashboard, a digital solution designed to help people organize their finances amid rising household debt in Brazil. The document frames the social motivation, summarizes the theoretical references that support the proposal, and explains the product decisions that shaped the experience: guided onboarding, intuitive recording of income and expenses, category-based organization, goal setting, and visual panels that combine indicators, alerts, and educational guidance.
+The research highlights how requirement gathering, prototyping, user testing, and faculty feedback steered continuous improvements until the solution became publicly available. It also records the metrics collected, the validations performed, and the limitations identified, pointing to future work such as automated connections with financial institutions and richer observability of user journeys. The abstract therefore offers a broad view of the motivation, outcomes, and next steps of the project.
 \end{abstract}
 
 %----------------------------------------------------------------
@@ -108,16 +106,5 @@ Subsequent chapters cover the schedule, resources, and final considerations that
 %----------------------------------------------------------------
 \bibliographystyle{tcc-alpha}
 \bibliography{exemplo-bib}
-
-%----------------------------------------------------------------
-% Apêndices e Anexos
-%----------------------------------------------------------------
-\appendix
-\chapter{Meu primeiro apêndice}
-\chapter{My second appendix}
-
-\anexos
-\chapter{Meu primeiro anexo}
-\chapter{My second attachment}
 
 \end{document}

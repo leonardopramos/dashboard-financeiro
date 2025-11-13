@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.10.6)  12 NOV 2025 15:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.10.6)  13 NOV 2025 17:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -688,15 +688,9 @@ Package pgfplots notification 'compat/show suggested version=true': document has
 
 ] [4
 
-]
-LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 74.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 75.
- (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
-File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
-) [5
+] [5
 
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [6
+] [6
 
 ] (./exemplo.lof
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 4.
@@ -715,6 +709,8 @@ Overfull \hbox (8.46552pt too wide) in paragraph at lines 5--5
  [][] \T1/phv/m/n/12 Fi-gura []I-SFB: sé-rie re-cente (2020^^U2024). \T1/phv/b/n/12 Fon-tes: \T1/phv/m/n/12 FE-BRA-BAN/BCB [[], 
  []
 
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 18.
 )
 \tf@lof=\write4
 \openout4 = `exemplo.lof'.
@@ -752,17 +748,22 @@ Overfull \hbox (8.46552pt too wide) in paragraph at lines 5--5
  [12
 
 ] (./exemplo.toc
-Overfull \hbox (1.82674pt too wide) in paragraph at lines 8--8
+Overfull \hbox (1.82674pt too wide) in paragraph at lines 11--11
  [][] []\T1/phv/m/n/12 VISUALIZAÇÃO DE DA-DOS, BU-SI-NESS IN-TEL-LI-GENCE E IN-TER-FACE ANA- 
+ []
+
+[13
+
+]
+Overfull \hbox (0.74747pt too wide) in paragraph at lines 57--57
+ [][] []\T1/phv/m/n/12 CONSIDERAÇÕES SO-BRE DIS-TRI-BUI-ÇÃO DE FUN-CI-O-NA-LI-DA-DES EN-TRE 
  []
 
 )
 \tf@toc=\write10
 \openout10 = `exemplo.toc'.
 
- [13
-
-]
+ [14]
 \openout2 = `exemplo-cap1.aux'.
 
  (./exemplo-cap1.tex
@@ -772,20 +773,34 @@ Underfull \hbox (badness 10000) detected at line 1
 \T1/phv/b/n/14.4 1. 
  []
 
-[14
+
+Underfull \hbox (badness 10000) detected at line 32
+\T1/phv/b/n/12 1.1
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 34
+\T1/phv/m/n/12 1.1.1
+ []
+
+[15
 
 
 
 ]
+Underfull \hbox (badness 10000) detected at line 38
+\T1/phv/m/n/12 1.1.2
+ []
+
 LaTeX Font Info:    Trying to load font information for TS1+phv on input line 41.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1phv.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1phv.fd
 File: ts1phv.fd 2020/03/25 scalable font definitions for TS1/phv.
 )
 Underfull \hbox (badness 10000) detected at line 51
-\T1/phv/b/n/12 1.1
+\T1/phv/b/n/12 1.2
  []
 
-) [15]
+) [16]
 \openout2 = `exemplo-cap2.aux'.
 
  (./exemplo-cap2.tex
@@ -802,83 +817,77 @@ Underfull \hbox (badness 10000) detected at line 5
 
 LaTeX Font Info:    Font shape `TS1/phv/m/it' in size <12> not available
 (Font)              Font shape `TS1/phv/m/sl' tried instead on input line 6.
-Package pgfplots info on input line 38: Using 'lua backend=false' for axis: x coord trafo unsupported.
-[16
+[17
 
 
 
 
 ]
-Underfull \hbox (badness 10000) detected at line 49
+Package pgfplots info on input line 40: Using 'lua backend=false' for axis: x coord trafo unsupported.
+
+Underfull \hbox (badness 10000) detected at line 51
 \T1/phv/b/n/12 2.2
  []
 
-[17]
-Underfull \hbox (badness 10000) detected at line 89
+[18] [19]
+Underfull \hbox (badness 10000) detected at line 93
 \T1/phv/b/n/12 2.3
  []
 
-[18]
-Underfull \hbox (badness 10000) detected at line 92
+
+Underfull \hbox (badness 10000) detected at line 96
 \T1/phv/m/n/12 2.3.1
  []
 
-<figs/guiabolso.jpg, id=67, 1062.21844pt x 472.01344pt>
+<figs/guiabolso.jpg, id=70, 1062.21844pt x 472.01344pt>
 File: figs/guiabolso.jpg Graphic file (type jpg)
 <use figs/guiabolso.jpg>
-Package pdftex.def Info: figs/guiabolso.jpg  used on input line 99.
+Package pdftex.def Info: figs/guiabolso.jpg  used on input line 103.
 (pdftex.def)             Requested size: 314.40001pt x 139.7109pt.
-[19 <./figs/guiabolso.jpg>]
-Underfull \hbox (badness 10000) detected at line 120
+[20 <./figs/guiabolso.jpg>]
+Underfull \hbox (badness 10000) detected at line 124
 \T1/phv/m/n/12 2.3.2
  []
 
-<figs/organizze.png, id=72, 1319.93124pt x 724.7075pt>
+<figs/organizze.png, id=74, 1319.93124pt x 724.7075pt>
 File: figs/organizze.png Graphic file (type png)
 <use figs/organizze.png>
-Package pdftex.def Info: figs/organizze.png  used on input line 127.
+Package pdftex.def Info: figs/organizze.png  used on input line 131.
 (pdftex.def)             Requested size: 314.40001pt x 172.61743pt.
-[20 <./figs/organizze.png>]
-Underfull \hbox (badness 10000) detected at line 148
+[21]
+Underfull \hbox (badness 10000) detected at line 152
 \T1/phv/m/n/12 2.3.3
  []
 
-<figs/minhas-economias.png, id=78, 419.5675pt x 565.11125pt>
+<figs/minhas-economias.png, id=79, 419.5675pt x 565.11125pt>
 File: figs/minhas-economias.png Graphic file (type png)
 <use figs/minhas-economias.png>
-Package pdftex.def Info: figs/minhas-economias.png  used on input line 155.
+Package pdftex.def Info: figs/minhas-economias.png  used on input line 159.
 (pdftex.def)             Requested size: 314.40001pt x 423.46161pt.
-[21] [22 <./figs/minhas-economias.png>]
-Underfull \hbox (badness 10000) detected at line 176
+[22 <./figs/organizze.png>] [23 <./figs/minhas-economias.png>]
+Underfull \hbox (badness 10000) detected at line 180
 \T1/phv/m/n/12 2.3.4
  []
 
-<figs/mobills.jpg, id=86, 602.25pt x 319.1925pt>
+<figs/mobills.jpg, id=88, 602.25pt x 319.1925pt>
 File: figs/mobills.jpg Graphic file (type jpg)
 <use figs/mobills.jpg>
-Package pdftex.def Info: figs/mobills.jpg  used on input line 183.
+Package pdftex.def Info: figs/mobills.jpg  used on input line 187.
 (pdftex.def)             Requested size: 314.40001pt x 166.63857pt.
 
-Overfull \hbox (1.83153pt too wide) in paragraph at lines 198--199
+Overfull \hbox (1.83153pt too wide) in paragraph at lines 202--203
 []\T1/phv/m/n/12 Boa parte das fun-ci-o-na-li-da-des avan-ça-das per-ma-nece atrás de pay-wall, li-mi-tando usuá-
  []
 
-[23 <./figs/mobills.jpg>]
-Overfull \hbox (10.32614pt too wide) in paragraph at lines 210--222
- [][] 
- []
-
-
-Overfull \hbox (1.59312pt too wide) in paragraph at lines 225--226
-[]\T1/phv/m/n/12 As al-ter-na-ti-vas exis-ten-tes evo-luí-ram a ex-pe-ri-ên-cia de con-trole fi-nan-ceiro, mas ainda
- []
-
-
-Underfull \hbox (badness 10000) detected at line 233
+[24 <./figs/mobills.jpg>]
+Underfull \hbox (badness 10000) detected at line 208
 \T1/phv/m/n/12 2.3.5
  []
 
-[24]) [25]
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 212.
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
+)) [25{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
 \openout2 = `exemplo-cap3.aux'.
 
  (./exemplo-cap3.tex
@@ -888,23 +897,183 @@ Underfull \hbox (badness 10000) detected at line 1
 \T1/phv/b/n/14.4 3. 
  []
 
+
+Underfull \hbox (badness 10000) detected at line 5
+\T1/phv/b/n/12 3.1
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 9
+\T1/phv/b/n/12 3.2
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 15
+\T1/phv/b/n/12 3.3
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 17
+\T1/phv/m/n/12 3.3.1
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 20
+\T1/phv/m/n/12 3.3.2
+ []
+
 [26
 
 
 
 
-] [27] [28]
-<figs/diagramaarquitetura.png, id=106, 766.865pt x 394.47375pt>
+]
+Underfull \hbox (badness 10000) detected at line 23
+\T1/phv/m/n/12 3.3.3
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 26
+\T1/phv/m/n/12 3.3.4
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 29
+\T1/phv/m/n/12 3.3.5
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 32
+\T1/phv/m/n/12 3.3.6
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 35
+\T1/phv/m/n/12 3.3.7
+ []
+
+[27]
+Underfull \hbox (badness 10000) detected at line 38
+\T1/phv/m/n/12 3.3.8
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 43
+\T1/phv/b/n/12 3.4
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 55
+\T1/phv/b/n/12 3.5
+ []
+
+[28]
+Underfull \hbox (badness 10000) detected at line 59
+\T1/phv/b/n/12 3.6
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 63
+\T1/phv/m/n/12 3.6.1
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 66
+\T1/phv/m/n/12 3.6.2
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 69
+\T1/phv/m/n/12 3.6.3
+ []
+
+[29]
+Underfull \hbox (badness 10000) detected at line 72
+\T1/phv/b/n/12 3.7
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 76
+\T1/phv/m/n/12 3.7.1
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 83
+\T1/phv/m/n/12 3.7.2
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 90
+\T1/phv/m/n/12 3.7.3
+ []
+
+[30]
+Underfull \hbox (badness 10000) detected at line 99
+\T1/phv/b/n/12 3.8
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 103
+\T1/phv/m/n/12 3.8.1
+ []
+
+[31]
+Underfull \hbox (badness 10000) detected at line 114
+\T1/phv/m/n/12 3.8.2
+ []
+
+<figs/diagramaarquitetura.png, id=116, 766.865pt x 394.47375pt>
 File: figs/diagramaarquitetura.png Graphic file (type png)
 <use figs/diagramaarquitetura.png>
-Package pdftex.def Info: figs/diagramaarquitetura.png  used on input line 73.
+Package pdftex.def Info: figs/diagramaarquitetura.png  used on input line 118.
 (pdftex.def)             Requested size: 459.51054pt x 236.37308pt.
- [29 <./figs/diagramaarquitetura.png (PNG copy)>]
-Overfull \hbox (173.69897pt too wide) in paragraph at lines 88--89
+
+Underfull \hbox (badness 10000) detected at line 123
+\T1/phv/m/n/12 3.8.3
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 126
+\T1/phv/m/n/12 3.8.4
+ []
+
+[32 <./figs/diagramaarquitetura.png (PNG copy)>]
+Underfull \hbox (badness 10000) detected at line 129
+\T1/phv/m/n/12 3.8.5
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 132
+\T1/phv/m/n/12 3.8.6
+ []
+
+
+Overfull \hbox (173.69897pt too wide) in paragraph at lines 133--134
 []\T1/phv/m/n/12 Eventos de usuá-rios, tran-sa-ções e me-tas são con-su-mi-dos pelo mi-cro-ser-viço \T1/cmtt/m/n/12 dashboard-financeiro-notificacoes\T1/phv/m/n/12 ,
  []
 
-) [30]
+
+Underfull \hbox (badness 10000) detected at line 135
+\T1/phv/m/n/12 3.8.7
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 145
+\T1/phv/b/n/12 3.9
+ []
+
+[33]
+<figs/modelo-dados.jpg, id=123, 1307.88625pt x 1300.86pt>
+File: figs/modelo-dados.jpg Graphic file (type jpg)
+<use figs/modelo-dados.jpg>
+Package pdftex.def Info: figs/modelo-dados.jpg  used on input line 154.
+(pdftex.def)             Requested size: 459.51054pt x 457.03473pt.
+ [34 <./figs/modelo-dados.jpg>]
+Underfull \hbox (badness 10000) detected at line 161
+\T1/phv/b/n/12 3.10
+ []
+
+) [35]
 \openout2 = `exemplo-cap4.aux'.
 
  (./exemplo-cap4.tex
@@ -914,102 +1083,200 @@ Underfull \hbox (badness 10000) detected at line 1
 \T1/phv/b/n/14.4 4. 
  []
 
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 23.
+<figs/us-l1-step1.png, id=130, 1904.11375pt x 909.3975pt>
+File: figs/us-l1-step1.png Graphic file (type png)
+<use figs/us-l1-step1.png>
+Package pdftex.def Info: figs/us-l1-step1.png  used on input line 52.
+(pdftex.def)             Requested size: 445.00023pt x 212.52896pt.
+<figs/us-l1-step2.png, id=131, 1904.11375pt x 909.3975pt>
+File: figs/us-l1-step2.png Graphic file (type png)
+<use figs/us-l1-step2.png>
+Package pdftex.def Info: figs/us-l1-step2.png  used on input line 57.
+(pdftex.def)             Requested size: 445.00023pt x 212.52896pt.
+<figs/us-l1-step3.png, id=132, 1904.11375pt x 909.3975pt>
+File: figs/us-l1-step3.png Graphic file (type png)
+<use figs/us-l1-step3.png>
+Package pdftex.def Info: figs/us-l1-step3.png  used on input line 62.
+(pdftex.def)             Requested size: 445.00023pt x 212.52896pt.
+<figs/us-l1-email.png, id=133, 1620.0525pt x 840.13875pt>
+File: figs/us-l1-email.png Graphic file (type png)
+<use figs/us-l1-email.png>
+Package pdftex.def Info: figs/us-l1-email.png  used on input line 67.
+(pdftex.def)             Requested size: 445.00023pt x 230.76324pt.
+[36
 
-Overfull \hbox (27.50967pt too wide) in paragraph at lines 12--28
- [][] 
+
+
+
+]
+Overfull \vbox (254.90147pt too high) has occurred while \output is active []
+
+ [37 <./figs/us-l1-step1.png> <./figs/us-l1-step2.png> <./figs/us-l1-step3.png> <./figs/us-l1-email.png>]
+<figs/us-l1-step4.png, id=145, 1900.09875pt x 909.3975pt>
+File: figs/us-l1-step4.png Graphic file (type png)
+<use figs/us-l1-step4.png>
+Package pdftex.def Info: figs/us-l1-step4.png  used on input line 75.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+<figs/us-l1-step5.png, id=146, 1900.09875pt x 909.3975pt>
+File: figs/us-l1-step5.png Graphic file (type png)
+<use figs/us-l1-step5.png>
+Package pdftex.def Info: figs/us-l1-step5.png  used on input line 80.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+<figs/us-l1-login.png, id=147, 1900.09875pt x 909.3975pt>
+File: figs/us-l1-login.png Graphic file (type png)
+<use figs/us-l1-login.png>
+Package pdftex.def Info: figs/us-l1-login.png  used on input line 85.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+<figs/us-l1-dashboard.png, id=148, 1900.09875pt x 909.3975pt>
+File: figs/us-l1-dashboard.png Graphic file (type png)
+<use figs/us-l1-dashboard.png>
+Package pdftex.def Info: figs/us-l1-dashboard.png  used on input line 90.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+
+Overfull \vbox (254.02577pt too high) has occurred while \output is active []
+
+ [38 <./figs/us-l1-step4.png> <./figs/us-l1-step5.png> <./figs/us-l1-login.png> <./figs/us-l1-dashboard.png>]
+<figs/us-l2-entry.png, id=156, 1900.09875pt x 909.3975pt>
+File: figs/us-l2-entry.png Graphic file (type png)
+<use figs/us-l2-entry.png>
+Package pdftex.def Info: figs/us-l2-entry.png  used on input line 101.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+<figs/us-l2-form.png, id=157, 1900.09875pt x 909.3975pt>
+File: figs/us-l2-form.png Graphic file (type png)
+<use figs/us-l2-form.png>
+Package pdftex.def Info: figs/us-l2-form.png  used on input line 106.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+<figs/us-l2-list.png, id=158, 1900.09875pt x 909.3975pt>
+File: figs/us-l2-list.png Graphic file (type png)
+<use figs/us-l2-list.png>
+Package pdftex.def Info: figs/us-l2-list.png  used on input line 111.
+(pdftex.def)             Requested size: 445.00023pt x 212.97299pt.
+ [39]
+Overfull \vbox (17.04387pt too high) has occurred while \output is active []
+
+ [40 <./figs/us-l2-entry.png> <./figs/us-l2-form.png> <./figs/us-l2-list.png>]
+<figs/us-l3.png, id=168, 1892.06876pt x 909.3975pt>
+File: figs/us-l3.png Graphic file (type png)
+<use figs/us-l3.png>
+Package pdftex.def Info: figs/us-l3.png  used on input line 122.
+(pdftex.def)             Requested size: 411.14528pt x 197.59808pt.
+
+Overfull \hbox (14.55716pt too wide) in paragraph at lines 128--129
+\T1/phv/m/n/12 com atri-bu-tos es-pe-cí-fi-cos (ape-lido, tipo, agên-cia) sin-cro-ni-za-dos com \T1/cmtt/m/n/12 /finance/bank-accounts\T1/phv/m/n/12 . 
  []
 
+[41 <./figs/us-l3.png>]
+<figs/us-r2.png, id=173, 1892.06876pt x 908.39375pt>
+File: figs/us-r2.png Graphic file (type png)
+<use figs/us-r2.png>
+Package pdftex.def Info: figs/us-r2.png  used on input line 153.
+(pdftex.def)             Requested size: 411.14528pt x 197.37999pt.
+ [42]
+<figs/us-r3.png, id=178, 1900.09875pt x 909.3975pt>
+File: figs/us-r3.png Graphic file (type png)
+<use figs/us-r3.png>
+Package pdftex.def Info: figs/us-r3.png  used on input line 163.
+(pdftex.def)             Requested size: 411.14528pt x 196.76552pt.
+<figs/us-p1-1.png, id=179, 1892.06876pt x 909.3975pt>
+File: figs/us-p1-1.png Graphic file (type png)
+<use figs/us-p1-1.png>
+Package pdftex.def Info: figs/us-p1-1.png  used on input line 173.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p1-2.png, id=180, 1892.06876pt x 909.3975pt>
+File: figs/us-p1-2.png Graphic file (type png)
+<use figs/us-p1-2.png>
+Package pdftex.def Info: figs/us-p1-2.png  used on input line 178.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p1-3.png, id=181, 1892.06876pt x 909.3975pt>
+File: figs/us-p1-3.png Graphic file (type png)
+<use figs/us-p1-3.png>
+Package pdftex.def Info: figs/us-p1-3.png  used on input line 183.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p1-4.png, id=182, 1892.06876pt x 909.3975pt>
+File: figs/us-p1-4.png Graphic file (type png)
+<use figs/us-p1-4.png>
+Package pdftex.def Info: figs/us-p1-4.png  used on input line 188.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+ [43 <./figs/us-r2.png> <./figs/us-r3.png>]
+Overfull \vbox (288.08475pt too high) has occurred while \output is active []
 
-Underfull \hbox (badness 10000) in paragraph at lines 43--43
-[]|\T1/phv/b/n/12 Funcionalidade pla-ne-
+ [44 <./figs/us-p1-1.png> <./figs/us-p1-2.png> <./figs/us-p1-3.png> <./figs/us-p1-4.png>]
+<figs/us-p2-1.png, id=196, 1892.06876pt x 909.3975pt>
+File: figs/us-p2-1.png Graphic file (type png)
+<use figs/us-p2-1.png>
+Package pdftex.def Info: figs/us-p2-1.png  used on input line 199.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p2-2.png, id=197, 1892.06876pt x 909.3975pt>
+File: figs/us-p2-2.png Graphic file (type png)
+<use figs/us-p2-2.png>
+Package pdftex.def Info: figs/us-p2-2.png  used on input line 204.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p2-3.png, id=198, 1892.06876pt x 909.3975pt>
+File: figs/us-p2-3.png Graphic file (type png)
+<use figs/us-p2-3.png>
+Package pdftex.def Info: figs/us-p2-3.png  used on input line 209.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/us-p2-4.png, id=199, 1892.06876pt x 909.3975pt>
+File: figs/us-p2-4.png Graphic file (type png)
+<use figs/us-p2-4.png>
+Package pdftex.def Info: figs/us-p2-4.png  used on input line 214.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+ [45]
+Overfull \vbox (285.55269pt too high) has occurred while \output is active []
+
+ [46 <./figs/us-p2-1.png> <./figs/us-p2-2.png> <./figs/us-p2-3.png> <./figs/us-p2-4.png>]
+Overfull \hbox (4.1828pt too wide) in paragraph at lines 221--222
+[]\T1/phv/b/n/12 Fluxo im-ple-men-tado: \T1/phv/m/n/12 even-tos de me-tas e tran-sa-ções ge-ram men-sa-gens no Kafka,
  []
 
-
-Overfull \hbox (46.49457pt too wide) in paragraph at lines 45--46
-[]|\T1/phv/m/n/12 Microserviço $\T1/cmtt/m/n/12 dashboard-[]financeiro-[]cadastro-[]autenticacao$
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 47--48
-[]|\T1/phv/m/n/12 Endpoints \T1/cmtt/m/n/12 /finance/bank-accounts\T1/phv/m/n/12 , en-ti-da-des
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 49--49
-[]|\T1/phv/m/n/12 Registro/categorização
- []
-
-
-Underfull \hbox (badness 7291) in paragraph at lines 51--51
-[]|\T1/phv/m/n/12 Metas fi-nan-cei-ras com
- []
-
-
-Underfull \hbox (badness 1509) in paragraph at lines 53--53
-[]|\T1/phv/m/n/12 Dashboards e in-di-ca-do-
- []
-
-
-Underfull \hbox (badness 2443) in paragraph at lines 53--54
-[]|\T1/cmtt/m/n/12 DashboardService \T1/phv/m/n/12 agre-gando re-cei-tas, des-pe-sas,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--57
-[]|\T1/phv/m/n/12 Notificações tran-sa-ci-o-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--58
-[]|\T1/phv/m/n/12 Microserviço $\T1/cmtt/m/n/12 dashboard-[]financeiro-[]notificacoes$
- []
-
-
-Underfull \hbox (badness 2351) in paragraph at lines 57--58
-\T1/phv/m/n/12 com do-mí-nio au-ten-ti-cado, além do log \T1/cmtt/m/n/12 email_-
- []
-
-[31
-
-
-
-
-] [32] [33] [34]
-Overfull \hbox (90.53249pt too wide) in paragraph at lines 134--135
+<figs/us-p3-email.png, id=210, 1892.06876pt x 909.3975pt>
+File: figs/us-p3-email.png Graphic file (type png)
+<use figs/us-p3-email.png>
+Package pdftex.def Info: figs/us-p3-email.png  used on input line 225.
+(pdftex.def)             Requested size: 459.51054pt x 220.85472pt.
+<figs/railway.png, id=211, 1907.125pt x 907.39pt>
+File: figs/railway.png Graphic file (type png)
+<use figs/railway.png>
+Package pdftex.def Info: figs/railway.png  used on input line 236.
+(pdftex.def)             Requested size: 459.51054pt x 218.62263pt.
+[47 <./figs/us-p3-email.png>] [48 <./figs/railway.png>] [49] [50]
+Overfull \hbox (90.53249pt too wide) in paragraph at lines 311--312
 []\T1/phv/m/n/12 Como o pro-duto está fi-na-li-zado, esta se-ção re-sume a tra-je-tó-ria des-crita em \T1/cmtt/m/n/12 documentacao-final.md\T1/phv/m/n/12 ,
  []
 
 
-Overfull \hbox (13.74216pt too wide) in paragraph at lines 139--140
+Overfull \hbox (13.74216pt too wide) in paragraph at lines 316--317
 \T1/phv/m/n/12 na-dos o \T1/cmtt/m/n/12 docker-compose \T1/phv/m/n/12 com SQL Ser-ver, Kafka e Zo-o-ke-e-per, além do \T1/cmtt/m/n/12 application.yml
  []
 
-[35]
-Overfull \hbox (7.01811pt too wide) in paragraph at lines 145--146
+
+Overfull \hbox (7.01811pt too wide) in paragraph at lines 322--323
 \T1/phv/m/n/12 de con-tas e tran-sa-ções, con-trol-lers, ser-vi-ços, re-gras de saldo e o \T1/cmtt/m/n/12 ApiExceptionHandler\T1/phv/m/n/12 .
  []
 
 Package textcomp Info: Symbol \textrightarrow not provided by
 (textcomp)             font family phv in TS1 encoding.
-(textcomp)             Default family used instead on input line 149.
-LaTeX Font Info:    Trying to load font information for T1+cmss on input line 149.
+(textcomp)             Default family used instead on input line 326.
+LaTeX Font Info:    Trying to load font information for T1+cmss on input line 326.
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
 File: t1cmss.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    Trying to load font information for TS1+cmss on input line 149.
+LaTeX Font Info:    Trying to load font information for TS1+cmss on input line 326.
  (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmss.fd
 File: ts1cmss.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 Package textcomp Info: Symbol \textrightarrow not provided by
 (textcomp)             font family phv in TS1 encoding.
-(textcomp)             Default family used instead on input line 149.
+(textcomp)             Default family used instead on input line 326.
 Package textcomp Info: Symbol \textrightarrow not provided by
 (textcomp)             font family phv in TS1 encoding.
-(textcomp)             Default family used instead on input line 149.
+(textcomp)             Default family used instead on input line 326.
 Package textcomp Info: Symbol \textrightarrow not provided by
 (textcomp)             font family phv in TS1 encoding.
-(textcomp)             Default family used instead on input line 149.
-) [36{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+(textcomp)             Default family used instead on input line 326.
+ [51]) [52{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [53]
 \openout2 = `exemplo-cap5.aux'.
 
  (./exemplo-cap5.tex
@@ -1020,57 +1287,68 @@ Underfull \hbox (badness 10000) detected at line 1
  []
 
 
-Overfull \hbox (9.85643pt too wide) in paragraph at lines 22--23
-[]\T1/phv/b/n/12 MySQL \T1/phv/m/n/12 ^^U banco de da-dos re-la-ci-o-nal exe-cu-tado lo-cal-mente via con-têi-ner Doc-ker [[]]; 
+Underfull \hbox (badness 10000) detected at line 5
+\T1/phv/b/n/12 5.1
  []
 
-[37
+
+Underfull \hbox (badness 10000) detected at line 12
+\T1/phv/b/n/12 5.2
+ []
+
+<figs/modelo-dominio.png, id=239, 753.81625pt x 1165.35374pt>
+File: figs/modelo-dominio.png Graphic file (type png)
+<use figs/modelo-dominio.png>
+Package pdftex.def Info: figs/modelo-dominio.png  used on input line 18.
+(pdftex.def)             Requested size: 459.51054pt x 710.36687pt.
+[54
 
 
 
 
 ]
-<figs/railway.png, id=137, 1907.125pt x 907.39pt>
-File: figs/railway.png Graphic file (type png)
-<use figs/railway.png>
-Package pdftex.def Info: figs/railway.png  used on input line 40.
-(pdftex.def)             Requested size: 459.51054pt x 218.62263pt.
- [38]
-<figs/modelo-dominio.png, id=141, 753.81625pt x 1165.35374pt>
-File: figs/modelo-dominio.png Graphic file (type png)
-<use figs/modelo-dominio.png>
-Package pdftex.def Info: figs/modelo-dominio.png  used on input line 51.
-(pdftex.def)             Requested size: 459.51054pt x 710.36687pt.
- [39 <./figs/railway.png>]
 Overfull \vbox (9.79547pt too high) has occurred while \output is active []
 
- [40 <./figs/modelo-dominio.png (PNG copy)>]
-<figs/modelo-dados.jpg, id=149, 1307.88625pt x 1300.86pt>
-File: figs/modelo-dados.jpg Graphic file (type jpg)
-<use figs/modelo-dados.jpg>
-Package pdftex.def Info: figs/modelo-dados.jpg  used on input line 62.
-(pdftex.def)             Requested size: 459.51054pt x 457.03473pt.
-<figs/modelo-uso.jpg, id=150, 764.8575pt x 714.67pt>
-File: figs/modelo-uso.jpg Graphic file (type jpg)
-<use figs/modelo-uso.jpg>
-Package pdftex.def Info: figs/modelo-uso.jpg  used on input line 73.
-(pdftex.def)             Requested size: 435.32422pt x 406.75545pt.
- [41 <./figs/modelo-dados.jpg>] [42 <./figs/modelo-uso.jpg>]) [43]
-\openout2 = `exemplo-cap6.aux'.
+ [55 <./figs/modelo-dominio.png (PNG copy)>]
+Underfull \hbox (badness 10000) detected at line 25
+\T1/phv/b/n/12 5.3
+ []
 
- (./exemplo-cap6.tex
+
+Underfull \hbox (badness 10000) detected at line 35
+\T1/phv/b/n/12 5.4
+ []
+
+[56]
+Overfull \hbox (9.85643pt too wide) in paragraph at lines 46--47
+[]\T1/phv/b/n/12 MySQL \T1/phv/m/n/12 ^^U banco de da-dos re-la-ci-o-nal exe-cu-tado lo-cal-mente via con-têi-ner Doc-ker [[]]; 
+ []
+
+[57]
 6.
 
-Underfull \hbox (badness 10000) detected at line 1
+Underfull \hbox (badness 10000) detected at line 52
 \T1/phv/b/n/14.4 6. 
  []
 
-[44
+) [58
+
+]
+\openout2 = `exemplo-cap6.aux'.
+
+ (./exemplo-cap6.tex
+7.
+
+Underfull \hbox (badness 10000) detected at line 1
+\T1/phv/b/n/14.4 7. 
+ []
+
+[59
 
 
 
 
-] [45] [46]) [47] (./exemplo.bbl
+] [60] [61]) [62] (./exemplo.bbl
 Underfull \hbox (badness 1082) in paragraph at lines 20--22
 []\T1/phv/m/n/12 ANBIMA; Plano CDE. ``Edu-ca-ção fi-nan-ceira: um re-trato das ini-ci-a-ti-vas no
  []
@@ -1125,65 +1403,54 @@ Underfull \hbox (badness 1454) in paragraph at lines 56--58
 []\T1/phv/m/n/12 FEBRABAN; IPESPE. ``17\TS1/phv/m/n/12 ª \T1/phv/m/n/12 edição do observatório febraban: maioria dos
  []
 
-[48
+[63
 
 
 
 ]
-Underfull \hbox (badness 1616) in paragraph at lines 76--78
+Underfull \hbox (badness 1097) in paragraph at lines 72--74
+[]\T1/phv/m/n/12 Minhas Economias. ``Minhas economias --- planejamento financeiro online''.
+ []
+
+
+Underfull \hbox (badness 1616) in paragraph at lines 88--90
 []\T1/phv/m/n/12 OECD/INFE. ``2023 international survey of adult financial literacy''. Acesso
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 84--86
+Underfull \hbox (badness 10000) in paragraph at lines 100--102
 []\T1/phv/m/n/12 Serasa Ex-pe-rian. ``Mapa da ina-dim-plên-cia e re-ne-go-ci-a-ção de
  []
 
 
-Underfull \hbox (badness 3179) in paragraph at lines 84--86
+Underfull \hbox (badness 3179) in paragraph at lines 100--102
 \T1/phv/m/n/12 dí-vi-das no bra-sil --- de-zem-bro de 2024''. Acesso em: 20 mar. 2025,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 84--86
+Underfull \hbox (badness 10000) in paragraph at lines 100--102
 \T1/phv/m/n/12 Cap-tu-rado em: $https : / / www . serasa . com . br / limpa-[]nome-[]online / blog /
  []
 
-) [49]
-\uppercase {Ap\^endice} A.
-[50
-
-]
-\uppercase {Ap\^endice} B.
-[51
-
-]
-\uppercase {Anexo} A.
-[52
-
-]
-\uppercase {Anexo} B.
-[53
-
-] (./exemplo.aux (./exemplo-cap1.aux) (./exemplo-cap2.aux) (./exemplo-cap3.aux) (./exemplo-cap4.aux) (./exemplo-cap5.aux) (./exemplo-cap6.aux))
+) [64] (./exemplo.aux (./exemplo-cap1.aux) (./exemplo-cap2.aux) (./exemplo-cap3.aux) (./exemplo-cap4.aux) (./exemplo-cap5.aux) (./exemplo-cap6.aux))
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 28611 strings out of 474222
- 713728 string characters out of 5748733
- 1947975 words of memory out of 5000000
- 50257 multiletter control sequences out of 15000+600000
- 588422 words of font info for 80 fonts, out of 8000000 for 9000
+ 28828 strings out of 474222
+ 718468 string characters out of 5748733
+ 1937975 words of memory out of 5000000
+ 50466 multiletter control sequences out of 15000+600000
+ 606942 words of font info for 113 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,13n,101p,964b,2345s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on exemplo.pdf (53 pages, 1226019 bytes).
+ 99i,12n,101p,936b,2345s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
+Output written on exemplo.pdf (64 pages, 3584619 bytes).
 PDF statistics:
- 225 PDF objects out of 1000 (max. 8388607)
- 144 compressed objects within 2 object streams
+ 320 PDF objects out of 1000 (max. 8388607)
+ 177 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 58 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 168 words of extra memory for PDF output out of 10000 (max. 10000000)
 
