@@ -25,9 +25,10 @@ UC3 .> UC2 : <<inclui>>
 UC4 .> UC6 : <<estende>>
 
 note right of UC5
-  Inclui os modos Quadros e Analytics,
-  consumindo as APIs consolidadas
-  descritas no Capítulo 3.
+  Inclui a Visão Geral com modos
+  Quadros e Gráficos, consumindo
+  as APIs consolidadas descritas
+  no Capítulo 3.
 end note
 
 note bottom of UC6

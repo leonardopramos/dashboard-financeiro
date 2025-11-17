@@ -2,11 +2,296 @@
 
 Este capítulo descreve como cada elemento do \textbf{Dashboard Financeiro} foi planejado, construído e validado. A intenção é apresentar a visão integrada da solução final, conectando requisitos funcionais, rastreabilidade técnica e evidências de validação em ambiente real.
 
-\section*{Funcionalidades Implementadas por História de Usuário}
+\section{Arquitetura da Solução}
 
-Todas as funcionalidades previstas na fase de planejamento foram entregues e organizadas de acordo com as nove histórias de usuário documentadas no Capítulo~\ref{chap:chap3}. A Tabela~\ref{tab:rastreabilidade-funcionalidades} relaciona cada história (\textbf{US}) à funcionalidade correspondente e aos componentes efetivamente disponibilizados em produção.
+A arquitetura geral do sistema foi estruturada com base na separação de responsabilidades entre frontend, backend e infraestrutura compartilhada. O planejamento permaneceu incremental e enxuto — tarefas foram organizadas no Git e revisadas com o orientador para priorizar entregas de maior valor, mantendo arquitetura, infraestrutura e validações sempre alinhadas. Para ilustrar o ambiente real em produção, a Figura~\ref{fig:arquitetura-geral} mostra a disposição dos contêineres Docker dentro do Railway, agrupados nos blocos de serviços, infraestrutura e frontend conforme captura da implantação.
 
-\begin{table}[htb]
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/railway.png}
+\caption{Ambiente de produção no Railway com os contêineres do \textit{Dashboard Financeiro}.}
+\label{fig:arquitetura-geral}
+\end{figure}
+
+Além da visão operacional, a solução se distribui em camadas bem definidas: o frontend em \textbf{React.js}~\cite{REACT2025} concentra a experiência do usuário e consome a API por meio do Axios; o backend em \textbf{Spring Boot} expõe serviços RESTful com autenticação e roteamento executados pelo \textbf{Spring Security}~\cite{SPRINGSECURITY2025} e pelo \textbf{Spring Cloud Gateway}; a persistência utiliza \textbf{MySQL}~\cite{MYSQL2025} e migrações versionadas, executadas localmente via \textbf{Docker}; e o versionamento é realizado com Git e GitHub para manter a rastreabilidade entre commits, issues e artefatos.
+
+Os mecanismos de segurança e privacidade abrangem autenticação baseada em \textbf{JWT}, criptografia de senhas com \texttt{bcrypt} e validações alinhadas às recomendações do OWASP Top 10. Esses cuidados evitam exposição de dados sensíveis, reforçam o isolamento entre microserviços e sustentam os requisitos institucionais de sigilo.
+
+Por fim, a implantação em nuvem aproveita os Dockerfiles do repositório no \textbf{Railway}, onde cada microserviço (cadastro/autenticação, financeiro, notificações, gateway e frontend) possui imagem própria conectada a instâncias gerenciadas de MySQL e Kafka. O domínio \texttt{tcc-leonardopreczevski.com.br} foi adquirido na \textbf{KingHost} e aponta o subdomínio \texttt{app.tcc\-leonardopreczevski.com.br} para o frontend publicado, mantendo o mesmo endereço nas integrações e nos e-mails transacionais disparados via \textbf{Resend} (com registros SPF, DKIM e \textit{tracking} validados). Esse arranjo garante identidade própria, HTTPS e entregabilidade dos alertas.
+
+\section{Evidências por História de Usuário}
+
+As subseções a seguir descrevem como cada história de usuário se materializa na interface e nos serviços. Foram reservados espaços para inserir as capturas de tela solicitadas durante a defesa do volume.
+
+\subsection{US-L1 — Cadastro Validado (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-L1 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} formulário de duas etapas em \texttt{Register.tsx} com máscaras de CPF/CEP, autocomplete ViaCEP e validações de unicidade no endpoint \texttt{/api/v1/users}. O login subsequente utiliza \texttt{/api/v1/auth} e guarda tokens no \textit{local storage}.
+
+A Figura~\ref{fig:us-l1a} mostra o formulário de cadastro nas etapas inicial e preenchida: (a) apresenta os campos vazios aguardando entrada e (b) evidencia os dados preenchidos com a validação de CPF aplicada antes do envio.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.7\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-form-empty.png}\\
+\smallskip
+\textit{(a) Formulário inicial com campos vazios.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.7\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-form-filled.png}\\
+\smallskip
+\textit{(b) Dados preenchidos com validação de CPF ativa.}
+\caption{Fluxo US-L1 — etapas do formulário até a validação de CPF.}
+\label{fig:us-l1a}
+\end{figure}
+
+A Figura~\ref{fig:us-l1a-email} apresenta (a) a solicitação do OTP na interface e (b) o e-mail recebido pelo usuário, comprovando o disparo automático via serviço Resend.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.7\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-otp-request.png}\\
+\smallskip
+\textit{(a) Solicitação do código de verificação na aplicação.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.78\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-otp-email.png}\\
+\smallskip
+\textit{(b) E-mail com o OTP enviado pelo Resend.}
+\caption{Fluxo US-L1 — disparo e recebimento do código de verificação.}
+\label{fig:us-l1a-email}
+\end{figure}
+
+A Figura~\ref{fig:us-l1b} detalha (a) a digitação do código recebido e (b) a confirmação automática com mensagem de sucesso antes do redirecionamento para o login.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.7\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-otp-input.png}\\
+\smallskip
+\textit{(a) Campo de OTP preenchido pelo usuário.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.7\textwidth,height=0.42\textheight,keepaspectratio]{figs/us-l1-otp-success.png}\\
+\smallskip
+\textit{(b) Confirmação do código e redirecionamento.}
+\caption{Fluxo US-L1 — verificação via OTP e confirmação automática.}
+\label{fig:us-l1b}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-L2 — Registros Diários (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-L2 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} tela \texttt{Transactions.tsx} com formulários modais, categorização colorida, filtros de período e exportação local. O backend recalcula saldos em \texttt{TransactionService} e publica eventos \texttt{transactions.events}.
+
+A Figura~\ref{fig:us-l2} evidencia o fluxo completo: (a) o registro de uma nova receita, (b) a confirmação em tela após o envio e (c) a lista filtrada dos últimos 30 dias contendo a transação lançada.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.92\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-l2-form-entry.png}\\
+\smallskip
+\textit{(a) Lançamento de receita com categorização e data.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.92\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-l2-form-success.png}\\
+\smallskip
+\textit{(b) Confirmação exibida após o cadastro.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.92\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-l2-list-30days.png}\\
+\smallskip
+\textit{(c) Lista dos últimos 30 dias com o registro efetivado.}
+\caption{Fluxo US-L2 — criação e visualização de transações categorizadas no período de 30 dias.}
+\label{fig:us-l2}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-L3 — Metas Savings (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-L3 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} cadastro de metas no modo \textit{SAVINGS} em \texttt{Goals.tsx}, cálculo automático de progresso e alertas exibidos no frontend e enviados via Resend quando o status muda.
+
+A Figura~\ref{fig:us-l3} destaca a meta de reserva configurada, com acompanhamento do progresso e indicação de objetivo atingido.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.85\textwidth,height=0.6\textheight,keepaspectratio]{figs/us-l3-goal-reserve.png}
+\caption{Fluxo US-L3 — meta de reserva com barras de progresso e alertas configurados.}
+\label{fig:us-l3}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-R1 — Contas (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-R1 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} gerenciamento de múltiplas contas em \texttt{BankAccounts.tsx}, com atributos específicos (apelido, tipo, agência) sincronizados com \texttt{/finance/bank-accounts}.
+
+A Figura~\ref{fig:us-r1a} apresenta (a) o formulário de contas vazio aguardando dados e (b) a confirmação do cadastro com alerta de sucesso após o envio.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.35\textheight,keepaspectratio]{figs/us-r1-form-empty.png}\\
+\smallskip
+\textit{(a) Formulário de contas sem preenchimento inicial.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.35\textheight,keepaspectratio]{figs/us-r1-form-success.png}\\
+\smallskip
+\textit{(b) Conta cadastrada com feedback positivo em tela.}
+\caption{Fluxo US-R1 — criação da conta com validações completas.}
+\label{fig:us-r1a}
+\end{figure}
+
+A Figura~\ref{fig:us-r1b} foca no modo de edição, mostrando os campos preenchidos e os botões de atualizar ou cancelar alterações.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.55\textheight,keepaspectratio]{figs/us-r1-edit.png}\\
+\caption{Fluxo US-R1 — edição da conta cadastrada com feedback em tempo real.}
+\label{fig:us-r1b}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-R2 — Conciliação (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-R2 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} histórico detalhado em \texttt{Transactions.tsx} com filtros combinados (período, categoria, conta) e buscas textuais, apoiado por consultas especializadas no \texttt{TransactionQueryService}.
+
+A Figura~\ref{fig:us-r2} mostra a tela de conciliação com o filtro de 30 dias habilitado e os atalhos de edição/exclusão por transação.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.85\textwidth,height=0.6\textheight,keepaspectratio]{figs/us-r2-conciliacao.png}
+\caption{Fluxo US-R2 — conciliação de transações com filtro aplicado aos últimos 30 dias.}
+\label{fig:us-r2}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-R3 — Limites por Categoria (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-R3 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} definição de metas \textit{EXPENSE\_LIMIT} em \texttt{Goals.tsx}, painel de acompanhamento e alertas visuais/notificações quando o teto é ultrapassado.
+
+A Figura~\ref{fig:us-r3} evidencia os limites configurados por categoria, incluindo o estado de meta ultrapassada e o acompanhamento das reservas.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.85\textwidth,height=0.6\textheight,keepaspectratio]{figs/us-r3-limit-category.png}
+\caption{Fluxo US-R3 — metas \textit{EXPENSE\_LIMIT} com destaque para limites ultrapassados.}
+\label{fig:us-r3}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-P1 — Visão Geral (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-P1 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} página inicial ``Visão Geral'' com toggle ``Quadros/Gráficos'', apresentando cartões de saldo, metas e categorias, além dos gráficos de tendência, distribuição por contas/categorias e fluxo diário, todos alimentados pelo \texttt{DashboardService}.
+
+A Figura~\ref{fig:us-p1} sintetiza o modo Quadros: (a) destaca os cartões principais, (b) mostra a variação de saldo por conta e (c) apresenta distribuições por categoria e séries temporais.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-p1-overview-quadros1.png}\\
+\smallskip
+\textit{(a) Cartões com resumo de receitas, despesas e saldos.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-p1-overview-quadros2.png}\\
+\smallskip
+\textit{(b) Gráfico com a variação de saldo por conta.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.3\textheight,keepaspectratio]{figs/us-p1-overview-quadros3.png}\\
+\smallskip
+\textit{(c) Distribuições por categoria e evolução mensal.}
+\caption{Fluxo US-P1 — Visão Geral — Saúde Financeira (modo Quadros).}
+\label{fig:us-p1}
+\end{figure}
+
+A Figura~\ref{fig:us-p1b} apresenta o modo Gráficos, em que (a) se observa o fluxo diário por tipo de movimentação e (b) a consolidação das metas financeiras com seus status.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.35\textheight,keepaspectratio]{figs/us-p1-overview-graficos1.png}\\
+\smallskip
+\textit{(a) Fluxo diário recente e saldo por tipo de conta.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.35\textheight,keepaspectratio]{figs/us-p1-overview-graficos2.png}\\
+\smallskip
+\textit{(b) Visão consolidada das metas com status e prazos.}
+\caption{Fluxo US-P1 — Visão Geral — Saúde Financeira (modo Gráficos).}
+\label{fig:us-p1b}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-P2 — Checklists Educativos (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-P2 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} módulo \texttt{Education.tsx} que ativa checklists, mantras e dicas conforme indicadores do período, reforçando os rituais sugeridos durante as mentorias.
+
+A Figura~\ref{fig:us-p2} destaca o módulo educativo inicial, em que (a) são apresentados diagnóstico e saldo educativo do período e (b) um guia rápido que conecta cada módulo do dashboard.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.25\textheight,keepaspectratio]{figs/us-p2-diagnostico.png}\\
+\smallskip
+\textit{(a) Diagnóstico do período com saldo educativo e foco do momento.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.25\textheight,keepaspectratio]{figs/us-p2-guia.png}\\
+\smallskip
+\textit{(b) Guia rápido com atalhos para os principais módulos.}
+\caption{Fluxo US-P2 — diagnósticos e guias rápidos do módulo educacional.}
+\label{fig:us-p2}
+\end{figure}
+
+A Figura~\ref{fig:us-p2b} apresenta (a) o laboratório de decisões e os mantras de educação financeira e (b) o checklist diário e os rituais aplicados ao ciclo atual.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.9\textwidth,height=0.25\textheight,keepaspectratio]{figs/us-p2-lab.png}\\
+\smallskip
+\textit{(a) Laboratório para simular metas e lembretes educativos.}
+
+\par\medskip
+
+\safeincludegraphics[width=0.9\textwidth,height=0.25\textheight,keepaspectratio]{figs/us-p2-rituais.png}\\
+\smallskip
+\textit{(b) Rituais de aplicação e checklist diário de hábitos.}
+\caption{Fluxo US-P2 — laboratório de decisões e rituais aplicados.}
+\label{fig:us-p2b}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{US-P3 — Notificações Externas (usuário)}
+\textbf{Referência no Capítulo~\ref{chap:chap3}:} história US-P3 descrita na Seção~\ref{sec:user-stories}.
+\textbf{Fluxo implementado:} eventos de metas e transações geram mensagens no Kafka, consumidas pelo serviço de notificações que envia e-mails via Resend e registra \texttt{email\_notification\_log}.
+
+A Figura~\ref{fig:us-p3} mostra o e-mail transacional enviado automaticamente com orientações para os primeiros passos dentro do dashboard.
+
+\begin{figure}[!htbp]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{figs/us-p3-email.png}
+\caption{Fluxo US-P3 — e-mail transacional de boas-vindas orientando primeiros passos e reforçando o uso das notificações.}
+\label{fig:us-p3}
+\end{figure}
+
+\FloatBarrier
+
+\section{Funcionalidades Implementadas por História de Usuário}
+
+Após evidenciar cada jornada individual, esta seção consolida o que foi efetivamente entregue para cada história descrita no Capítulo~\ref{chap:chap3}. A Tabela~\ref{tab:rastreabilidade-funcionalidades} apresenta, lado a lado, o objetivo de cada US, o recorte do MVP e os componentes publicados (frontend, serviços e integrações), permitindo rastrear rapidamente se alguma funcionalidade precisa de reforço.
+
+\begin{table}[!htbp]
 \centering
 \caption{\label{tab:rastreabilidade-funcionalidades}Rastreabilidade entre histórias de usuário e funcionalidades entregues.}
 \setlength{\tabcolsep}{0.2cm}
@@ -16,282 +301,31 @@ Todas as funcionalidades previstas na fase de planejamento foram entregues e org
 \hline
 \textbf{História de usuário} & \textbf{Funcionalidade MVP} & \textbf{Implementação entregue} \\
 \hline
-US-L1 (Larissa — cadastro validado) & Onboarding com validação de CPF e preenchimento automático de endereço & Microserviço ``dashboard-financeiro-cadastro-autenticacao'' com endpoints \texttt{/api/v1/users} e \texttt{/api/v1/auth}, integração ViaCEP, criptografia via \texttt{AuthService} e telas \path{Register.tsx}/\path{Login.tsx}. \\
+US-L1 (usuário — cadastro validado) & Onboarding com validação de CPF e preenchimento automático de endereço & Microserviço ``dashboard-financeiro-cadastro-autenticacao'' com endpoints \texttt{/api/v1/users} e \texttt{/api/v1/auth}, integração ViaCEP, criptografia via \texttt{AuthService} e telas \path{Register.tsx}/\path{Login.tsx}. \\
 \hline
-US-L2 (Larissa — registros diários) & Cadastro e busca de receitas/despesas categorizadas & Endpoints \texttt{/finance/transactions}, \texttt{TransactionService} com recalculo de saldo, filtros no frontend (\path{Transactions.tsx}) e exportação em tela. \\
+US-L2 (usuário — registros diários) & Cadastro e busca de receitas/despesas categorizadas & Endpoints \texttt{/finance/transactions}, \texttt{TransactionService} com recalculo de saldo, filtros no frontend (\path{Transactions.tsx}) e exportação em tela. \\
 \hline
-US-L3 (Larissa — metas savings) & Metas do tipo \textit{SAVINGS} com alertas contextuais & \texttt{FinancialGoalController}, cálculo automático de progresso, notificações via Resend e telas \path{Goals.tsx}/\path{GoalAllocationModal.tsx}. \\
+US-L3 (usuário — metas savings) & Metas do tipo \textit{SAVINGS} com alertas contextuais & \texttt{FinancialGoalController}, cálculo automático de progresso, notificações via Resend e telas \path{Goals.tsx}/\path{GoalAllocationModal.tsx}. \\
 \hline
-US-R1 (Ricardo — múltiplas contas) & Cadastro e manutenção de contas PF/PJ & Endpoints \texttt{/finance/bank-accounts}, entidade \texttt{BankAccountJpaEntity} e tela \path{BankAccounts.tsx} com formulários modais e paginação. \\
+US-R1 (usuário — múltiplas contas) & Cadastro e manutenção de contas & Endpoints \texttt{/finance/bank-accounts}, entidade \texttt{BankAccountJpaEntity} e tela \path{BankAccounts.tsx} com formulários modais e paginação. \\
 \hline
-US-R2 (Ricardo — reconciliação) & Histórico filtrável por categoria, período e conta & Serviços \texttt{TransactionQueryService}, filtros avançados em \path{Transactions.tsx} e componentes de busca rápida no frontend. \\
+US-R2 (usuário — conciliação) & Histórico detalhado por categoria, período e conta & Serviços \texttt{TransactionQueryService}, filtros avançados em \path{Transactions.tsx} e componentes de busca rápida no frontend. \\
 \hline
-US-R3 (Ricardo — limites por categoria) & Metas \textit{EXPENSE\_LIMIT} com monitoramento & Mesmos endpoints de metas, campo \texttt{goalType} diferenciado e alertas configuráveis exibidos em \path{Goals.tsx}. \\
+US-R3 (usuário — limites por categoria) & Metas \textit{EXPENSE\_LIMIT} com monitoramento & Mesmos endpoints de metas, campo \texttt{goalType} diferenciado e alertas configuráveis exibidos em \path{Goals.tsx}. \\
 \hline
-US-P1 (Patrícia — dashboards analíticos) & Visões Summary/Analytics com tendências e distribuições & \texttt{DashboardService}, componentes \texttt{SummaryView}, \texttt{AnalyticsView} (MUI Charts) e ranking de categorias/metas. \\
+US-P1 (usuário — visão geral) & Página inicial com quadros e gráficos consolidados & \texttt{DashboardService}, componentes da Visão Geral (quadros, gráficos e ranking) e filtros de período. \\
 \hline
-US-P2 (Patrícia — checklists educativos) & Módulo educacional com dicas contextuais & Componentes \path{Education.tsx} e \path{LearningChecklist.tsx} consumindo indicadores do período e exibindo rituais guiados. \\
+US-P2 (usuário — checklists educativos) & Módulo educacional com dicas contextuais & Componentes \path{Education.tsx} e \path{LearningChecklist.tsx} consumindo indicadores do período e exibindo rituais guiados. \\
 \hline
-US-P3 (Patrícia — notificações externas) & E-mails transacionais sobre metas críticas & Microserviço ``dashboard-financeiro-notificacoes'' (consumo Kafka), templates HTML e registro em \texttt{email\_notification\_log}. \\
+US-P3 (usuário — notificações externas) & E-mails transacionais sobre metas críticas & Microserviço ``dashboard-financeiro-notificacoes'' (consumo Kafka), templates HTML e registro em \texttt{email\_notification\_log}. \\
 \hline
 \end{tabular}
 \normalsize
 \end{table}
 
-Os fluxos foram exercitados pelo roteiro descrito em \texttt{PASSO-A-PASSO.md}, garantindo que cada história fosse validada ponta a ponta (frontend, API Gateway, microserviços e notificações).
+Esses resultados reforçam que cada requisito funcional definido no Capítulo~\ref{chap:chap3} foi amparado por componentes reais em produção (frontend, serviços e integrações), garantindo rastreabilidade entre proposta e implementação.
 
-\section*{Evidências por História de Usuário}
-
-As subseções a seguir descrevem como cada história de usuário se materializa na interface e nos serviços. Foram reservados espaços para inserir as capturas de tela solicitadas durante a defesa do volume.
-
-\subsection*{US-L1 — Cadastro Validado (Larissa)}
-\textbf{Fluxo implementado:} formulário de duas etapas em \texttt{Register.tsx} com máscaras de CPF/CEP, autocomplete ViaCEP e validações de unicidade no endpoint \texttt{/api/v1/users}. O login subsequente utiliza \texttt{/api/v1/auth} e guarda tokens no \textit{local storage}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-step1.png}\\
-\footnotesize Formulário inicial (campos vazios).
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-step2.png}\\
-\footnotesize Dados preenchidos e validação de CPF.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-step3.png}\\
-\footnotesize Solicitação do código de verificação.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-email.png}\\
-\footnotesize E-mail com o OTP enviado pelo serviço Resend.
-\caption{Fluxo US-L1 — onboarding validado (etapas de cadastro e disparo do código).}
-\label{fig:us-l1a}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-step4.png}\\
-\footnotesize Digitação do código recebido.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-step5.png}\\
-\footnotesize Confirmação automática e redirecionamento.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-login.png}\\
-\footnotesize Login liberado após validação.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l1-dashboard.png}\\
-\footnotesize Acesso concedido ao painel principal.
-\caption{Fluxo US-L1 — confirmação do e-mail e autenticação com redirecionamento ao dashboard.}
-\label{fig:us-l1b}
-\end{figure}
-
-\subsection*{US-L2 — Registros Diários (Larissa)}
-\textbf{Fluxo implementado:} tela \texttt{Transactions.tsx} com formulários modais, categorização colorida, filtros de período e exportação local. O backend recalcula saldos em \texttt{TransactionService} e publica eventos \texttt{transactions.events}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l2-entry.png}\\
-\footnotesize Registro de uma nova receita com categorização e data.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l2-form.png}\\
-\footnotesize Confirmação em tela após o cadastro da operação.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-l2-list.png}\\
-\footnotesize Lista filtrada dos últimos 30 dias com a transação lançada.
-\caption{Fluxo US-L2 — criação e visualização de transações categorizadas no período de 30 dias.}
-\label{fig:us-l2}
-\end{figure}
-
-\subsection*{US-L3 — Metas Savings (Larissa)}
-\textbf{Fluxo implementado:} cadastro de metas no modo \textit{SAVINGS} em \texttt{Goals.tsx}, cálculo automático de progresso e alertas exibidos no frontend e enviados via Resend quando o status muda.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.85\textwidth]{figs/us-l3.png}
-\caption{Fluxo US-L3 — meta de reserva com barras de progresso e alertas configurados.}
-\label{fig:us-l3}
-\end{figure}
-
-\subsection*{US-R1 — Contas PF/PJ (Ricardo)}
-\textbf{Fluxo implementado:} gerenciamento de múltiplas contas em \texttt{BankAccounts.tsx}, com atributos específicos (apelido, tipo, agência) sincronizados com \texttt{/finance/bank-accounts}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.92\textwidth]{figs/us-r1-step1.png}\\
-\footnotesize Formulário de contas vazio aguardando o primeiro cadastro.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-r1-step2.png}\\
-\footnotesize Conta criada e confirmada com alerta verde.
-
-\par\medskip
-
-\safeincludegraphics[width=0.92\textwidth]{figs/us-r1-step3.png}\\
-\footnotesize Edição do registro existente com os botões de ação.
-\caption{Fluxo US-R1 — manutenção de contas bancárias PF/PJ, incluindo cadastro e edição de registros.}
-\label{fig:us-r1}
-\end{figure}
-
-\subsection*{US-R2 — Reconciliação (Ricardo)}
-\textbf{Fluxo implementado:} histórico detalhado em \texttt{Transactions.tsx} com filtros combinados (período, categoria, conta) e buscas textuais, apoiado por consultas especializadas no \texttt{TransactionQueryService}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.85\textwidth]{figs/us-r2.png}
-\caption{Fluxo US-R2 — reconciliação de transações com filtro aplicado aos últimos 30 dias.}
-\label{fig:us-r2}
-\end{figure}
-
-\subsection*{US-R3 — Limites por Categoria (Ricardo)}
-\textbf{Fluxo implementado:} definição de metas \textit{EXPENSE\_LIMIT} em \texttt{Goals.tsx}, painel de acompanhamento e alertas visuais/notificações quando o teto é ultrapassado.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.85\textwidth]{figs/us-r3.png}
-\caption{Fluxo US-R3 — metas \textit{EXPENSE\_LIMIT} com destaque para limites ultrapassados.}
-\label{fig:us-r3}
-\end{figure}
-
-\subsection*{US-P1 — Dashboards Analíticos (Patrícia)}
-\textbf{Fluxo implementado:} visões ``Quadros'' e ``Analytics'' com gráficos de tendência, distribuição por categoria/conta e ranking de metas, alimentadas pelo \texttt{DashboardService}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p1-1.png}\\
-\footnotesize Visão geral com variação do saldo e categorias de maior impacto.
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p1-2.png}\\
-\footnotesize Distribuições por categoria e séries temporais de receitas/despesas.
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p1-3.png}\\
-\footnotesize Fluxo diário e comparação de saldos por tipo de conta.
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p1-4.png}\\
-\footnotesize Consolidação de metas com status e prazos no painel Analytics.
-\caption{Fluxo US-P1 — dashboards Summary/Analytics exibindo tendências, distribuições e metas.}
-\label{fig:us-p1}
-\end{figure}
-
-\subsection*{US-P2 — Checklists Educativos (Patrícia)}
-\textbf{Fluxo implementado:} módulo \texttt{Education.tsx} que ativa checklists, mantras e dicas conforme indicadores do período, reforçando os rituais sugeridos durante as mentorias.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p2-1.png}\\
-\footnotesize Diagnóstico e foco do momento com saldo educativo do período.
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p2-2.png}\\
-\footnotesize Guia rápido conectando módulos (Visão Geral, Transações, Metas, Contas).
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p2-3.png}\\
-\footnotesize Laboratório de decisões e mantras de educação financeira.
-
-\par\medskip
-
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p2-4.png}\\
-\footnotesize Checklists e rituais aplicados para o ciclo atual.
-\caption{Fluxo US-P2 — módulo educacional com diagnósticos, guias e checklists interativos.}
-\label{fig:us-p2}
-\end{figure}
-
-\subsection*{US-P3 — Notificações Externas (Patrícia)}
-\textbf{Fluxo implementado:} eventos de metas e transações geram mensagens no Kafka, consumidas pelo serviço de notificações que envia e-mails via Resend e registra \texttt{email\_notification\_log}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.95\textwidth]{figs/us-p3-email.png}
-\caption{Fluxo US-P3 — e-mail transacional de boas-vindas orientando primeiros passos e reforçando o uso das notificações.}
-\label{fig:us-p3}
-\end{figure}
-
-\section*{Arquitetura da Solução}
-
-A arquitetura geral do sistema foi estruturada com base na separação de responsabilidades entre frontend, backend e infraestrutura compartilhada. Para ilustrar o ambiente real em produção, a Figura~\ref{fig:arquitetura-geral} mostra a disposição dos contêineres Docker dentro do Railway, agrupados nos blocos de serviços, infraestrutura e frontend conforme captura da implantação.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=0.95\textwidth]{figs/railway.png}
-\caption{Ambiente de produção no Railway com os contêineres do \textit{Dashboard Financeiro}.}
-\label{fig:arquitetura-geral}
-\end{figure}
-
-\section*{Funcionalidades do Sistema}
-
-O sistema \textbf{Dashboard Financeiro} foi projetado para proporcionar ao usuário um ambiente intuitivo e eficiente para o controle de suas finanças pessoais. As funcionalidades foram definidas com base nas entidades modeladas no banco de dados e estruturadas para atender às necessidades práticas do cotidiano financeiro. As principais funcionalidades são:
-
-\begin{itemize}
-    \item \textbf{Cadastro de Usuário:} criação de conta com dados pessoais, endereço completo e credenciais de acesso;
-    
-    \item \textbf{Login Seguro:} autenticação via e-mail e senha, com proteção de rotas por meio do Spring Security~\cite{SPRINGSECURITY2025};
-    
-    \item \textbf{Gerenciamento de Contas Bancárias:} cadastro de múltiplas contas com tipo (corrente, poupança etc.), número da conta, agência e saldo atual;
-    
-    \item \textbf{Registro de Transações:} lançamento de entradas e saídas financeiras com valor, data, categoria e tipo (receita ou despesa), atualizando automaticamente o saldo da conta;
-
-    \item \textbf{Classificação por Categoria:} associação de cada transação a uma categoria específica, como alimentação, transporte, moradia, saúde, lazer, entre outras;
-
-    \item \textbf{Visualização de Histórico Financeiro:} exibição do histórico de transações por conta, com filtros por período, tipo e categoria;
-
-    \item \textbf{Metas Financeiras:} definição de objetivos com valor e prazo, permitindo o planejamento e o acompanhamento de metas pessoais;
-
-    \item \textbf{Notificações de Metas:} alertas visuais e e\hyp mails transacionais (via serviço de notificações + Resend) quando metas estão próximas do vencimento ou mudam de status;
-
-    \item \textbf{Painel Resumo:} apresentação gráfica do saldo atual, despesas por categoria, metas ativas e progresso financeiro do usuário;
-
-    \item \textbf{Módulo de Educação Financeira:} orientações, checklists, mantras e rituais diários conectados aos indicadores reais para apoiar novos hábitos;
-
-    \item \textbf{Organização Responsiva:} adaptação da interface a diferentes tamanhos de tela, promovendo usabilidade em computadores e dispositivos móveis;
-
-    \item \textbf{Gerenciamento de Sessão:} controle de login do usuário, com encerramento de sessão e redirecionamento seguro;
-
-    \item \textbf{Segurança dos Dados:} proteção de endpoints, uso de tokens JWT para autenticação e criptografia de senhas no banco de dados~\cite{SPRINGSECURITY2025}.
-\end{itemize}
-
-Essas funcionalidades compõem o escopo mínimo viável (MVP) da aplicação, com foco em usabilidade, segurança e utilidade prática. Outras funcionalidades adicionais estão previstas como parte dos trabalhos futuros.
-
-\section*{Descrição da Arquitetura}
-
-A arquitetura full-stack será dividida nas seguintes camadas:
-
-\begin{description}
-    \item[Frontend:] Interface desenvolvida em \textbf{React.js}~\cite{REACT2025}, com utilização de bibliotecas como Chart.js ou Recharts para geração de gráficos e Axios para comunicação com a API;
-    \item[Backend:] Implementado com \textbf{Spring Boot}, contendo APIs RESTful, controle de autenticação com \textbf{Spring Security}~\cite{SPRINGSECURITY2025}, e persistência dos dados com \textbf{Spring Data JPA};
-    \item[Persistência:] Utilização do \textbf{MySQL}~\cite{MYSQL2025}, com configuração via \textbf{Docker} para facilitar testes e ambientes isolados;
-    \item[Gerenciamento de Código:] Versionamento com Git e repositório no GitHub.
-\end{description}
-
-\section*{Segurança e Privacidade}
-
-A aplicação contará com autenticação baseada em \textbf{JWT (JSON Web Token)}, criptografia das senhas com algoritmos como \texttt{bcrypt} e validações para prevenir injeções e vulnerabilidades comuns no OWASP Top 10~\cite{SPRINGSECURITY2025}. As boas práticas de segurança visam proteger a integridade e a confidencialidade dos dados sensíveis dos usuários.
-
-\section*{Planejamento Metodológico}
-
-O planejamento adotado permaneceu simples e incremental, priorizando o que gerava mais valor em cada ciclo curto. As tarefas foram organizadas diretamente no repositório Git e em anotações compartilhadas com o orientador, com revisões frequentes para validar funcionalidades e ajustar prioridades conforme feedback.
-
-\section*{Metodologia de Desenvolvimento}
+\section{Metodologia de Desenvolvimento}
 
 A metodologia adotada baseia-se em princípios da engenharia de software moderna e do desenvolvimento ágil. O projeto será dividido em etapas bem definidas:
 
@@ -306,9 +340,9 @@ A metodologia adotada baseia-se em princípios da engenharia de software moderna
 
 Essa metodologia garante alinhamento com os objetivos da solução e permite monitoramento constante da evolução do projeto, com entregas incrementais e foco na qualidade final do produto. Em síntese, o planejamento descrito mantém as entregas técnicas conectadas à proposta de oferecer uma ferramenta educativa, segura e acessível para o controle financeiro pessoal.
 
-\section*{Trilha de Desenvolvimento}
+\section{Cronologia de Construção da Arquitetura}
 
-Como o produto está finalizado, esta seção resume a trajetória descrita em \texttt{documentacao-final.md}, detalhando o que foi construído em cada marco:
+Como registro apresento a linha do tempo do projeto, detalhando o que foi construído em cada marco:
 
 \begin{itemize}
     \item \textbf{16/09/2025 — Bootstrap do monorepo.} O repositório foi criado com um serviço Spring Boot básico (Gradle + Java 25) e um frontend React/Vite totalmente funcional. Esse commit inicial garantiu scripts de build, hot reload e testes mínimos, permitindo que o time executasse `./gradlew bootRun` e `npm run dev` sem ajustes adicionais.
@@ -323,13 +357,13 @@ Como o produto está finalizado, esta seção resume a trajetória descrita em \
 
     \item \textbf{02/10/2025 — Ferramentas de apoio.} Na mesma data foram registrados scripts de migração externa, coleções Insomnia, guias por microserviço e documentação de endpoints, permitindo que novos colaboradores reproduzissem os fluxos rapidamente.
 
-    \item \textbf{20/10/2025 — Camada analítica e eventos.} Entraram categorias, metas, dashboard agregado com \texttt{monthlyTrend}, \texttt{categoryBreakdown} e \texttt{goals}, além de eventos Kafka (\texttt{transactions.events}, \texttt{goals.events}, \texttt{user.events}). Também foi criado o guia operacional \texttt{PASSO-A-PASSO.md}, descrevendo a jornada completa (cadastro → login → contas → metas → dashboard).
+    \item \textbf{20/10/2025 — Camada analítica e eventos.} Entraram categorias, metas, dashboard agregado com \texttt{monthlyTrend}, \texttt{categoryBreakdown} e \texttt{goals}, além de eventos Kafka (\texttt{transactions.events}, \texttt{goals.events}, \texttt{user.events}).
 
-    \item \textbf{04/11/2025 — Primeira versão ponta a ponta.} Foram adicionados verificação de e-mail, templates HTML, listener de confirmação, gráficos avançados na tela Analytics, páginas CRUD para contas, categorias, metas, transações e perfil, bem como seeds SQL para demonstração. Essa fase consolidou o MVP completo descrito no Capítulo~\ref{chap:chap3}.
+    \item \textbf{04/11/2025 — Primeira versão ponta a ponta.} Foram adicionados verificação de e-mail, templates HTML, listener de confirmação, gráficos avançados na Visão Geral (modo Gráficos), páginas CRUD para contas, categorias, metas, transações e perfil, bem como seeds SQL para demonstração. Essa fase consolidou o MVP completo descrito no Capítulo~\ref{chap:chap3}.
 
     \item \textbf{10/11/2025 — Preparação para deploy e hardening.} A stack migrou de SQL Server para MySQL, cada serviço recebeu Dockerfile próprio, o compose foi movido para a raiz, implementou-se o client Resend dedicado e foram higienizados segredos, garantindo que a solução pudesse ser provisionada em produção de forma repetível.
 
     \item \textbf{11/11/2025 — Publicação em nuvem com domínio próprio.} Construí as imagens Docker a partir dos serviços (frontend, gateway, cadastro, financeiro e notificações), subi cada contêiner no Railway, configurei variáveis de ambiente compartilhadas e conectei-os às instâncias gerenciadas de MySQL e Kafka. Em seguida registrei o domínio \path{tcc-leonardopreczevski.com.br} na KingHost, apontei o subdomínio \path{app.tcc-leonardopreczevski.com.br} para o frontend hospedado e validei os registros DNS necessários (SPF, DKIM e tracking) para habilitar envios autenticados via Resend. Nesse marco a aplicação completa ficou disponível publicamente com HTTPS e e-mails de produção.
 \end{itemize}
 
-Além desses marcos datados, o período final envolveu ajustes finos no frontend (runtime-config para múltiplos ambientes, componentes de dashboard em MUI Charts, responsividade com Tailwind) e no backend (perfis Docker, scripts de inicialização do MySQL, logs estruturados). A documentação resultante — linha do tempo, guias operacionais e rastreabilidade de funcionalidades — assegura que o leitor compreenda exatamente o que foi construído desde o esqueleto inicial até o produto final hospedável.
+Além desses marcos datados, o período final envolveu ajustes finos no frontend (runtime-config para múltiplos ambientes, componentes de dashboard em MUI Charts, responsividade com Tailwind) e no backend (perfis Docker, scripts de inicialização do MySQL, logs estruturados).

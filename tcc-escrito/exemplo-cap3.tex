@@ -26,8 +26,8 @@ O usuário mantém múltiplas contas com apelidos, tipos e saldos. Cada lançame
 \subsection{Metas financeiras}
 Metas podem ser criadas nos formatos \textit{SAVINGS} (acúmulo) ou \textit{EXPENSE\_LIMIT} (limite de gastos). O sistema calcula progresso em tempo real, permite alocações manuais e dispara alertas configuráveis quando o desempenho sai do planejado.
 
-\subsection{Dashboards}
-A visão resumida reúne cartões de receitas, despesas e saldo líquido, além do ranking de categorias e das metas críticas. A visão analítica adiciona gráficos de tendência mensal, fluxo diário, distribuição por contas e impacto por categoria para orientar decisões.
+\subsection{Visão Geral (quadros e gráficos)}
+A página inicial consolida os quadros de receitas, despesas, saldo líquido, metas críticas e categorias em destaque, além dos gráficos de tendência mensal, fluxo diário e distribuição por contas/categorias. Um único toggle permite alternar entre ``Quadros'' e ``Gráficos'', mantendo o contexto da mesma tela.
 
 \subsection{Módulo educacional}
 Checklists, rituais de aprendizado e dicas contextuais são exibidos conforme os indicadores do usuário, reforçando o aspecto pedagógico do produto e incentivando novos hábitos financeiros.
@@ -47,7 +47,7 @@ O MVP definido no planejamento do projeto corresponde ao conjunto mínimo public
     \item onboarding completo (cadastro, autenticação, verificação e exclusão);
     \item cadastro e gestão de contas bancárias, categorias e transações com atualização automática de saldos;
     \item definição de metas com alertas em tela e via e-mail (metas atingidas/excedidas);
-    \item dashboards (resumo + analytics) abastecidos pelos dados reais do usuário;
+    \item visão geral (quadros + gráficos) abastecida pelos dados reais do usuário;
     \item módulo educacional acoplado às métricas do período.
 \end{enumerate}
 Esses itens foram priorizados e entregues entre junho e agosto; funcionalidades adicionais acrescidas após a validação MVP estão descritas no Capítulo~\ref{chap:chap4}.
@@ -60,41 +60,42 @@ Apesar de o projeto não seguir à risca as cerimônias das metodologias ágeis 
 
 As personas foram derivadas das entrevistas iniciais, dos relatos coletados durante os testes exploratórios e do estudo das métricas do Índice de Saúde Financeira do Brasileiro. Elas expressam a diversidade de perfis que o Dashboard precisa atender e justificam a priorização do MVP focado em onboarding seguro, registro granular de transações, metas inteligentes, dashboards analíticos e notificações proativas.
 
-\subsection{Larissa (24) — Analista Júnior}
-\textbf{Contexto:} Recém-formada e moradora de São Paulo, Larissa passou a receber salário fixo e benefícios variáveis, mas ainda mistura gastos pessoais e profissionais em um único cartão. Ela acompanha conteúdos de educação financeira no celular, prefere experiências responsivas e busca alertas que a mantenham engajada sem precisar abrir planilhas.
+\subsection{Usuário Analista Júnior}
+\textbf{Contexto:} Recém-formado e morador de São Paulo, este usuário passou a receber salário fixo e benefícios variáveis, mas ainda mistura gastos pessoais e profissionais em um único cartão. Ele acompanha conteúdos de educação financeira no celular, prefere experiências responsivas e busca alertas que o mantenham engajado sem precisar abrir planilhas.
 
-\subsection{Ricardo (38) — Microempreendedor Individual}
-\textbf{Contexto:} Ricardo possui um pequeno estúdio de design e alterna entre contas PJ e PF. Ele precisa visualizar fluxo de caixa consolidado, controlar gastos recorrentes com fornecedores e justificar decisões para o contador. A mobilidade não é prioridade; o foco está em ter dashboards completos no desktop e backups consistentes das informações.
+\subsection{Usuário Microempreendedor Individual}
+\textbf{Contexto:} Este usuário possui um pequeno estúdio de design e alterna entre contas PJ e PF. Ele precisa visualizar fluxo de caixa consolidado, controlar gastos recorrentes com fornecedores e justificar decisões para o contador. A mobilidade não é prioridade; o foco está em ter dashboards completos no desktop e backups consistentes das informações.
 
-\subsection{Patrícia (46) — Mentora de Educação Financeira Comunitária}
-\textbf{Contexto:} Patrícia atua como voluntária em oficinas de finanças pessoais e auxilia famílias endividadas. Ela precisa demonstrar rapidamente a situação de cada participante, sugerir rituais de revisão semanal e disparar lembretes externos quando alguém deixa de atualizar o painel.
+\subsection{Usuário Mentor de Educação Financeira Comunitária}
+\textbf{Contexto:} Este usuário atua como voluntário em oficinas de finanças pessoais e auxilia famílias endividadas. Ele precisa demonstrar rapidamente a situação de cada participante, sugerir rituais de revisão semanal e disparar lembretes externos quando alguém deixa de atualizar o painel.
 
 \section{Histórias de Usuário}
+\label{sec:user-stories}
 
-As histórias abaixo foram extraídas diretamente das entrevistas com cada persona e guiaram o backlog incremental durante todo o TC~II.
+As histórias abaixo foram extraídas diretamente das entrevistas com cada persona e guiaram o backlog incremental durante todo o TC~II. Para padronizar os exemplos de tela e os fluxos de validação, todas as histórias passaram a utilizar apenas o nome genérico ``usuário'', independentemente do perfil descrito anteriormente.
 
-\subsection{Larissa — Fluxos priorizados no MVP}
-\begin{itemize}
-    \item Como Larissa, quero concluir o cadastro com validação de CPF e preenchimento automático de endereço via ViaCEP para começar a usar o painel sem erros de digitação.
-    \item Como Larissa, quero registrar receitas e despesas diárias com categorias coloridas, filtros por período e exportação em tela para identificar para onde meu salário está indo.
-    \item Como Larissa, quero definir metas do tipo \textit{SAVINGS} e receber alertas por e-mail quando eu estiver próxima de atingi-las, garantindo que meus objetivos de reserva de emergência sejam cumpridos.
-\end{itemize}
+\subsection{Usuário — Fluxos priorizados no MVP}
+\begin{description}
+    \item[\textbf{US-L1 — Cadastro validado}] Como usuário, quero concluir o cadastro com validação de CPF e preenchimento automático de endereço via ViaCEP para começar a usar o painel sem erros de digitação.
+    \item[\textbf{US-L2 — Registros diários}] Como usuário, quero registrar receitas e despesas diárias com categorias coloridas, filtros por período e exportação em tela para identificar para onde meu salário está indo.
+    \item[\textbf{US-L3 — Metas savings}] Como usuário, quero definir metas do tipo \textit{SAVINGS} e receber alertas por e-mail quando eu estiver próxima de atingi-las, garantindo que meus objetivos de reserva de emergência sejam cumpridos.
+\end{description}
 
-\subsection{Ricardo — Fluxo financeiro consolidado}
-\begin{itemize}
-    \item Como Ricardo, quero cadastrar múltiplas contas bancárias com tipos e saldos independentes para separar o capital da empresa do orçamento familiar.
-    \item Como Ricardo, quero aplicar filtros por categoria, período e conta no histórico de transações para reconciliar recebíveis e despesas fixas antes de enviar dados ao contador.
-    \item Como Ricardo, quero configurar metas \textit{EXPENSE\_LIMIT} para categorias críticas (ex.: softwares e fornecedores) e ser notificado quando ultrapassar o teto definido, evitando descasamentos de caixa.
-\end{itemize}
+\subsection{Usuário — Fluxo financeiro consolidado}
+\begin{description}
+    \item[\textbf{US-R1 — Contas independentes}] Como usuário, quero cadastrar múltiplas contas bancárias com tipos e saldos independentes para separar o capital da empresa do orçamento familiar.
+    \item[\textbf{US-R2 — Conciliação detalhada}] Como usuário, quero aplicar filtros por categoria, período e conta no histórico de transações para reconciliar recebíveis e despesas fixas antes de enviar dados ao contador.
+    \item[\textbf{US-R3 — Limites por categoria}] Como usuário, quero configurar metas \textit{EXPENSE\_LIMIT} para categorias críticas (ex.: softwares e fornecedores) e ser notificado quando ultrapassar o teto definido, evitando descasamentos de caixa.
+\end{description}
 
-\subsection{Patrícia — Acompanhamento Educacional}
-\begin{itemize}
-    \item Como Patrícia, quero acessar dashboards analíticos com tendência mensal, distribuição por categoria e impacto por conta para identificar quais famílias precisam de intervenção imediata.
-    \item Como Patrícia, quero ativar checklists e dicas contextuais vinculadas aos indicadores do período para recomendar ações educativas personalizadas durante as oficinas.
-    \item Como Patrícia, quero que o sistema envie e-mails transacionais quando metas ficarem críticas ou forem atingidas, permitindo que eu acompanhe os mentorados mesmo fora dos encontros presenciais.
-\end{itemize}
+\subsection{Usuário — Acompanhamento Educacional}
+\begin{description}
+    \item[\textbf{US-P1 — Visão geral}] Como usuário, quero acessar a Visão Geral com quadros e gráficos dos últimos meses para verificar rapidamente tendências, categorias críticas e o saldo consolidado.
+    \item[\textbf{US-P2 — Checklists educativos}] Como usuário, quero ativar checklists e dicas contextuais vinculadas aos indicadores do período para recomendar ações educativas personalizadas durante as oficinas.
+    \item[\textbf{US-P3 — Notificações externas}] Como usuário, quero que o sistema envie e-mails transacionais quando metas ficarem críticas ou forem atingidas, permitindo que eu acompanhe os mentorados mesmo fora dos encontros presenciais.
+\end{description}
 
-Essas três personas e seus respectivos conjuntos de histórias de usuário representam o escopo completo utilizado para direcionar as decisões de produto. Elas também explicam por que a solução combina onboarding seguro, gestão financeira detalhada, módulo educativo e notificações integradas antes de avançar para requisitos mais complexos descritos na arquitetura.
+Esses três perfis de usuário e seus respectivos conjuntos de histórias representam o escopo completo utilizado para direcionar as decisões de produto. Eles também explicam por que a solução combina onboarding seguro, gestão financeira detalhada, módulo educativo e notificações integradas antes de avançar para requisitos mais complexos descritos na arquitetura.
 
 \section{Arquitetura da Aplicação}
 
@@ -113,24 +114,26 @@ A arquitetura organiza-se em serviços especializados que se comunicam por \text
 
 \subsection{Diagrama de Arquitetura}
 
+A Figura~\ref{fig:arquitetura} consolida esses blocos em uma visão única, evidenciando o fluxo completo: o frontend React orquestra interações com o API Gateway, que valida credenciais, direciona requisições aos microserviços de cadastro, finanças e notificações, e persiste dados segmentados em bancos MySQL independentes. Essa representação facilita enxergar como os eventos Kafka e o serviço de e-mail se conectam às jornadas do usuário e sustentam a escalabilidade discutida nas seções anteriores.
+
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{figs/diagramaarquitetura.png}
+\safeincludegraphics[width=0.85\textwidth]{figs/diagramaarquitetura.png}
 \caption{Arquitetura proposta para o \textbf{Dashboard Financeiro}.}
 \label{fig:arquitetura}
 \end{figure}
 
 \subsection{Cadastro e Autenticação}
-Criação de conta, autenticação (login), refresh token, gestão de perfil e exclusão são atendidos pelo microserviço \texttt{dashboard-financeiro-cadastro-autenticacao}, que utiliza Spring Security, JWT e MySQL dedicado.
+Criação de conta, autenticação (login), refresh token, gestão de perfil e exclusão são atendidos pelo microserviço \texttt{dashboard-\allowbreak financeiro-\allowbreak cadastro-\allowbreak autenticacao}, que utiliza Spring Security, JWT e MySQL dedicado.
 
 \subsection{Gestão Financeira}
-CRUD de contas, categorias, transações e metas são tratados pelo microserviço \texttt{dashboard-financeiro}, que centraliza validações, regras de consistência e fechamento mensal, além de publicar eventos Kafka.
+CRUD de contas, categorias, transações e metas são tratados pelo microserviço \texttt{dashboard-\allowbreak financeiro}, que centraliza validações, regras de consistência e fechamento mensal, além de publicar eventos Kafka.
 
 \subsection{Dashboards e Indicadores}
-As consultas agregadas (período, categoria, tendência e metas) são executadas pelo \texttt{DashboardService}, exposto pelo mesmo microserviço financeiro e consumido pelo frontend nas visões ``Quadros'' e ``Analytics''.
+As consultas agregadas (período, categoria, tendência e metas) são executadas pelo \texttt{DashboardService}, exposto pelo mesmo microserviço financeiro e consumido pelo frontend na Visão Geral, que disponibiliza abas ``Quadros'' e ``Gráficos'' dentro da mesma página.
 
 \subsection{Notificações}
-Eventos de usuários, transações e metas são consumidos pelo microserviço \texttt{dashboard-financeiro-notificacoes}, que utiliza Resend para enviar e\hyp mails autenticados com o domínio próprio e persiste logs para auditoria.
+Eventos de usuários, transações e metas são consumidos pelo microserviço \texttt{dashboard-\allowbreak financeiro-\allowbreak notificacoes}, que utiliza Resend para enviar e\hyp mails autenticados com o domínio próprio e persiste logs para auditoria.
 
 \subsection{Fluxo de Uso (Exemplo)}
 
@@ -138,7 +141,7 @@ Eventos de usuários, transações e metas são consumidos pelo microserviço \t
     \item O usuário acessa a interface (React), que solicita ``\textit{buscar transações do mês}'' para o \textbf{API Gateway};
     \item O gateway valida o \textbf{JWT} (Spring Security) e encaminha a requisição ao \textbf{Serviço Financeiro};
     \item O serviço consulta o \textbf{MySQL} correspondente, recalcula saldos e publica eventos em Kafka quando necessário;
-    \item A resposta agregada retorna ao \textbf{Frontend}, que atualiza os gráficos de resumo ou da visão analítica;
+    \item A resposta agregada retorna ao \textbf{Frontend}, que atualiza os quadros e gráficos da Visão Geral;
     \item Se metas mudarem de status, o evento é consumido pelo \textbf{Serviço de Notificações}, que envia e\hyp mails via Resend com o domínio autenticado.
 \end{enumerate}
 
@@ -151,7 +154,7 @@ As entidades apresentadas na Figura~\ref{fig:esquema-banco} foram exportadas aut
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{figs/modelo-dados.jpg}
+\safeincludegraphics[width=0.85\textwidth]{figs/modelo-dados.jpg}
 \caption{Modelo relacional consolidado no MySQL.}
 \label{fig:esquema-banco}
 \end{figure}
