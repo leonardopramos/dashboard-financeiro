@@ -4,6 +4,9 @@ import com.dashboard_financeiro.Dashboard.Financeiro.application.DashboardRange;
 import com.dashboard_financeiro.Dashboard.Financeiro.application.DashboardService;
 import com.dashboard_financeiro.Dashboard.Financeiro.security.AuthenticatedUser;
 import com.dashboard_financeiro.Dashboard.Financeiro.web.dto.DashboardOverviewResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,11 +20,17 @@ import java.time.YearMonth;
 @RestController
 @RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor
+@Tag(name = "Dashboard")
+@SecurityRequirement(name = "bearerAuth")
 public class DashboardController {
 
     private final DashboardService dashboardService;
 
     @GetMapping("/overview")
+    @Operation(
+            summary = "Consultar visão geral",
+            description = "Retorna saldos, totais por tipo e evolução do período informado (ano/mês e range opcional)."
+    )
     public ResponseEntity<DashboardOverviewResponse> overview(@AuthenticationPrincipal AuthenticatedUser currentUser,
                                                               @RequestParam(required = false) Integer year,
                                                               @RequestParam(required = false) Integer month,

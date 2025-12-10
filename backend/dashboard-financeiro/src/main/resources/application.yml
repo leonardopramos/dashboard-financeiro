@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: ${FINANCE_DB_URL:jdbc:mysql://localhost:3306/dashboard_financeiro?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -43,8 +43,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID:dummy-id}
-            client-secret: ${GOOGLE_CLIENT_SECRET:dummy-secret}
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
             scope: openid,profile,email
         provider:
           google:
@@ -53,10 +53,10 @@ spring:
 security:
   jwt:
     issuer: ${JWT_ISSUER:dashboard-financeiro-auth}
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${FINANCE_SERVER_PORT:8080}
 
 logging:
   level:

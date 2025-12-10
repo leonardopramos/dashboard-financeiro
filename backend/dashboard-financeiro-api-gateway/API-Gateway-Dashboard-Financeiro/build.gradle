@@ -10,7 +10,7 @@ description = '📌 Para centralizar APIs e delegar autenticação.'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(24)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 

@@ -5,6 +5,9 @@ import com.dashboard_financeiro.cadastroautenticacao.security.AuthenticatedUser;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.CreateUserRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UpdateUserRequest;
 import com.dashboard_financeiro.cadastroautenticacao.web.dto.UserDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,16 +21,26 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Tag(name = "Usuários")
 public class UserController {
 
     private final UserService service;
 
     @PostMapping
+    @Operation(
+            summary = "Registrar usuário",
+            description = "Cria um novo usuário e dispara verificação de e-mail."
+    )
     public ResponseEntity<UserDTO> register(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
     }
 
     @GetMapping("/{id}")
+    @Operation(
+            summary = "Buscar usuário por id",
+            description = "Retorna o perfil do próprio usuário ou, se ADMIN, de outro usuário."
+    )
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserDTO> getById(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser currentUser) {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -41,6 +54,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Operation(
+            summary = "Atualizar usuário",
+            description = "Permite ao usuário alterar seus dados ou um ADMIN atualizar outro usuário."
+    )
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserDTO> update(@PathVariable UUID id,
                                           @AuthenticationPrincipal AuthenticatedUser currentUser,
                                           @Valid @RequestBody UpdateUserRequest request) {
@@ -56,6 +74,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Remover usuário",
+            description = "Exclui a própria conta ou, para ADMIN, remove outro usuário."
+    )
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> delete(@PathVariable UUID id,
                                        @AuthenticationPrincipal AuthenticatedUser currentUser) {
         if (currentUser == null) {

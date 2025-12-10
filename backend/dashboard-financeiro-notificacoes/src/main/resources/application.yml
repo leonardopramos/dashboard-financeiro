@@ -1,13 +1,11 @@
 spring:
-  config:
-    import: optional:file:.env[.properties]
   application:
     name: dashboard-financeiro-notificacoes
 
   datasource:
     url: ${NOTIFICATIONS_DB_URL:jdbc:mysql://localhost:3306/dashboard_financeiro_notificacoes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -45,7 +43,7 @@ spring:
               headers: false
 
 server:
-  port: ${SERVER_PORT:8083}
+  port: ${NOTIFICATIONS_SERVER_PORT:8083}
 
 messaging:
   topics:
